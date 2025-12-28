@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<script>
+(function() {
+  try {
+    const savedMode = localStorage.getItem('mode') || 'dark';
+    document.documentElement.setAttribute('data-mode', savedMode);
+  } catch (e) {
+    document.documentElement.setAttribute('data-mode', 'dark');
+  }
+
+  const loader = document.createElement('div');
+  loader.id = 'mode-loader';
+  loader.innerHTML = '<div class="loader-bar"></div>';
+  document.documentElement.appendChild(loader);
+})();
+</script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Template Gallery | cre8ive.cv</title>
+  <meta name="description" content="Browse our collection of professional resume templates. Choose a template that fits your style and career goals.">
+  <meta name="keywords" content="resume templates,CV templates,professional resume,resume gallery">
+  <link rel="icon" type="image/png" href="/assets/logo-rocket-circle.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/variables.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    :root[data-mode="hacker"] body {
+      background:
+        radial-gradient(circle at 20% 50%, rgba(123, 228, 149, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(82, 201, 122, 0.06) 0%, transparent 50%),
+        linear-gradient(135deg, #040806 0%, #060b08 50%, #0a120d 100%);
+      background-attachment: fixed;
+    }
+
+    .gallery-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    /* Logo positioning - matches sidebar position */
+    .logo-section {
+      position: fixed;
+      left: 24px;
+      top: 24px;
+      z-index: 100;
+      padding-top: 12px;
+    }
+
+    .logo-heading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 4px;
+      flex: 0 0 auto;
+      transform: translateY(-20px);
+    }
+
+    .logo-title {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin: 0;
+      position: relative;
+      display: inline-block;
+      font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      text-transform: lowercase;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .logo-title-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      text-decoration: none;
+      position: relative;
+      color: var(--accent-primary);
+      background: linear-gradient(135deg, #64B5F6 0%, #42A5F5 50%, #2196F3 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 1px 28px rgba(100, 181, 246, 0.7));
+      transition: transform 0.55s cubic-bezier(0.55, 0, 0.1, 1);
+    }
+
+    .logo-title-link:hover,
+    .logo-title-link:focus-visible {
+      transform: none;
+    }
+
+    .logo-emoji {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15em;
+      position: relative;
+      will-change: transform;
+      transition: transform 0.45s ease, color 1s ease, -webkit-text-fill-color 1s ease;
+      color: var(--accent-primary);
+      -webkit-text-fill-color: var(--accent-primary);
+      --logo-emoji-gradient: linear-gradient(135deg, #64B5F6 0%, #42A5F5 50%, #2196F3 100%);
+      --logo-emoji-plain-color: #64B5F6;
+      overflow: hidden;
+    }
+
+    .logo-emoji::before {
+      content: attr(data-emoji);
+      position: absolute;
+      inset: 0;
+      background: var(--logo-emoji-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      transition: opacity 1s ease;
+    }
+
+    .logo-title-link:hover .logo-emoji::before,
+    .logo-title-link:focus-visible .logo-emoji::before {
+      opacity: 0;
+    }
+
+    .logo-title-link.launching .logo-emoji,
+    .logo-title-link.returning .logo-emoji {
+      animation-fill-mode: forwards;
+      color: var(--logo-emoji-plain-color);
+      -webkit-text-fill-color: var(--logo-emoji-plain-color);
+      text-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+    }
+
+    .logo-title-link.launching .logo-emoji {
+      animation: rocket-away 0.7s ease-out forwards;
+      animation-delay: 1.5s;
+    }
+
+    .logo-title-link.returning .logo-emoji {
+      animation: rocket-return 2.4s linear forwards;
+      will-change: transform;
+    }
+
+    .logo-title-link.returning.restoring-color .logo-emoji {
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+    }
+
+    :root[data-mode="hacker"] .logo-emoji {
+      --logo-emoji-plain-color: #7be495;
+      --logo-emoji-gradient: linear-gradient(135deg, #9bf2b2 0%, #7be495 50%, #52c97a 100%);
+    }
+
+    :root[data-mode="light"] .logo-title-link {
+      filter: drop-shadow(0 1px 22px rgba(66, 165, 245, 0.75));
+    }
+
+    :root[data-mode="hacker"] .logo-title-link {
+      background: linear-gradient(135deg, #9bf2b2 0%, #7be495 50%, #52c97a 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 18px rgba(123, 228, 149, 0.9));
+    }
+
+    .logo-subtitle {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: -0.01em;
+      margin: 0;
+    }
+
+    .gallery-header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .gallery-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .gallery-subtitle {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent-primary);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: 8px;
+      background: rgba(100, 181, 246, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+      background: rgba(100, 181, 246, 0.2);
+      transform: translateX(-4px);
+    }
+
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 1200px) {
+      .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .gallery-title {
+        font-size: 2rem;
+      }
+
+      .logo-section {
+        position: relative;
+        left: 0;
+        top: 0;
+        margin-bottom: 20px;
+        padding-top: 0;
+      }
+
+      .gallery-container {
+        padding-top: 20px;
+      }
+
+      .gallery-header {
+        margin-top: 0;
+      }
+    }
+
+    .gallery-item {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      aspect-ratio: 1;
+    }
+
+    .gallery-item:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 32px var(--shadow-hover);
+      border-color: var(--accent-primary);
+    }
+
+    .gallery-item-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gallery-item-label {
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      right: 0;
+      padding: 32px 20px;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.98), rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.5), transparent);
+      font-weight: 800;
+      font-size: 1.75rem;
+      text-align: center;
+      text-shadow:
+        0 6px 20px rgba(0, 0, 0, 1),
+        0 3px 10px rgba(0, 0, 0, 0.95),
+        0 1px 4px rgba(0, 0, 0, 0.9);
+    }
+
+    /* Dynamic color based on mode */
+    :root[data-mode="dark"] .gallery-item-label {
+      color: #64B5F6;
+    }
+
+    :root[data-mode="light"] .gallery-item-label {
+      color: #5b9dd9;
+    }
+
+    :root[data-mode="hacker"] .gallery-item-label {
+      color: #7be495;
+    }
+
+    .gallery-item-preview {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 10;
+    }
+
+    .gallery-item:hover .gallery-item-preview {
+      opacity: 1;
+    }
+
+    .gallery-item-preview iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      transform: scale(0.4);
+      transform-origin: top left;
+      width: 250%;
+      height: 250%;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+    }
+
+    .loading i {
+      font-size: 2rem;
+      margin-bottom: 16px;
+      display: block;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="gallery-container">
+    <div class="logo-section">
+      <div class="logo-heading">
+        <h1 class="logo-title">
+          <a href="/" class="logo-title-link">
+            <span class="logo-emoji" data-emoji="🚀">🚀</span>
+            cre8ive.cv
+          </a>
+        </h1>
+        <p class="logo-subtitle">Your ultimate resume creator</p>
+      </div>
+    </div>
+
+    <div class="gallery-header">
+      <h1 class="gallery-title">Templates Gallery</h1>
+      <p class="gallery-subtitle">Choose a template to start creating your professional resume. In the future you can expect even more templates</p>
+      <a href="/" class="back-link">
+        <i class="fas fa-arrow-left"></i>
+        Back to Main Page
+      </a>
+    </div>
+
+    <div id="galleryGrid" class="gallery-grid">
+      <div class="loading">
+        <i class="fas fa-spinner"></i>
+        <div>Loading templates...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Gallery loading functionality
+    async function loadGallery() {
+      try {
+        const response = await fetch('/api/gallery/templates');
+        const templates = await response.json();
+
+        const grid = document.getElementById('galleryGrid');
+        grid.innerHTML = '';
+
+        templates.forEach(template => {
+          const item = document.createElement('div');
+          item.className = 'gallery-item';
+          item.onclick = () => {
+            window.location.href = `/gallery/template.html?id=${template.id}`;
+          };
+
+          item.innerHTML = `
+            <img src="/gallery/${template.folder}/${template.image}" alt="${template.label}" class="gallery-item-image">
+            <div class="gallery-item-label">${template.label}</div>
+            <div class="gallery-item-preview">
+              <iframe src="/gallery/${template.folder}/${template.html}" sandbox="allow-same-origin"></iframe>
+            </div>
+          `;
+
+          grid.appendChild(item);
+        });
+      } catch (error) {
+        console.error('Error loading gallery:', error);
+        document.getElementById('galleryGrid').innerHTML = `
+          <div class="loading">
+            <i class="fas fa-exclamation-circle"></i>
+            <div>Failed to load templates. Please try again later.</div>
+          </div>
+        `;
+      }
+    }
+
+    loadGallery();
+
+    // Remove loader after page loads
+    window.addEventListener('load', () => {
+      const loader = document.getElementById('mode-loader');
+      if (loader) {
+        loader.remove();
+      }
+    });
+  </script>
+</body>
+</html>
