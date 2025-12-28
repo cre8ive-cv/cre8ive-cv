@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terms and conditions | cre8ive.cv</title>
+  <link rel="icon" type="image/png" href="assets/logo-rocket-circle.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #1e2127;
+      --bg-secondary: #262a31;
+      --card: rgba(255, 255, 255, 0.04);
+      --text-primary: #e8eaed;
+      --text-secondary: #b0b8c1;
+      --text-muted: #7b8794;
+      --border-color: #3d4148;
+      --accent-primary: #64b5f6;
+      --accent-secondary: #42a5f5;
+      --accent-hover: #90caf9;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      --highlight-bg: rgba(100, 181, 246, 0.08);
+      --highlight-border: rgba(100, 181, 246, 0.6);
+      --highlight-text: #c9e7ff;
+      --warning-bg: rgba(255, 193, 7, 0.12);
+      --warning-border: rgba(255, 193, 7, 0.7);
+      --warning-text: #ffd666;
+    }
+
+    :root[data-mode="light"] {
+      --bg-primary: #eef1f7;
+      --bg-secondary: #f7f9fe;
+      --card: #ffffff;
+      --text-primary: #1f2430;
+      --text-secondary: #4b5563;
+      --text-muted: #6b7280;
+      --border-color: #d8dee9;
+      --accent-primary: #64b5f6;
+      --accent-secondary: #42a5f5;
+      --accent-hover: #4fa6f0;
+      --shadow: 0 16px 50px rgba(31, 41, 55, 0.12);
+      --highlight-bg: rgba(100, 181, 246, 0.12);
+      --highlight-border: rgba(100, 181, 246, 0.55);
+      --highlight-text: #1f2430;
+      --warning-bg: rgba(255, 193, 7, 0.18);
+      --warning-border: rgba(255, 193, 7, 0.7);
+      --warning-text: #674100;
+    }
+
+    :root[data-mode="hacker"] {
+      --bg-primary: #060b08;
+      --bg-secondary: #0f1812;
+      --card: rgba(28, 42, 34, 0.7);
+      --text-primary: #d9ffe8;
+      --text-secondary: #a9d6b9;
+      --text-muted: #7aa088;
+      --border-color: #1c2a22;
+      --accent-primary: #7be495;
+      --accent-secondary: #52c97a;
+      --accent-hover: #9bf2b2;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+      --highlight-bg: rgba(123, 228, 149, 0.12);
+      --highlight-border: rgba(123, 228, 149, 0.55);
+      --highlight-text: #d9ffe8;
+      --warning-bg: rgba(255, 193, 7, 0.16);
+      --warning-border: rgba(255, 193, 7, 0.7);
+      --warning-text: #ffd666;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      padding: 40px 20px;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--card);
+      padding: 42px;
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(6px);
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .header i {
+      font-size: 32px;
+      color: var(--accent-primary);
+    }
+
+    h1 {
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-top: 32px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    h2 i {
+      font-size: 18px;
+      color: var(--accent-primary);
+    }
+
+    p, li {
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+
+    ul {
+      margin-left: 24px;
+      margin-bottom: 16px;
+    }
+
+    .highlight-box {
+      background: var(--highlight-bg);
+      border-left: 4px solid var(--highlight-border);
+      padding: 16px;
+      border-radius: 6px;
+      margin: 24px 0;
+    }
+
+    .highlight-box p {
+      margin-bottom: 0;
+      color: var(--highlight-text);
+      font-weight: 600;
+    }
+
+    .success-box {
+      background: rgba(123, 228, 149, 0.15);
+      border-left: 4px solid rgba(123, 228, 149, 0.8);
+      padding: 16px;
+      border-radius: 6px;
+      margin: 24px 0;
+    }
+
+    .success-box p {
+      margin-bottom: 6px;
+      color: #d9ffe8;
+    }
+    .success-box ul {
+      margin: 0 0 0 20px;
+      padding: 0;
+      list-style: disc;
+      color: #d9ffe8;
+    }
+    .success-box li {
+      margin-bottom: 6px;
+    }
+
+    :root[data-mode="light"] .success-box {
+      background: rgba(123, 228, 149, 0.2);
+      border-left-color: rgba(50, 205, 120, 0.8);
+    }
+
+    :root[data-mode="light"] .success-box p,
+    :root[data-mode="light"] .success-box ul {
+      color: #1f2430;
+    }
+
+    :root[data-mode="hacker"] .success-box {
+      background: rgba(123, 228, 149, 0.2);
+      border-left-color: rgba(123, 228, 149, 0.85);
+    }
+
+    .warning-box {
+      background: var(--warning-bg);
+      border-left: 4px solid var(--warning-border);
+      padding: 16px;
+      border-radius: 6px;
+      margin: 24px 0;
+    }
+
+    .warning-box p {
+      margin-bottom: 8px;
+      color: var(--warning-text);
+    }
+
+    .warning-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent-primary);
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-color);
+      transition: color 0.2s ease, gap 0.2s ease;
+    }
+
+    .back-link:hover {
+      color: var(--accent-hover);
+      gap: 10px;
+    }
+
+    .date {
+      color: var(--text-muted);
+      font-size: 14px;
+      font-style: italic;
+    }
+
+    strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    code {
+      background: var(--bg-secondary);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 14px;
+      color: var(--accent-primary);
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 20px 14px; }
+      .container { padding: 28px 18px; }
+      h1 { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <i class="fas fa-shield-alt"></i>
+      <h1>Privacy Policy & Terms of Service</h1>
+    </div>
+
+    <p class="date"><strong>Last updated:</strong> <span id="lastUpdated"></span></p>
+
+    <div class="success-box">
+      <p><i class="fas fa-compress"></i> <strong>TL;DR</strong></p>
+      <ul>
+        <li>Resume content is processed entirely in memory for previews/exports and never written to persistent storage.</li>
+        <li>We only retain anonymous usage metadata (e.g., timestamp, selected theme, and UI mode) to keep improving the experience.</li>
+        <li>Matomo analytics runs in zero-cookie mode with IP anonymization so we can gauge traffic trends without profiling visitors.</li>
+      </ul>
+    </div>
+
+    <div class="highlight-box">
+      <p><i class="fas fa-info-circle"></i> By using this service, you acknowledge and accept these terms and our data processing practices.</p>
+    </div>
+
+    <h2><i class="fas fa-database"></i> 1. What Data We Process</h2>
+    <p>When you export data, we temporarily process the following personal data:</p>
+    <ul>
+      <li><strong>Resume content:</strong> Name, contact information (email, phone, location), work experience, education, skills, projects, professional bio</li>
+      <li><strong>Photos:</strong> Photography which you upload (processed as base64-encoded images)</li>
+      <li><strong>Custom preferences:</strong> Selected theme, color scheme, section customizations</li>
+    </ul>
+
+    <h2><i class="fas fa-cogs"></i> 2. How We Process Your Data</h2>
+    <p><strong>PDF Preview and Download:</strong></p>
+    <ul>
+      <li>When you click "PDF Preview &amp; Download", your data is sent to the server</li>
+      <li>A PDF buffer is generated entirely in memory using Puppeteer (headless browser) &mdash; no resume content or PDF output is written to disk</li>
+      <li>For preview: The in-memory PDF buffer is streamed to your browser and discarded as soon as it has been sent</li>
+      <li>For export: The same in-memory buffer is streamed as a download and then immediately released; nothing persists on the server once the response finishes</li>
+      <li><strong>Usage statistics & customizations:</strong> When you export as PDF, HTML, or JSON, we collect and store metadata including theme, color palette, and <strong>custom names of resume sections</strong> (e.g., if you rename "Experience" to "My Work History"). Unlike the actual content of your resume (which is deleted immediately), these custom section titles are stored in our analytics database to help us understand how users customize their templates.</li>
+    </ul>
+
+    <div class="highlight-box">
+      <p><i class="fas fa-check-circle"></i> <strong>Privacy Guarantee:</strong> We do NOT store your resume data permanently. All processing is temporary and data is deleted immediately after use. Only metadata is collected.</p>
+    </div>
+
+    <h2><i class="fas fa-clock"></i> 3. Data Retention</h2>
+    <ul>
+      <li><strong>Resume data:</strong> Processed in-memory only, never written to permanent storage</li>
+      <li><strong>PDF buffers:</strong> Generated in RAM for a fraction of a second and released immediately after the preview/download response completes (no temporary files)</li>
+      <li><strong>Anonymous usage statistics:</strong> Anonymous usage statistics (timestamp, theme preferences, display mode, custom section names and order) collected during PDF, HTML, or JSON exports are stored in a local SQLite database and retained indefinitely for service improvement. This database contains only usage metadata. There are NO personal information or resume content stored in the database.</li>
+      <li><strong>Matomo analytics:</strong> Web analytics data is retained according to our analytics retention policy</li>
+      <li><strong>Local CLI exports:</strong> If you use the optional open-source CLI, the generated HTML/PDF files are saved only to the folders you configure on your own machine (never uploaded to us). Managing or deleting those local files is your responsibility.</li>
+    </ul>
+
+    <h2><i class="fas fa-chart-line"></i> 4. Analytics & Tracking</h2>
+
+    <p><strong>Matomo Web Analytics:</strong></p>
+    <p>This website uses Matomo (self-hosted analytics) to understand how visitors use our service and improve it. We've configured Matomo with privacy in mind:</p>
+    <ul>
+      <li><strong>No tracking cookies:</strong> Matomo collects usage data without storing any analytics cookies in your browser</li>
+      <li><strong>IP anonymization:</strong> IP addresses are anonymized (1 byte masked) before processing</li>
+      <li><strong>Approximate location only:</strong> Only country-level location data based on anonymized IP</li>
+      <li><strong>Page views and navigation:</strong> Pages visited and time spent on the site</li>
+      <li><strong>Interaction data:</strong> Links clicked and downloads, along with referrer information</li>
+      <li><strong>Technical information:</strong> Browser type, operating system, and screen resolution</li>
+    </ul>
+    <p><strong>Cloudflare Turnstile & Security Services:</strong> We use Cloudflare’s protective services, including Turnstile, to keep the platform safe from bots, spam, and abuse. These services may set strictly necessary security cookies to verify that a request comes from a legitimate user. Cloudflare does not use these cookies for advertising or cross-site tracking, and we do not access or store their contents.</p>
+
+    <p><strong>Export Usage Statistics (SQLite Database):</strong></p>
+    <p>Whenever you export your resume (PDF, HTML, or JSON), we collect and store anonymous usage statistics in a local database to improve the user interface and understand which features are most popular. The following metadata is stored:</p>
+    
+    
+    <ul>
+      <li><strong>Timestamp:</strong> Local date and time of the export (in format YYYY-MM-DD HH:MM:SS)</li>
+      <li><strong>Application version:</strong> Version number of cre8ive.cv</li>
+      <li><strong>Page URL:</strong> The URL you accessed the service from</li>
+      <li><strong>Export type:</strong> Whether you exported as PDF, HTML, or JSON</li>
+      <li><strong>Display mode:</strong> Interface theme used (dark/light/hacker mode)</li>
+      <li><strong>Theme and color selections:</strong> Which resume theme and color palette you chose</li>
+      <li><strong>Watermark preference:</strong> Whether the watermark was enabled or disabled (boolean value)</li>
+      <li><strong>Section configuration:</strong> Which resume sections were enabled and their custom names (section names only, not the actual content)</li>
+    </ul>
+    <p><strong>Important:</strong> This data is completely anonymous and stored locally on our server. It is NOT linked to you, your identity, or your resume content. We do NOT store your name, contact information, resume content, or any personally identifiable information. This database only contains usage preferences and helps us understand UI/UX patterns to improve the service for all users.</p>
+    
+    <div class="warning-box">
+      <p><i class="fas fa-exclamation-triangle"></i> <strong>Important Note regarding Custom Section Names:</strong></p>
+      <p>We store the text you enter as <strong>Section Titles</strong> (e.g., "Education", "Projects"). Please <strong>DO NOT</strong> enter personal data (such as your name, phone number, or address) in the section titles. If you choose to enter personal information in these structural fields, be aware that it will be stored in our analytics database.</p>
+    </div>
+    
+    <p><strong>Clarification:</strong> Aside from the Section Titles described above, we do NOT store the actual <i>content</i> of your resume (bullet points, descriptions, dates, personal bio). That content remains strictly temporary.</p>
+    
+
+    <h2><i class="fas fa-balance-scale"></i> 5. Legal Basis for Processing</h2>
+    <p>We process your personal data based on:</p>
+    <ul>
+      <li><strong>Consent:</strong> By using this service, you consent to the temporary processing of your data for resume generation</li>
+      <li><strong>Legitimate Interest:</strong> We have a legitimate interest in providing this service and improving it through analytics</li>
+    </ul>
+
+    <h2><i class="fas fa-user-shield"></i> 6. Your Rights (GDPR)</h2>
+    <p>Under GDPR, you have the right to:</p>
+    <ul>
+      <li><strong>Access:</strong> Request what data we have (in our case: none stored permanently)</li>
+      <li><strong>Rectification:</strong> Correct any inaccurate data (you control all data in your browser)</li>
+      <li><strong>Erasure:</strong> Request deletion (simply close the browser tab - no data persists)</li>
+      <li><strong>Data Portability:</strong> Export your data (use "Export JSON" button)</li>
+      <li><strong>Withdraw Consent:</strong> Stop using the service at any time</li>
+      <li><strong>Object to Processing:</strong> Do not use the service if you object to temporary server-side processing</li>
+    </ul>
+
+    <h2><i class="fas fa-lock"></i> 7. Data Security</h2>
+    <ul>
+      <li>All data transmission should occur over HTTPS (encrypted connections)</li>
+      <li>Server processing happens in isolated sessions with no cross-user data exposure</li>
+      <li>No data is logged to files or databases</li>
+    </ul>
+
+    <h2><i class="fas fa-server"></i> 8. Data Controller & Service Provider</h2>
+    <p>In accordance with Art. 13 of the GDPR and the Act on Providing Services by Electronic Means, the Data Controller (Administrator) and the owner of the service is:</p>
+    
+    <div style="background: var(--bg-secondary); padding: 20px; border-radius: 8px; border-left: 4px solid var(--accent-primary); margin: 20px 0;">
+      <p style="margin-bottom: 4px; color: var(--text-primary);"><strong>Patryk Palej</strong></p>
+      <p style="margin-bottom: 4px;">NIP (Tax ID): <strong>6783189665</strong></p>
+    </div>
+
+    <p>For privacy inquiries please contact us at <a href="mailto:privacy@cre8ive.cv" style="color: var(--accent-primary); text-decoration: none;">privacy@cre8ive.cv</a>.</p>
+
+    <h2><i class="fas fa-globe"></i> 9. International Data Transfers</h2>
+    <p>Your data is processed on the server where this instance is hosted. Our infrastructure is located within the European Union, so data never leaves the EU during normal processing. No data is transferred to third parties or other countries.</p>
+    
+    <h2><i class="fas fa-file-contract"></i> 10. Terms of Service</h2>
+    <ul>
+      <li>This service is provided "as-is" without warranties of any kind</li>
+      <li>You are responsible for the accuracy and legality of the content you enter</li>
+      <li>Do not use this service to process data of others without their consent</li>
+      <li>Do not attempt to abuse, hack, or overload the service</li>
+      <li>We reserve the right to refuse service or limit usage to ensure fair access</li>
+    </ul>
+
+    <h2><i class="fas fa-edit"></i> 11. Changes to This Policy</h2>
+    <p>We may update this privacy policy from time to time. The "Last updated" date at the top indicates when changes were last made. Continued use of the service after changes constitutes acceptance of the updated terms.</p>
+
+    <h2><i class="fas fa-envelope"></i> 12. Contact</h2>
+    <p>For questions about this privacy policy or data processing practices:</p>
+    <ul>
+      <li><strong>Privacy inquiries:</strong> <a href="mailto:privacy@cre8ive.cv" style="color: var(--accent-primary); text-decoration: none;">privacy@cre8ive.cv</a></li>
+      <li><strong>General questions:</strong> Open an issue on our GitHub repository (linked on the main page)</li>
+    </ul>
+
+    <a href="/" class="back-link">
+      <i class="fas fa-arrow-left"></i>
+      Back to cre8ive.cv
+    </a>
+  </div>
+  <script>
+    (function () {
+      const MODE_STORAGE_KEY = 'mode';
+      const DEFAULT_MODE = 'dark';
+      const SUPPORTED_MODES = ['dark', 'light', 'hacker'];
+
+      const getMode = () => {
+        try {
+          const storedMode = localStorage.getItem(MODE_STORAGE_KEY);
+          if (storedMode && SUPPORTED_MODES.includes(storedMode)) {
+            return storedMode;
+          }
+        } catch (error) {
+          console.error('Unable to read mode from localStorage:', error);
+        }
+        return DEFAULT_MODE;
+      };
+
+      const activeMode = getMode();
+      document.documentElement.dataset.mode = activeMode;
+
+      // Fetch and display the actual last modified date from the server
+      async function setLastModifiedDate() {
+        try {
+          const response = await fetch('/api/terms/last-modified');
+          if (response.ok) {
+            const data = await response.json();
+            const lastUpdatedEl = document.getElementById('lastUpdated');
+            if (lastUpdatedEl) {
+              lastUpdatedEl.textContent = data.lastModifiedFormatted;
+            }
+          } else {
+            // Fallback to current date if API fails
+            const today = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = today.toLocaleDateString('en-US', options);
+            const lastUpdatedEl = document.getElementById('lastUpdated');
+            if (lastUpdatedEl) {
+              lastUpdatedEl.textContent = formattedDate;
+            }
+          }
+        } catch (error) {
+          console.error('Failed to fetch last modified date:', error);
+          // Fallback to current date
+          const today = new Date();
+          const options = { year: 'numeric', month: 'long', day: 'numeric' };
+          const formattedDate = today.toLocaleDateString('en-US', options);
+          const lastUpdatedEl = document.getElementById('lastUpdated');
+          if (lastUpdatedEl) {
+            lastUpdatedEl.textContent = formattedDate;
+          }
+        }
+      }
+
+      setLastModifiedDate();
+    })();
+  </script>
+</body>
+</html>

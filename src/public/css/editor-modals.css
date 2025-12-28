@@ -1,0 +1,3469 @@
+/* JSON Editor */
+.json-editor-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+  min-height: 0;
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--bg-tertiary);
+  border-radius: 6px 6px 0 0;
+  border: 1px solid var(--border-color);
+  border-bottom: none;
+  flex-shrink: 0;
+}
+
+.editor-header span {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.btn-expand-editor {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--accent-primary);
+  color: white !important;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-expand-editor:hover {
+  background: var(--accent-secondary);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px var(--shadow-hover);
+  color: white !important;
+}
+
+.btn-expand-editor i {
+  font-size: 13px;
+  color: white !important;
+}
+
+.btn-expand-editor span {
+  color: white !important;
+}
+
+#jsonEditor {
+  width: 100%;
+  flex: 1;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 0 0 6px 6px;
+  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  resize: none;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  min-height: 200px;
+}
+
+#jsonEditor::placeholder {
+  font-size: 13px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.6;
+}
+
+#jsonEditor:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+/* Global Modal Backdrop */
+#modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.15s ease-in-out, visibility 0.15s ease-in-out;
+}
+
+#modal-backdrop.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* JSON Editor Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  visibility: hidden;
+  pointer-events: none;
+  transition: visibility 0s linear 0.15s;
+}
+
+.modal.show {
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+.modal-content {
+  background:
+    radial-gradient(ellipse 800px 400px at 50% 0%, rgba(100, 181, 246, 0.08) 0%, transparent 60%),
+    linear-gradient(135deg, rgba(100, 181, 246, 0.03) 0%, transparent 50%, rgba(144, 202, 249, 0.04) 100%),
+    color-mix(in srgb, var(--bg-secondary) 92%, white 8%);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 1200px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: none;
+  transform: translateY(20px) scale(0.96);
+  opacity: 0;
+  transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.15s ease-in-out;
+  position: relative;
+  isolation: isolate;
+}
+
+/* Theme-specific backdrop colors */
+:root[data-mode="light"] #modal-backdrop {
+  background: rgba(0, 0, 0, 0.18);
+}
+
+:root[data-mode="hacker"] #modal-backdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+/* Add subtle inner glow to modal content for separation */
+.modal-content::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(100, 181, 246, 0.06) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+:root[data-mode="light"] .modal-content {
+  background:
+    radial-gradient(ellipse 800px 400px at 50% 0%, rgba(74, 138, 196, 0.14) 0%, transparent 60%),
+    linear-gradient(135deg, rgba(91, 157, 217, 0.08) 0%, transparent 50%, rgba(58, 95, 143, 0.10) 100%),
+    linear-gradient(180deg, #fdfcfb 0%, #f5f3ef 100%);
+  border: 1px solid rgba(227, 225, 220, 0.8);
+  box-shadow: none;
+}
+
+:root[data-mode="light"] .modal-content::before {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, transparent 50%);
+}
+
+:root[data-mode="hacker"] .modal-content {
+  background:
+    linear-gradient(135deg, rgba(123, 228, 149, 0.1) 0%, transparent 35%, transparent 65%, rgba(82, 201, 122, 0.08) 100%),
+    linear-gradient(180deg, rgba(12, 20, 15, 0.97) 0%, rgba(10, 18, 13, 0.98) 100%);
+  border: 1px solid rgba(123, 228, 149, 0.35);
+  box-shadow: none;
+}
+
+.modal.show .modal-content {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+/* Keep section management and form modals aligned/same size to prevent visible jumps */
+#projectsModal .modal-content,
+#projectFormModal .modal-content {
+  width: min(920px, 95vw) !important;
+  max-width: min(920px, 95vw) !important;
+  min-height: 85vh !important;
+}
+
+/* Explicit sizing for project modals to ensure they match */
+#projectsModal .modal-content {
+  width: 920px !important;
+  max-width: 920px !important;
+  min-width: 920px !important;
+  height: 85vh !important;
+  max-height: 85vh !important;
+  min-height: 85vh !important;
+}
+
+#projectFormModal .modal-content {
+  width: 920px !important;
+  max-width: 920px !important;
+  min-width: 920px !important;
+  height: 85vh !important;
+  max-height: 85vh !important;
+  min-height: 85vh !important;
+}
+
+#personalInfoModal .modal-content {
+  min-height: 85vh;
+}
+
+/* Explicit sizing for experience modals to ensure they match */
+#experienceModal .modal-content {
+  width: 920px !important;
+  max-width: 920px !important;
+  min-width: 920px !important;
+  height: 85vh !important;
+  max-height: 85vh !important;
+  min-height: 85vh !important;
+}
+
+#experienceFormModal .modal-content {
+  width: 920px !important;
+  max-width: 920px !important;
+  min-width: 920px !important;
+  height: 85vh !important;
+  max-height: 85vh !important;
+  min-height: 85vh !important;
+}
+
+/* Explicit sizing for education modals to ensure they match */
+#educationModal .modal-content {
+  width: 920px !important;
+  max-width: 920px !important;
+  min-width: 920px !important;
+  height: 85vh !important;
+  max-height: 85vh !important;
+  min-height: 85vh !important;
+}
+
+#educationFormModal .modal-content {
+  width: 920px !important;
+  max-width: 920px !important;
+  min-width: 920px !important;
+  height: 85vh !important;
+  max-height: 85vh !important;
+  min-height: 85vh !important;
+}
+
+/* Explicit sizing for skills modals to ensure they match */
+#skillsModal .modal-content,
+#skillFormModal .modal-content {
+  width: 90%;
+  max-width: 1200px;
+  height: 85vh;
+  max-height: 85vh;
+  min-height: 85vh;
+}
+
+#skillFormModal .modal-body,
+#experienceFormModal .modal-body {
+  height: calc(85vh - 160px);
+  padding-right: 24px;
+  padding-left: 24px;
+  overflow: auto;
+}
+
+#skillFormModal .experience-form,
+#experienceFormModal .experience-form {
+  height: auto;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 2px solid var(--bg-tertiary);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.modal-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+
+.modal-header h2 i {
+  color: var(--accent-primary);
+  font-size: 22px;
+}
+
+#modalSectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+
+.btn-rename-section-modal {
+  background: var(--bg-primary);
+  border: 1px solid var(--accent-primary);
+  color: var(--accent-primary);
+  cursor: pointer;
+  padding: 4px 7px;
+  font-size: 12px;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  margin-left: 8px;
+}
+
+.btn-rename-section-modal:hover {
+  background: var(--bg-secondary);
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px var(--shadow-hover);
+}
+
+.btn-rename-section-modal i {
+  font-size: 11px;
+  color: var(--accent-primary) !important;
+}
+
+/* Inline section name editing */
+.section-name-editing {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-name-input {
+  font-size: 20px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border: 2px solid var(--accent-primary);
+  border-radius: 6px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: inherit;
+  min-width: 300px;
+}
+
+.section-name-input:focus {
+  outline: none;
+  border-color: var(--accent-secondary);
+  box-shadow: 0 0 0 3px rgba(91, 124, 153, 0.1);
+}
+
+.section-name-edit-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-save-section-name,
+.btn-cancel-section-name {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-save-section-name {
+  background: var(--green);
+  color: var(--bg-darkest);
+  border: 1px solid #00c853;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+:root[data-mode="light"] .modal .btn-save-section-name {
+  color: #1a2028;
+}
+
+.btn-save-section-name:hover {
+  background: var(--green-dark);
+  border-color: #00a744;
+}
+
+.btn-save-section-name i {
+  color: var(--bg-darkest) !important;
+  font-size: 14px;
+}
+
+:root[data-mode="light"] .modal .btn-save-section-name i {
+  color: #1a2028 !important;
+}
+
+.btn-cancel-section-name {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.btn-cancel-section-name:hover {
+  background: var(--border-color);
+}
+
+/* Modal error message */
+.modal-error-message {
+  background: rgba(230, 57, 70, 0.1);
+  border: 1px solid var(--error);
+  border-radius: 6px;
+  color: var(--error);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  display: none;
+}
+
+.modal-error-message.show {
+  display: block;
+}
+
+/* Personal Info Form */
+.personal-info-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.personal-info-form .form-field label {
+  font-size: 18px;
+}
+
+/* Boost input sizing specifically for personal info modal */
+.personal-info-form .form-field input[type="text"],
+.personal-info-form .form-field input[type="email"],
+.personal-info-form .form-field input[type="number"],
+.personal-info-form .form-field input[type="tel"] {
+  font-size: 17px;
+  padding: 14px 16px;
+}
+
+.personal-info-form .full-width-field {
+  width: 100%;
+}
+
+.personal-info-form .full-width-field textarea {
+  min-height: 200px;
+  font-size: 17px;
+  padding: 14px 16px;
+}
+
+.personal-info-form .input-group-prepend {
+  font-size: 16px;
+  padding: 14px 16px;
+}
+
+/* Project Form (Side Projects) */
+#projectForm .form-field input[type="text"],
+#projectForm .form-field input[type="url"] {
+  font-size: 17px;
+  padding: 14px 16px;
+}
+
+#projectForm .form-field textarea {
+  font-size: 17px;
+  padding: 18px 16px;
+  min-height: 140px;
+}
+
+/* Experience Form (Professional Experience) */
+#experienceForm .form-field input[type="text"]:not(.date-part-year):not(.date-part-month),
+#experienceForm .form-field input[type="month"],
+#experienceForm .form-field input[type="email"],
+#experienceForm .form-field input[type="number"] {
+  font-size: 17px;
+  padding: 14px 16px;
+}
+
+#experienceForm .responsibility-item input[type="text"] {
+  font-size: 17px;
+  padding: 14px 16px;
+}
+
+#experienceForm .form-field textarea {
+  font-size: 17px;
+  padding: 18px 16px;
+}
+
+/* Make date parts larger while keeping compact widths */
+#experienceForm .date-part-year,
+#experienceForm .date-part-month {
+  font-size: 16px;
+  padding: 10px 12px;
+}
+
+/* Education Form */
+#educationForm .form-field input[type="text"]:not(.date-part-year):not(.date-part-month),
+#educationForm .form-field input[type="month"],
+#educationForm .form-field input[type="email"],
+#educationForm .form-field input[type="number"] {
+  font-size: 17px;
+  padding: 14px 16px;
+}
+
+#educationForm .form-field textarea {
+  font-size: 17px;
+  padding: 18px 16px;
+}
+
+#educationForm .date-part-year,
+#educationForm .date-part-month {
+  font-size: 16px;
+  padding: 10px 12px;
+}
+
+/* Skills Form */
+#skillForm .skill-group-name input[type="text"] {
+  font-size: 17px;
+  padding: 14px 16px;
+  width: min(420px, 100%);
+}
+
+#skillForm .skill-item input[type="text"] {
+  font-size: 17px;
+  padding: 14px 16px;
+}
+
+.skill-items-field {
+  width: 100%;
+  max-width: var(--skill-content-width);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.skill-items-field > label {
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--text-primary);
+}
+
+/* Bio Editor */
+.bio-editor-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.bio-editor-container label {
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--text-primary);
+}
+
+.bio-textarea {
+  min-height: 200px;
+  height: 300px;
+  padding: 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 17px;
+  font-family: inherit;
+  line-height: 1.6;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  resize: both;
+  transition: border-color 0.2s;
+}
+
+.bio-textarea:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(91, 124, 153, 0.1);
+}
+
+.bio-textarea::placeholder {
+  color: var(--text-tertiary);
+  font-style: italic;
+  opacity: 0.4;
+}
+
+.modal-close {
+  font-size: 20px;
+}
+
+.modal-body {
+  flex: 1;
+  padding: 24px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  position: relative;
+  z-index: 1;
+}
+
+#expandedJsonEditor {
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* CodeMirror customization */
+#expandedJsonEditor .CodeMirror {
+  height: 500px;
+  max-height: 500px;
+  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+  font-size: 18px;
+  line-height: 1.6;
+  border-radius: 8px;
+  overflow: auto;
+}
+
+#expandedJsonEditor .CodeMirror-scroll {
+  overflow-y: auto;
+  overflow-x: auto;
+  max-height: 500px;
+}
+
+#expandedJsonEditor .CodeMirror-gutters {
+  background: var(--bg-tertiary);
+  border-right: 1px solid var(--border-color);
+}
+
+#expandedJsonEditor .CodeMirror-linenumber {
+  color: var(--text-muted);
+  padding: 0 8px;
+}
+
+/* Custom fold/unfold icons with + and - in square boxes */
+#expandedJsonEditor .CodeMirror-foldgutter {
+  display: none;
+}
+
+#expandedJsonEditor .CodeMirror-foldgutter-open,
+#expandedJsonEditor .CodeMirror-foldgutter-folded {
+  display: none !important;
+}
+
+#expandedJsonEditor .CodeMirror-foldgutter-open:after {
+  display: none !important;
+}
+
+#expandedJsonEditor .CodeMirror-foldgutter-folded:after {
+  display: none !important;
+}
+
+#expandedJsonEditor .CodeMirror-foldgutter-open:hover:after,
+#expandedJsonEditor .CodeMirror-foldgutter-folded:hover:after {
+  display: none !important;
+}
+
+#expandedJsonEditor .CodeMirror-foldgutter-open:active:after,
+#expandedJsonEditor .CodeMirror-foldgutter-folded:active:after {
+  display: none !important;
+}
+
+#expandedJsonEditor .CodeMirror-foldmarker {
+  background: var(--accent-primary);
+  color: white;
+  border-radius: 3px;
+  padding: 2px 6px;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1.4;
+  margin: 0 2px;
+  font-weight: 500;
+}
+
+#expandedJsonEditor .CodeMirror-focused {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(91, 124, 153, 0.1);
+}
+
+/* Error highlighting in CodeMirror */
+#expandedJsonEditor .json-error-line {
+  background: rgba(230, 57, 70, 0.15);
+  border-left: 3px solid var(--error);
+}
+
+#expandedJsonEditor .json-error-marker {
+  color: var(--error);
+  font-weight: bold;
+  font-size: 18px;
+}
+
+#expandedJsonEditor .CodeMirror-gutter-wrapper .json-error-gutter {
+  color: var(--error);
+  font-weight: bold;
+  width: 100%;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border-color);
+  gap: 16px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  min-height: 70px;
+}
+
+.modal-footer-form {
+  min-height: 72px;
+  justify-content: center;
+}
+
+.modal-footer-left,
+.modal-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
+
+.modal-footer-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.modal-footer-right {
+  position: absolute;
+  left: 90%;
+  transform: translateX(-50%);
+}
+
+.modal-footer.modal-footer-form .modal-footer-left {
+  position: static;
+  transform: none;
+}
+
+.modal-footer.modal-footer-form .modal-footer-right {
+  position: static;
+  transform: none;
+}
+
+/* Make list modals use the same layout as form modals */
+#projectsModal .modal-footer .modal-footer-left,
+#experienceModal .modal-footer .modal-footer-left,
+#educationModal .modal-footer .modal-footer-left,
+#skillsModal .modal-footer .modal-footer-left {
+  position: static;
+  transform: none;
+}
+
+/* Keep buttons centered but ensure exact positioning */
+#projectsModal .modal-footer .modal-footer-right,
+#experienceModal .modal-footer .modal-footer-right,
+#educationModal .modal-footer .modal-footer-right,
+#skillsModal .modal-footer .modal-footer-right {
+  position: static;
+  transform: none;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Mobile responsive for modal */
+@media (max-width: 1024px) {
+  .modal-content {
+    width: 95% !important;
+    max-width: 95% !important;
+    min-width: auto !important;
+    height: 85vh !important;
+    max-height: 85vh !important;
+    min-height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* List modals - bigger size to see many items */
+  #projectsModal .modal-content,
+  #experienceModal .modal-content,
+  #educationModal .modal-content,
+  #skillsModal .modal-content {
+    width: 95% !important;
+    max-width: 95% !important;
+    min-width: auto !important;
+    height: 92vh !important;
+    max-height: 92vh !important;
+    min-height: auto !important;
+  }
+
+  /* Form modals - smaller size so buttons are clearly visible */
+  #projectFormModal .modal-content,
+  #experienceFormModal .modal-content,
+  #educationFormModal .modal-content,
+  #skillFormModal .modal-content,
+  #personalInfoModal .modal-content,
+  #gdprModal .modal-content {
+    width: 95% !important;
+    max-width: 95% !important;
+    min-width: auto !important;
+    height: 80vh !important;
+    max-height: 80vh !important;
+    min-height: auto !important;
+  }
+
+  #personalInfoModal .modal-content {
+    height: 95vh !important;
+    max-height: 95vh !important;
+    min-height: 85vh !important;
+    overflow: hidden;
+  }
+
+  #personalInfoModal .modal-header {
+    position: sticky;
+    top: 0;
+    background: var(--bg-secondary);
+    z-index: 2;
+  }
+
+  /* Make Personal Info modal body and form expand to fill space */
+  #personalInfoModal .modal-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  #personalInfoModal .personal-info-form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* Make Bio field expand to fill remaining space on tablet */
+  #personalInfoModal .personal-info-form .full-width-field {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+
+  #personalInfoModal .personal-info-form .full-width-field textarea {
+    flex: 1;
+    min-height: 200px;
+    height: 100%;
+    resize: vertical;
+  }
+
+  /* Professional Experience specific adjustments */
+  #experienceModal .modal-content {
+    height: 95vh !important;
+    max-height: 95vh !important;
+  }
+
+  /* Center all list modal contents vertically on tablet */
+  #experienceModal .modal-body,
+  #educationModal .modal-body,
+  #projectsModal .modal-body {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+  }
+
+  #experienceModal .experience-list-container,
+  #educationModal .experience-list-container,
+  #projectsModal .projects-list-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  #experienceModal .experience-list,
+  #educationModal .experience-list,
+  #projectsModal .projects-list {
+    justify-content: center;
+    overflow-y: auto;
+    flex: none;
+  }
+
+  #experienceFormModal .modal-content {
+    height: 60vh !important;
+    max-height: 60vh !important;
+  }
+
+  .modal-header {
+    padding: 16px;
+    flex-shrink: 0 !important;
+  }
+
+  .modal-header h2 {
+    font-size: 18px;
+  }
+
+  .modal-body {
+    padding: 16px;
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+  }
+
+  #gdprModal .modal-body {
+    overflow: hidden !important;
+  }
+
+  #gdprModal .bio-editor-container {
+    flex: 1;
+    min-height: 0;
+  }
+
+  #gdprModal .bio-textarea {
+    flex: 1;
+    height: 100%;
+    min-height: 0;
+    resize: none;
+  }
+
+  /* Adjust form modal bodies */
+  #experienceFormModal .modal-body,
+  #skillFormModal .modal-body {
+    padding: 16px !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+  }
+
+  /* Center Project and Education Form Modals vertically on tablet */
+  #projectFormModal .modal-body,
+  #educationFormModal .modal-body {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 16px !important;
+    overflow-y: auto !important;
+  }
+
+  #projectFormModal .experience-form,
+  #educationFormModal .experience-form {
+    width: 100%;
+    flex: 0 0 auto;
+  }
+
+  /* Left-align labels in all form modals on tablet */
+  #projectFormModal .experience-form .form-field label,
+  #experienceFormModal .experience-form .form-field label,
+  #educationFormModal .experience-form .form-field label {
+    text-align: left !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Keep checkbox and span close together - fit-content width */
+  .form-field .checkbox-label {
+    display: inline-flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    flex-direction: row !important;
+    gap: 4px !important;
+    margin-top: 8px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    cursor: pointer !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: var(--text-primary) !important;
+    width: auto !important;
+    max-width: max-content !important;
+    align-self: flex-start !important;
+    justify-content: flex-start !important;
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+    break-inside: avoid-column !important;
+    page-break-inside: avoid !important;
+    contain: layout;
+  }
+
+  .form-field .checkbox-label input[type="checkbox"] {
+    flex-shrink: 0 !important;
+    display: inline-block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+    width: 13px !important;
+    height: 13px !important;
+  }
+
+  .form-field .checkbox-label span {
+    flex-shrink: 0 !important;
+    display: inline-block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    user-select: none !important;
+  }
+
+  /* Remove flex from forms on mobile to allow scrolling */
+  .experience-form,
+  .skills-form {
+    flex: none !important;
+    min-height: auto !important;
+    height: auto !important;
+  }
+
+  /* Remove flex from form inner elements on mobile */
+  .responsibilities-field,
+  .responsibilities-list,
+  .skill-items-field,
+  .skill-items-list {
+    flex: none !important;
+    min-height: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  #expandedJsonEditor {
+    min-height: 400px;
+  }
+
+  #expandedJsonEditor .CodeMirror {
+    height: 400px;
+    max-height: 400px;
+    font-size: 13px;
+  }
+
+  #expandedJsonEditor .CodeMirror-scroll {
+    max-height: 400px;
+  }
+
+  .modal-footer {
+    flex-direction: row;
+    align-items: center;
+    padding: 12px 16px;
+    min-height: auto;
+    flex-shrink: 0 !important;
+  }
+
+  .modal-footer-left,
+  .modal-footer-right {
+    position: static !important;
+    transform: none !important;
+    width: auto;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .modal-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .modal-actions .btn {
+    width: 100%;
+  }
+
+  /* Make all modal buttons full width on mobile */
+  #closeProjectsModalFooterBtn,
+  #saveProjectFormBtn,
+  #cancelProjectFormBtn,
+  #addProjectBtn,
+  #closeExperienceModalFooterBtn,
+  #saveExperienceFormBtn,
+  #cancelExperienceFormBtn,
+  #addExperienceBtn,
+  #closeEducationModalFooterBtn,
+  #saveEducationFormBtn,
+  #cancelEducationFormBtn,
+  #addEducationBtn,
+  #closeSkillsModalFooterBtn,
+  #saveSkillFormBtn,
+  #cancelSkillFormBtn,
+  #addSkillBtn,
+  #savePersonalInfoBtn,
+  #cancelPersonalInfoBtn,
+  #saveGdprBtn,
+  #cancelGdprBtn {
+    width: 100% !important;
+    min-width: auto !important;
+    max-width: 100% !important;
+  }
+
+  /* Override desktop fixed widths for Skills modal buttons on tablet */
+  #skillsModal .modal-footer #addSkillBtn,
+  #skillsModal .modal-footer #addSkillBtn.btn-compact,
+  #skillFormModal .modal-footer #cancelSkillFormBtn,
+  #skillFormModal .modal-footer #cancelSkillFormBtn.btn-secondary {
+    width: 100% !important;
+    min-width: auto !important;
+    max-width: 100% !important;
+  }
+
+  /* Skills form modal adjustments */
+  #skillFormModal .modal-content {
+    max-width: 95%;
+  }
+
+  /* Experience/Education modals */
+  #experienceFormModal .modal-body,
+  #educationFormModal .modal-body {
+    max-height: calc(95vh - 140px);
+  }
+
+  /* Adjust form fields for mobile */
+  .personal-info-form {
+    width: 100%;
+  }
+
+  .bio-editor-container {
+    width: 100%;
+  }
+
+  /* Make form rows stack on mobile */
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* Education Form - Remove desktop width constraints on tablet/mobile */
+  #educationFormModal .experience-form {
+    max-width: 100%;
+    padding: 0 8px;
+  }
+
+  #educationFormModal .experience-form .form-row {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  #educationFormModal .experience-form .form-row .form-field {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  #educationFormModal .experience-form .form-field input,
+  #educationFormModal .experience-form .form-field textarea {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  #educationFormModal #edInstitution {
+    max-width: 100% !important;
+  }
+
+  /* Date inputs should be centered when stacked on mobile */
+  #educationFormModal .date-input-group {
+    justify-content: flex-start;
+  }
+
+  /* Experience Form - Remove desktop width constraints on tablet/mobile */
+  #experienceFormModal .experience-form {
+    max-width: 100%;
+    padding: 0 8px;
+  }
+
+  #experienceFormModal .experience-form .form-row {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  #experienceFormModal .experience-form .form-row .form-field {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  #experienceFormModal .experience-form .form-field input,
+  #experienceFormModal .experience-form .form-field textarea {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  #experienceFormModal .date-input-group {
+    justify-content: flex-start;
+  }
+
+  /* Project Form - Remove desktop width constraints on tablet/mobile */
+  #projectFormModal .experience-form {
+    max-width: 100%;
+    padding: 0 8px;
+  }
+
+  #projectFormModal .experience-form .form-row {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  #projectFormModal .experience-form .form-row .form-field {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  #projectFormModal .experience-form .form-field input,
+  #projectFormModal .experience-form .form-field textarea {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Adjust skills form layout */
+  .skill-group-layout {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .skill-items-list {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Stack skills list vertically on tablet/mobile instead of horizontal scroll */
+  .skills-list {
+    flex-direction: column;
+    overflow-x: visible;
+    overflow-y: auto;
+    padding: 0;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  /* Make skill group cards take full width when stacked */
+  .skill-list-item-row {
+    flex: none;
+    width: 100%;
+  }
+
+  .skill-list-item {
+    width: 100%;
+    min-width: 300px; /* Ensure minimum readable width in modal regardless of weight slider */
+  }
+
+  /* Widen skills weights panel on tablet/mobile for better visibility */
+  .skills-weights-panel {
+    width: 95%;
+    max-width: 95%;
+  }
+
+  /* Adjust projects list for mobile */
+  .projects-list {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    justify-content: center;
+    justify-items: center;
+  }
+
+  .project-list-item {
+    width: min(520px, 100%);
+    justify-self: center;
+  }
+
+  /* List containers should fill modal body on mobile */
+  .projects-list-container,
+  .experience-list-container,
+  .skills-list-container {
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+
+  /* Adjust experience card width */
+  .experience-list-container {
+    --experience-card-width: 100%;
+  }
+
+  .experience-age-pill {
+    position: static;
+    margin-bottom: 8px;
+    width: auto;
+    display: inline-flex;
+  }
+
+  /* Stack responsibilities list */
+  .responsibilities-list {
+    max-height: 30vh;
+  }
+
+  /* Adjust section name input */
+  .section-name-input {
+    min-width: 200px;
+    font-size: 16px;
+  }
+
+  /* Stack section name edit controls */
+  .section-name-edit-controls {
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .btn-save-section-name,
+  .btn-cancel-section-name {
+    flex: 1;
+  }
+}
+
+/* Small phones - additional responsive adjustments */
+@media (max-width: 480px) {
+  .logo-title {
+    font-size: 18px;
+  }
+
+  .logo i {
+    font-size: 24px;
+  }
+
+  /* Smaller padding on very small screens */
+  .sidebar {
+    padding: 12px;
+  }
+
+  .main-content {
+    padding: 12px;
+  }
+
+  /* Button adjustments */
+  .btn {
+    padding: 10px 14px;
+    font-size: 13px;
+    min-height: 40px;
+    height: 40px;
+  }
+
+  #addProjectBtn.btn-compact,
+  #addExperienceBtn.btn-compact,
+  #addEducationBtn.btn-compact,
+  #addSkillBtn.btn-compact {
+    height: 40px;
+    min-height: 40px;
+  }
+
+  #saveProjectFormBtn,
+  #saveExperienceFormBtn,
+  #saveEducationFormBtn,
+  #saveSkillFormBtn,
+  #savePersonalInfoBtn,
+  #saveGdprBtn,
+  #saveModalBtn {
+    height: 40px;
+    min-height: 40px;
+  }
+
+  #cancelProjectFormBtn,
+  #cancelExperienceFormBtn,
+  #cancelEducationFormBtn,
+  #cancelSkillFormBtn,
+  #cancelPersonalInfoBtn,
+  #cancelGdprBtn {
+    height: 40px;
+    min-height: 40px;
+  }
+
+  .modal-footer .btn.btn-success,
+  .modal-footer .btn.btn-secondary {
+    height: 40px;
+    min-height: 40px;
+  }
+
+  /* Smaller badges */
+  .badge-info,
+  .privacy-badge {
+    font-size: 11px;
+    padding: 5px 8px;
+  }
+
+  /* Logo links stacked with smaller text */
+  .logo-link {
+    font-size: 13px;
+  }
+
+  /* Skill weight row more compact */
+  .skill-weight-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .skill-weight-pill {
+    min-width: auto;
+    width: 100%;
+  }
+
+  /* Stack skills list vertically on small mobile */
+  .skills-list {
+    flex-direction: column;
+    overflow-x: visible;
+    overflow-y: auto;
+    padding: 0;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  /* Full width skill groups on small mobile */
+  .skill-list-item-row {
+    flex: none;
+    width: 100%;
+  }
+
+  .skill-list-item {
+    width: 100%;
+    min-width: 260px; /* Ensure minimum readable width in modal regardless of weight slider */
+  }
+
+  /* Widen skills weights panel on small mobile */
+  .skills-weights-panel {
+    width: 100%;
+    max-width: 100%;
+    padding: 8px 10px;
+  }
+
+  /* Keep checkbox and span close together - fit-content width */
+  .form-field .checkbox-label {
+    display: inline-flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    flex-direction: row !important;
+    gap: 4px !important;
+    margin-top: 8px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    cursor: pointer !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: var(--text-primary) !important;
+    width: auto !important;
+    max-width: max-content !important;
+    align-self: flex-start !important;
+    justify-content: flex-start !important;
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+    break-inside: avoid-column !important;
+    page-break-inside: avoid !important;
+    contain: layout;
+  }
+
+  .form-field .checkbox-label input[type="checkbox"] {
+    flex-shrink: 0 !important;
+    display: inline-block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+    width: 13px !important;
+    height: 13px !important;
+  }
+
+  .form-field .checkbox-label span {
+    flex-shrink: 0 !important;
+    display: inline-block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    user-select: none !important;
+  }
+
+  /* List containers should fill modal body on mobile */
+  .projects-list-container,
+  .experience-list-container,
+  .skills-list-container {
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+
+  /* Section name input smaller */
+  .section-name-input {
+    font-size: 16px;
+    min-width: 200px;
+  }
+
+  /* Modal header icon smaller */
+  .modal-header h2 {
+    font-size: 16px;
+    gap: 8px;
+  }
+
+  .modal-header h2 i {
+    font-size: 18px;
+  }
+
+  /* Tooltip adjustments */
+  .tooltip-content {
+    min-width: 220px;
+    max-width: 260px;
+  }
+
+  /* Preview header stacked */
+  .preview-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .appearance-toolbar {
+    position: static;
+    transform: none;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .mode-switcher {
+    justify-self: flex-start;
+  }
+
+  .preview-status {
+    align-self: stretch;
+    text-align: left;
+    min-width: auto;
+  }
+
+  /* Experience card 100% width on very small screens */
+  .experience-list-container {
+    --experience-card-width: 100%;
+  }
+
+  /* Modal adjustments for very small screens */
+  .modal-header {
+    padding: 12px;
+  }
+
+  .modal-body {
+    padding: 12px;
+  }
+
+  .modal-footer {
+    padding: 10px 12px;
+  }
+
+  /* Ensure forms don't interfere with scrolling */
+  .experience-form,
+  .skills-form,
+  .responsibilities-field,
+  .responsibilities-list,
+  .skill-items-field,
+  .skill-items-list {
+    flex: none !important;
+    min-height: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Smaller input fields */
+  .personal-info-form .form-field input[type="text"],
+  .personal-info-form .form-field input[type="email"],
+  .personal-info-form .form-field input[type="number"],
+  .personal-info-form .form-field input[type="tel"] {
+    font-size: 15px;
+    padding: 12px 14px;
+  }
+
+  #projectForm .form-field input[type="text"],
+  #projectForm .form-field input[type="url"],
+  #projectForm .form-field textarea,
+  #experienceForm .form-field input[type="text"],
+  #experienceForm .form-field textarea,
+  #educationForm .form-field input[type="text"],
+  #educationForm .form-field textarea {
+    font-size: 15px;
+    padding: 12px 14px;
+  }
+
+  /* Compact form labels */
+  .form-field label {
+    font-size: 16px;
+  }
+
+  /* Adjust bio textarea */
+  .bio-textarea {
+    font-size: 15px;
+    padding: 16px;
+    min-height: 180px;
+    height: 250px;
+  }
+}
+
+/* Projects Management UI */
+.projects-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 560px;
+  padding: 30px 30px 14px 30px;
+}
+
+.projects-list {
+  display: grid;
+  grid-template-columns: repeat(2, 333px);
+  justify-content: center;
+  gap: 32px;
+  column-gap: 32px;
+  flex: 1;
+  overflow-y: auto;
+  align-content: start;
+}
+
+/* When projects list only contains placeholder text, layout like education/experience */
+.projects-list:has(> p:only-child) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.project-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 16px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  transition: all 0.2s;
+  width: 333px;
+  cursor: grab;
+  gap: 12px;
+  min-height: 130px;
+}
+
+.project-list-item:hover {
+  background: var(--bg-secondary);
+  border-color: var(--accent-secondary);
+  box-shadow: 0 2px 4px var(--shadow);
+}
+
+.project-list-item.dragging {
+  opacity: 0.85;
+  transform: scale(0.995);
+  box-shadow: 0 6px 12px var(--shadow);
+  cursor: grabbing;
+}
+
+.project-drag-handle {
+  color: var(--text-tertiary);
+  cursor: grab;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 6px;
+  transition: color 0.2s;
+}
+
+.project-drag-handle i {
+  font-size: 16px;
+}
+
+.project-drag-handle:active {
+  cursor: grabbing;
+}
+
+.project-list-item:hover .project-drag-handle {
+  color: var(--accent-secondary);
+}
+
+.project-list-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.project-list-item-name {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text-primary);
+  margin-bottom: 3px;
+}
+
+.project-list-item-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-list-item-controls {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.btn-small {
+  padding: 6px 10px;
+  font-size: 12px;
+  min-height: unset;
+}
+
+.btn-danger {
+  background: var(--red);
+  color: white;
+  font-weight: 600;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--red-light);
+  box-shadow: 0 4px 12px rgba(255, 82, 82, 0.4);
+}
+
+.experience-list-item-controls .btn.btn-danger,
+.project-list-item-controls .btn.btn-danger {
+  background: transparent;
+  border: none;
+  color: var(--red);
+  box-shadow: none;
+  min-width: 0;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.experience-list-item-controls .btn.btn-danger:hover:not(:disabled),
+.project-list-item-controls .btn.btn-danger:hover:not(:disabled) {
+  background: transparent;
+  color: var(--red-light);
+  box-shadow: none;
+}
+
+.experience-list-item-controls .btn.btn-danger:disabled,
+.project-list-item-controls .btn.btn-danger:disabled {
+  background: transparent;
+  color: rgba(255, 82, 82, 0.6);
+  box-shadow: none;
+}
+
+.experience-list-item-controls .btn.btn-danger i,
+.project-list-item-controls .btn.btn-danger i,
+.skill-list-item .experience-list-item-controls .btn.btn-danger i {
+  font-size: 16px;
+}
+
+.photo-remove-btn {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--red);
+}
+
+.photo-remove-btn:hover:not(:disabled) {
+  background: var(--red-pale);
+  border-color: var(--red-light);
+  box-shadow: 0 2px 8px rgba(255, 82, 82, 0.3);
+}
+
+.photo-remove-btn .fa-trash-alt {
+  color: var(--red);
+}
+
+#projectsModal .modal-footer {
+  justify-content: center;
+  gap: 16px;
+  position: relative;
+  min-height: 72px;
+}
+
+/* Make Done button same size and position as Save button */
+#closeProjectsModalFooterBtn,
+#saveProjectFormBtn {
+  min-width: 100px;
+  width: 100px;
+}
+
+/* Make Cancel and Add new entry same width for exact positioning */
+#cancelProjectFormBtn,
+#addProjectBtn {
+  min-width: 150px;
+  width: 150px;
+}
+
+/* Skills Management UI */
+#skillsModal .modal-body {
+  padding-right: 24px;
+  height: calc(85vh - 160px);
+}
+
+.skills-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.skills-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+#addSkillBtn {
+  width: auto;
+  min-width: 0;
+  height: 34px;
+  min-height: 34px;
+  padding: 6px 12px;
+  font-size: 13px;
+  margin: 0;
+}
+
+.skills-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 8px;
+  flex: 1 1 auto;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 16px 2px 0;
+  width: 100%;
+  align-items: stretch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-primary) var(--bg-medium);
+}
+
+.skills-list::-webkit-scrollbar {
+  height: 8px;
+}
+
+.skills-list::-webkit-scrollbar-track {
+  background: var(--bg-medium);
+  border-radius: 4px;
+}
+
+.skills-list::-webkit-scrollbar-thumb {
+  background: var(--accent-primary);
+  border-radius: 4px;
+}
+
+.skills-list::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-hover);
+}
+
+/* When skills list only contains placeholder text, center both horizontally and vertically */
+.skills-list:has(> p:only-child) {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.skill-list-item-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  flex: 1 1 0;
+  min-width: 0;
+  height: auto;
+}
+
+.skill-list-item-row.dragging {
+  opacity: 0.85;
+}
+
+.skill-list-item-row.dragging .skill-list-item {
+  cursor: grabbing;
+}
+
+.skill-list-item-row.drag-over .skill-list-item {
+  border-style: dashed;
+}
+
+.skill-list-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  transition: all 0.2s;
+  height: 100%;
+  overflow: hidden;
+  cursor: grab;
+}
+
+.skill-list-item .experience-list-item-controls {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-color);
+}
+
+.skill-list-item:hover {
+  background: var(--bg-secondary);
+  border-color: var(--accent-secondary);
+  box-shadow: 0 2px 4px var(--shadow);
+}
+
+.skill-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.skill-list-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.skill-list-name {
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.skill-fraction-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 11px;
+  width: fit-content;
+}
+
+.skill-list-meta {
+  color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  overflow: hidden;
+  align-content: flex-start;
+  position: relative;
+  padding-right: 4px;
+}
+
+.skill-tags-overflow::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 36px;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0), var(--bg-tertiary));
+}
+
+.skill-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.skill-tag-more {
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  background: rgba(100, 181, 246, 0.12);
+}
+
+.skill-tag-empty {
+  opacity: 0.65;
+  font-style: italic;
+}
+
+.skill-tag-hidden {
+  display: none;
+}
+
+.skill-tags .skill-tag:last-child {
+  margin-right: 0;
+}
+
+.skill-list-empty {
+  color: var(--text-secondary);
+  padding: 20px;
+  text-align: center;
+  border: 1px dashed var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-tertiary);
+}
+
+#skillsModal .modal-footer {
+  justify-content: center;
+  gap: 16px;
+  position: relative;
+  min-height: 72px;
+}
+
+/* Make Skills Done button same size as Save button */
+#closeSkillsModalFooterBtn,
+#saveSkillFormBtn {
+  min-width: 100px;
+  width: 100px;
+}
+
+/* Make Add Skill Group and Cancel same width for exact positioning */
+#skillsModal .modal-footer #addSkillBtn,
+#skillFormModal .modal-footer #cancelSkillFormBtn {
+  min-width: 150px !important;
+  width: 150px !important;
+}
+
+.skills-weights-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  flex-shrink: 0;
+  margin: 12px auto 0;
+  width: 65%;
+  max-width: 65%;
+}
+
+/* Hide skills weights panel when empty */
+.skills-weights-panel:empty {
+  display: none;
+}
+
+.skills-controls-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+/* Hide skills controls row when the weights panel is empty */
+.skills-controls-row:has(.skills-weights-panel:empty) {
+  display: none;
+}
+
+#addSkillBtn {
+  width: auto;
+  min-width: 0;
+  height: 34px;
+  min-height: 34px;
+  padding: 6px 12px;
+  font-size: 13px;
+  margin: 0 0 0 auto;
+  align-self: flex-start;
+}
+
+.skills-weights-panel-title {
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.skill-weight-row {
+  display: grid;
+  grid-template-columns: 180px 1fr auto;
+  gap: 6px;
+  align-items: center;
+}
+
+.skill-weight-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.skill-weight-slider {
+  width: 100%;
+  accent-color: #64B5F6;
+  height: 6px;
+  cursor: grab;
+}
+
+.skill-weight-slider:active {
+  cursor: grabbing;
+}
+
+:root[data-mode="hacker"] .skill-weight-slider {
+  accent-color: var(--accent-primary);
+}
+
+.skill-weight-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  font-weight: 700;
+  color: var(--text-secondary);
+  min-width: 105px;
+  justify-content: center;
+  font-size: 12px;
+}
+
+/* Removed - using shared sizing rule above */
+
+.skills-form {
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+  min-height: 0;
+  --skill-content-width: 820px;
+}
+
+.skill-group-layout {
+  width: 100%;
+  max-width: var(--skill-content-width);
+  margin: 0 auto 10px auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 24px;
+  align-items: end;
+  padding: 0;
+}
+
+.skill-group-name {
+  width: 100%;
+}
+
+.skill-group-action {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  width: 100%;
+}
+
+.skill-group-action #addSkillItemBtn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Skill Form UI */
+.skill-items-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 24px;
+  row-gap: 16px;
+  margin: 0;
+  width: 100%;
+  max-width: 100%;
+  flex: 1;
+  min-height: 0;
+  align-content: flex-start;
+  overflow-y: auto;
+  padding-right: 4px;
+  padding-bottom: 8px;
+}
+
+.skill-item {
+   display: grid;
+   grid-template-columns: auto minmax(0, 1fr) auto;
+   align-items: center;
+   gap: 12px;
+   padding: 6px 12px;
+   border: 1px solid var(--border-color);
+   border-radius: 6px;
+   background: var(--bg-tertiary);
+   transition: all 0.2s ease;
+   width: 100%;
+   cursor: default;
+ }
+
+.skill-item:hover {
+   background: var(--bg-secondary);
+   border-color: var(--accent-secondary);
+   box-shadow: 0 2px 4px var(--shadow);
+ }
+
+.skill-item input[type="text"] {
+  flex: 1;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: border-color 0.2s;
+}
+
+.skill-item input[type="text"]:focus {
+  outline: none;
+  border: 1px solid var(--accent-primary);
+}
+
+.skill-item .btn-icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--red);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.skill-item .btn-icon:hover {
+  color: var(--red-light);
+}
+
+.skill-drag-handle {
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+  cursor: grab;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 6px;
+  border: none;
+  background: transparent;
+  transition: color 0.2s;
+}
+
+.skill-drag-handle i {
+  font-size: 16px;
+}
+
+.skill-drag-handle:active {
+  cursor: grabbing;
+}
+
+.skill-item:hover .skill-drag-handle {
+  color: var(--accent-secondary);
+}
+
+.skill-item.dragging .skill-drag-handle {
+  cursor: grabbing;
+  color: var(--accent-primary);
+}
+
+.skill-item.dragging {
+  opacity: 0.85;
+  transform: scale(0.995);
+  box-shadow: 0 6px 12px var(--shadow);
+}
+
+/* Experience & Education Management UI */
+.experience-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 500px;
+  position: relative;
+  --experience-card-width: 50%;
+  width: 100%;
+}
+
+.experience-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 0;
+  position: relative;
+  width: 100%;
+}
+
+.experience-list.is-centered {
+  justify-content: center;
+}
+
+/* When experience/education list only contains placeholder text, center both horizontally and vertically */
+.experience-list:has(> p:only-child) {
+  justify-content: center;
+}
+
+.experience-list-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+}
+
+.experience-list-item-row.dragging {
+  opacity: 0.75;
+}
+
+.experience-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 15px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  transition: all 0.2s;
+  width: var(--experience-card-width);
+  cursor: grab;
+}
+
+.experience-list-item:hover {
+  background: var(--bg-secondary);
+  border-color: var(--accent-secondary);
+  box-shadow: 0 2px 4px var(--shadow);
+}
+
+.experience-list-item-row.dragging .experience-list-item {
+  box-shadow: 0 6px 12px var(--shadow);
+  transform: scale(0.995);
+  cursor: grabbing;
+}
+
+.experience-list-item-row.drag-over .experience-list-item {
+  border-style: dashed;
+}
+
+.experience-list-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.experience-list-item-position {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text-primary);
+  margin-bottom: 3px;
+}
+
+.experience-list-item-company {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+
+.experience-list-item-date {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+.experience-drag-handle {
+  margin-right: 10px;
+  color: var(--text-tertiary);
+  cursor: grab;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.experience-drag-handle:active {
+  cursor: grabbing;
+}
+
+.experience-list-item:hover .experience-drag-handle {
+  color: var(--accent-secondary);
+}
+
+.experience-age-pill {
+  position: absolute;
+  left: 40px;
+  top: 20px;
+  transform: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  width: 135px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1.5px solid var(--accent-primary);
+  background: var(--bg-primary);
+  color: var(--accent-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  text-align: center;
+  pointer-events: none;
+  z-index: 2;
+}
+
+:root[data-mode="light"] .experience-age-pill {
+  border-color: var(--mode-switcher-border);
+  color: var(--mode-switcher-border);
+}
+
+.experience-age-pill::before {
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  content: "\f0d7";
+  color: inherit;
+}
+
+.experience-age-pill.age-newest::before {
+  content: "\f062";
+}
+
+.experience-age-pill.age-oldest::before {
+  content: "\f063";
+}
+
+.experience-list-item-controls {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+#educationModal .modal-footer,
+#experienceModal .modal-footer {
+  justify-content: center;
+  gap: 16px;
+  position: relative;
+  min-height: 72px;
+}
+
+/* Make Done buttons same size and position as Save buttons */
+#closeExperienceModalFooterBtn,
+#saveExperienceFormBtn,
+#closeEducationModalFooterBtn,
+#saveEducationFormBtn {
+  min-width: 100px;
+  width: 100px;
+}
+
+/* Make Cancel and Add new entry same width for exact positioning */
+#cancelExperienceFormBtn,
+#addExperienceBtn,
+#cancelEducationFormBtn,
+#addEducationBtn {
+  min-width: 150px;
+  width: 150px;
+}
+
+/* Experience Form UI */
+.experience-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 1;
+  min-height: 0;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 40% 40%;
+  gap: 20%;
+}
+
+/* Stack date fields (and keep checkbox inline) on tablet to avoid splitting the row */
+@media (max-width: 1024px) {
+  #educationFormModal .experience-form .form-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* Keep checkbox + label hugged to the left on tablet */
+  #educationFormModal .experience-form .form-field .checkbox-label {
+    display: inline-flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    align-self: flex-start !important;
+    justify-content: flex-start !important;
+    gap: 4px !important;
+    flex: 0 0 auto !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: var(--text-primary) !important;
+    line-height: 1.2;
+    padding: 0 !important;
+    margin: 0 !important;
+    margin-top: 10px !important;
+    width: auto !important;
+    max-width: max-content !important;
+    white-space: nowrap !important;
+    cursor: pointer !important;
+    contain: layout;
+  }
+
+  /* Remove any default margins from checkbox input and span */
+  #educationFormModal .experience-form .form-field .checkbox-label input[type="checkbox"] {
+    margin: 0 !important;
+    padding: 0 !important;
+    flex-shrink: 0 !important;
+    cursor: pointer !important;
+    width: 13px !important;
+    height: 13px !important;
+  }
+
+  #educationFormModal .experience-form .form-field .checkbox-label span {
+    margin: 0 !important;
+    padding: 0 !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    user-select: none !important;
+  }
+
+  /* Apply same styles to experience modal */
+  #experienceFormModal .experience-form .form-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  #experienceFormModal .experience-form .form-field .checkbox-label {
+    display: inline-flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    align-self: flex-start !important;
+    justify-content: flex-start !important;
+    gap: 4px !important;
+    flex: 0 0 auto !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: var(--text-primary) !important;
+    line-height: 1.2;
+    padding: 0 !important;
+    margin: 0 !important;
+    margin-top: 10px !important;
+    width: auto !important;
+    max-width: max-content !important;
+    white-space: nowrap !important;
+    cursor: pointer !important;
+    contain: layout;
+  }
+
+  #experienceFormModal .experience-form .form-field .checkbox-label input[type="checkbox"] {
+    margin: 0 !important;
+    padding: 0 !important;
+    flex-shrink: 0 !important;
+    cursor: pointer !important;
+    width: 13px !important;
+    height: 13px !important;
+  }
+
+  #experienceFormModal .experience-form .form-field .checkbox-label span {
+    margin: 0 !important;
+    padding: 0 !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    user-select: none !important;
+  }
+}
+
+.responsibilities-field {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.responsibilities-field .field-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 100%;
+  margin-bottom: 16px;
+}
+
+.form-field label {
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--text-primary);
+}
+
+.experience-form .form-field label {
+  font-size: 18px;
+}
+
+.field-hint {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.form-field input[type="text"],
+.form-field input[type="month"],
+.form-field input[type="email"],
+.form-field input[type="number"] {
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: border-color 0.2s;
+}
+
+.form-field input[type="text"]:focus,
+.form-field input[type="month"]:focus,
+.form-field input[type="email"]:focus,
+.form-field input[type="number"]:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.form-field input[type="number"]::-webkit-outer-spin-button,
+.form-field input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.form-field input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.input-group {
+  display: flex;
+  width: 100%;
+}
+
+.input-group-prepend {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-right: none;
+  border-radius: 6px 0 0 6px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.input-group input[type="text"] {
+  flex: 1;
+  border-radius: 0 6px 6px 0;
+  min-width: 0;
+}
+
+.fraction-input {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.fraction-input input[type="range"] {
+  accent-color: #64B5F6;
+  width: 100%;
+}
+
+.fraction-value-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--bg-primary);
+  min-width: 110px;
+}
+
+.fraction-value-pill input[type="number"] {
+  width: 56px;
+  border: none;
+  background: transparent;
+  padding: 6px 4px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.fraction-value-pill input[type="number"]:focus {
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
+
+.fraction-unit {
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.skill-fraction-control-inline {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.skill-fraction-control-inline .skill-fraction-slider {
+  width: 100%;
+}
+
+.form-field textarea {
+  padding: 12px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: border-color 0.2s;
+  resize: vertical;
+}
+
+.form-field textarea:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+  color: var(--text-tertiary);
+  font-style: italic;
+  opacity: 0.4;
+}
+
+.responsibilities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0 0 10px;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  overflow-y: auto;
+  padding-right: 6px;
+  padding-bottom: 10px;
+  max-height: 45vh;
+}
+
+.responsibility-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-tertiary);
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.responsibility-item input[type="text"] {
+  flex: 1;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: border-color 0.2s;
+}
+
+.responsibility-item input[type="text"]:focus {
+  outline: none;
+  border: 1px solid var(--accent-primary);
+}
+
+.responsibility-item .btn-icon {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--red);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.responsibility-item .btn-icon:hover {
+  color: var(--red-light);
+}
+
+.responsibility-item .responsibility-drag-handle {
+  color: var(--text-tertiary);
+  cursor: grab;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 6px;
+  border: none;
+  background: transparent;
+  transition: color 0.2s;
+}
+
+.responsibility-item .responsibility-drag-handle i {
+  font-size: 16px;
+}
+
+.responsibility-item .responsibility-drag-handle:active {
+  cursor: grabbing;
+}
+
+.responsibility-item:hover .responsibility-drag-handle {
+  color: var(--accent-secondary);
+}
+
+#experienceFormModal .modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* PDF Preview Modal */
+.pdf-preview-modal .pdf-preview-content {
+  width: 95vw;
+  max-width: 900px;
+  height: 94vh;
+  max-height: none;
+}
+
+.pdf-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.pdf-preview-title-group {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.pdf-preview-download-btn {
+  min-width: 0;
+  padding: 0 20px;
+}
+
+.pdf-preview-body {
+  padding: 0;
+  height: calc(94vh - 80px);
+  overflow: hidden;
+}
+
+.pdf-preview-iframe-container {
+  width: 100%;
+  height: 100%;
+  background: var(--bg-darkest);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.pdf-preview-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: white;
+  border-radius: 4px;
+}
+
+.pdf-preview-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--text-medium);
+  text-align: center;
+  padding: 20px;
+}
+
+:root[data-mode="light"] .pdf-preview-placeholder {
+  color: var(--text-primary);
+}
+
+:root[data-mode="light"] .pdf-preview-placeholder p {
+  color: var(--text-primary);
+}
+
+.pdf-preview-placeholder.error {
+  color: var(--error);
+}
+
+.pdf-preview-error-detail {
+  font-size: 13px;
+  color: var(--error);
+}
+
+.pdf-preview-self-host {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent-primary);
+  line-height: 1.5;
+}
+
+.pdf-preview-self-host a {
+  color: var(--accent-primary);
+  text-decoration: underline;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.pdf-preview-progress {
+  width: 220px;
+  display: grid;
+  place-items: center;
+  gap: 14px;
+  color: var(--text-primary);
+}
+
+.pdf-preview-progress-rocket {
+  --rocket-accent: var(--accent-primary);
+  color: var(--rocket-accent);
+  -webkit-text-fill-color: var(--rocket-accent);
+  background: var(--rocket-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  font-size: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+  text-shadow: 0 0 14px var(--rocket-accent);
+  filter: drop-shadow(0 8px 22px rgba(0, 0, 0, 0.25));
+  animation: pdf-preview-rocket-prep 1.4s ease-in-out infinite;
+  transition: transform 0.4s ease, color 0.2s ease;
+}
+
+.pdf-preview-progress-rocket.launching {
+  --rocket-accent: var(--accent-hover);
+  animation: pdf-preview-rocket-launch 1.3s cubic-bezier(0.35, 0.05, 0.85, 1) forwards;
+}
+
+.pdf-preview-progress-track {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: transparent;
+  border: 1px solid var(--accent-primary);
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  position: relative;
+}
+
+.pdf-preview-progress-track::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+  opacity: 0.18;
+}
+
+.pdf-preview-progress-bar {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-hover), var(--accent-primary));
+  border-radius: inherit;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), 0 0 10px var(--accent-primary);
+  position: relative;
+  overflow: hidden;
+  transform-origin: left;
+  animation: pdf-preview-progress-fill var(--pdf-preview-progress-duration, 2400ms) cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.pdf-preview-progress-bar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.35) 40%, rgba(255, 255, 255, 0.75) 55%, transparent 100%);
+  animation: pdf-preview-progress-shimmer 1.65s ease-in-out infinite;
+}
+
+.pdf-preview-progress-glow {
+  width: 160px;
+  height: 6px;
+  border-radius: 999px;
+  background: radial-gradient(circle, var(--accent-primary) 0%, transparent 60%);
+  filter: blur(2px);
+  opacity: 0.6;
+  animation: pdf-preview-progress-glow 1.65s ease-in-out infinite;
+}
+
+@keyframes pdf-preview-progress-fill {
+  0% { transform: scaleX(0.08); }
+  60% { transform: scaleX(0.85); }
+  100% { transform: scaleX(0.98); }
+}
+
+@keyframes pdf-preview-progress-shimmer {
+  0% { transform: translateX(-60%); opacity: 0.65; }
+  50% { transform: translateX(0%); opacity: 1; }
+  100% { transform: translateX(60%); opacity: 0.65; }
+}
+
+@keyframes pdf-preview-progress-glow {
+  0% { opacity: 0.45; transform: translateY(0); }
+  50% { opacity: 0.9; transform: translateY(-2px); }
+  100% { opacity: 0.45; transform: translateY(0); }
+}
+
+@keyframes pdf-preview-rocket-prep {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes pdf-preview-rocket-launch {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+  10% { transform: translate(8px, -8px) scale(1.01) rotate(0deg); opacity: 0.98; }
+  25% { transform: translate(32px, -32px) scale(1.02) rotate(0deg); opacity: 0.9; }
+  45% { transform: translate(90px, -90px) scale(1.04) rotate(0deg); opacity: 0.72; }
+  65% { transform: translate(170px, -170px) scale(1.07) rotate(0deg); opacity: 0.5; }
+  85% { transform: translate(260px, -260px) scale(1.11) rotate(0deg); opacity: 0.25; }
+  100% { transform: translate(340px, -340px) scale(1.15) rotate(0deg); opacity: 0; }
+}
+
+/* Mobile PDF Preview - Canvas-based viewer */
+.pdf-preview-mobile-viewer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-darkest);
+}
+
+.pdf-preview-canvas-container {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow: auto;
+  padding: 8px;
+  background: var(--bg-darkest);
+}
+
+.pdf-preview-canvas {
+  max-width: 100%;
+  height: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  background: white;
+}
+
+.pdf-preview-mobile-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 16px;
+  background: var(--bg-dark);
+  border-top: 1px solid var(--border-medium);
+}
+
+.pdf-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 8px;
+  background: var(--bg-medium);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pdf-nav-btn:hover:not(:disabled) {
+  background: var(--accent-primary);
+  color: white;
+  transform: scale(1.05);
+}
+
+.pdf-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.pdf-nav-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.pdf-page-info {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 80px;
+  text-align: center;
+}
+
+.pdf-preview-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--error);
+}
+
+.pdf-download-fallback-btn {
+  padding: 12px 24px;
+  background: var(--accent-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pdf-download-fallback-btn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+#addProjectBtn.btn-compact,
+#addExperienceBtn.btn-compact,
+#addEducationBtn.btn-compact,
+#addSkillBtn.btn-compact {
+  min-width: 150px;
+  height: 44px;
+  min-height: 44px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+#saveProjectFormBtn,
+#saveExperienceFormBtn,
+#saveEducationFormBtn,
+#saveSkillFormBtn,
+#savePersonalInfoBtn,
+#saveGdprBtn,
+#saveModalBtn {
+  height: 44px;
+  min-height: 44px;
+}
+
+#cancelProjectFormBtn,
+#cancelExperienceFormBtn,
+#cancelEducationFormBtn,
+#cancelSkillFormBtn,
+#cancelPersonalInfoBtn,
+#cancelGdprBtn {
+  height: 44px;
+  min-height: 44px;
+}
+
+.modal-footer .btn.btn-success,
+.modal-footer .btn.btn-secondary {
+  height: 44px;
+  min-height: 44px;
+}
+#projectFormModal .modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  flex: 1;
+  padding: 40px 24px;
+  min-height: 0;
+}
+
+#projectsModal .modal-body,
+#experienceModal .modal-body,
+#educationModal .modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  flex: 1;
+}
+
+#projectFormModal .experience-form {
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto;
+  flex: 0 0 auto;
+}
+
+#projectFormModal .experience-form .form-field input,
+#projectFormModal .experience-form .form-field textarea {
+  width: 100%;
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#projectFormModal .experience-form .form-field label {
+  width: 100%;
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#educationFormModal .modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  flex: 1;
+  padding: 40px 24px;
+  min-height: 0;
+}
+
+#educationFormModal .experience-form {
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
+  flex: 0 0 auto;
+}
+
+#educationFormModal .experience-form .form-field input,
+#educationFormModal .experience-form .form-field textarea {
+  width: 100%;
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#educationFormModal #edInstitution {
+  max-width: 620px;
+}
+
+#experienceFormModal .modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  flex: 1;
+}
+
+#experienceFormModal .experience-form {
+  width: 100%;
+  max-width: 620px;
+}
+
+#experienceFormModal .experience-form .form-field input,
+#experienceFormModal .experience-form .form-field textarea {
+  width: 100%;
+  max-width: 620px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Date Input Group - Split inputs with fixed hyphen */
+.date-input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-part-year {
+  width: 80px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 14px;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+
+.date-part-month {
+  width: 50px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 14px;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+
+.date-part-year:focus,
+.date-part-month:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px rgba(100, 181, 246, 0.15);
+}
+
+.date-part-year:disabled,
+.date-part-month:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--bg-tertiary);
+}
+
+.date-separator {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+/* Checkbox for nullable dates - MUST stay together as one unit */
+.form-field .checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 4px;
+  margin-top: 10px;
+  margin-left: 0;
+  margin-right: 0;
+  align-self: flex-start;
+  justify-content: flex-start;
+  flex: 0 0 auto;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  width: auto;
+  max-width: max-content;
+  white-space: nowrap;
+  /* Prevent breaking across columns */
+  break-inside: avoid;
+  page-break-inside: avoid;
+  /* Keep checkbox and span together as atomic unit */
+  contain: layout;
+}
+
+.form-field .checkbox-label input[type="checkbox"] {
+  cursor: pointer;
+  accent-color: var(--accent-primary);
+  margin: 0;
+  padding: 0;
+  width: 13px;
+  height: 13px;
+}
+
+.form-field .checkbox-label span {
+  user-select: none;
+  white-space: nowrap;
+  margin: 0;
+  padding: 0;
+}
+
+.form-field .checkbox-label:hover span {
+  color: var(--text-primary);
+}
+
+/* Reset form-field styles for experience modal */
+#experienceFormModal .experience-form .form-field {
+  display: block;
+  flex-direction: unset;
+  gap: unset;
+}
+
+/* Date validation warning in modal header */
+.date-validation-warning {
+  display: none;
+  position: absolute;
+  right: 150px;
+  top: 20px;
+  background: rgba(230, 57, 70, 0.1);
+  border: 1px solid var(--error);
+  border-radius: 6px;
+  color: var(--error);
+  padding: 8px 12px;
+  font-size: 13px;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.date-validation-warning.show {
+  display: flex;
+}
+
+.date-validation-warning i {
+  font-size: 13px;
+}
+
+/* Vertically center education form content */
+#educationFormModal .modal-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#educationFormModal .experience-form {
+  margin: 0 auto;
+}
+
+/* Vertically center project form content */
+#projectFormModal .modal-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#projectFormModal .experience-form {
+  margin: 0 auto;
+}
+
+/* Mobile-specific PDF preview adjustments */
+@media (max-width: 768px) {
+  .pdf-preview-modal .pdf-preview-content {
+    height: 82vh;
+  }
+
+  .pdf-preview-body {
+    height: calc(82vh - 80px);
+  }
+
+  .pdf-preview-canvas-container {
+    padding: 4px;
+  }
+}

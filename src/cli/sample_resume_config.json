@@ -1,0 +1,126 @@
+{
+  "personalInfo": {
+    "name": "Alex Smith",
+    "title": "Software Engineer",
+    "email": "alex.smith@example.com",
+    "phone": "+1 555-123-4567",
+    "website": "alexsmith.dev",
+    "linkedin": "linkedin.com/in/alex-smith",
+    "github": "github.com/alexsmith",
+    "location": "Seattle, WA",
+    "bio": "Full-stack engineer who enjoys shipping reliable web applications and collaborating across teams."
+  },
+  "skills": [
+    {
+      "name": "Working knowledge",
+      "fraction": 3.5,
+      "items": [
+        "JavaScript",
+        "TypeScript",
+        "React",
+        "Node.js",
+        "Express",
+        "SQL",
+        "REST APIs",
+        "Git",
+        "Linux"
+      ]
+    },
+    {
+      "name": "Basic skills",
+      "fraction": 2.5,
+      "items": [
+        "Docker",
+        "Cloud basics",
+        "Python",
+        "Testing (Jest, Playwright)"
+      ]
+    },
+    {
+      "name": "Languages",
+      "fraction": 2.5,
+      "items": [
+        "English (C1)",
+        "Spanish (B2)"
+      ]
+    }
+  ],
+  "experience": [
+    {
+      "position": "Software Engineer",
+      "company": "Acme Corp",
+      "startDate": "2022-06",
+      "endDate": null,
+      "responsibilities": [
+        "Built and maintained React frontends backed by Node.js services",
+        "Improved API performance and added request tracing",
+        "Mentored interns on code quality and delivery practices"
+      ]
+    },
+    {
+      "position": "Junior Developer",
+      "company": "Tech Solutions",
+      "startDate": "2020-01",
+      "endDate": "2022-05",
+      "responsibilities": [
+        "Implemented UI features and bug fixes in a customer dashboard",
+        "Wrote integration tests for critical user flows",
+        "Collaborated with designers to refine UX details"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Computer Science",
+      "level": "Master studies",
+      "institution": "State University",
+      "startDate": "2017-10",
+      "graduationDate": "2019-07"
+    },
+    {
+      "degree": "Physics",
+      "level": "Bachelor studies",
+      "institution": "State University",
+      "startDate": "2014-10",
+      "graduationDate": "2017-07"
+    }
+  ],
+  "projects": [
+    {
+      "name": "Portfolio Site",
+      "description": "Personal website showcasing projects and writing.",
+      "technologies": [
+        "Next.js",
+        "Tailwind CSS"
+      ],
+      "link": "https://example.org"
+    },
+    {
+      "name": "Task Tracker API",
+      "description": "REST API for managing tasks with authentication and metrics.",
+      "technologies": [
+        "Node.js",
+        "Express",
+        "PostgreSQL"
+      ],
+      "link": "https://example.org"
+    }
+  ],
+  "gdprClause": "I agree to the processing of personal data provided in this document for realising the recruitment process pursuant to the Personal Data Protection Act of 10 May 2018 (Journal of Laws 2018, item 1000) and in agreement with Regulation (EU) 2016/679 of the European Parliament and of the Council of 27 April 2016 on the protection of natural persons with regard to the processing of personal data and on the free movement of such data, and repealing Directive 95/46/EC (General Data Protection Regulation).",
+  "_meta": {
+    "version": "0.1.0",
+    "enabledSections": {
+      "personalInfo": true,
+      "bio": true,
+      "skills": true,
+      "projects": true,
+      "experience": true,
+      "education": false,
+      "gdprClause": true
+    },
+    "selectedTheme": "corpo",
+    "selectedColor": "grey",
+    "showWatermark": true,
+    "customSectionNames": {}
+  }
+}

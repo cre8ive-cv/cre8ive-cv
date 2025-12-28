@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 | cre8ive.cv</title>
+  <link rel="icon" type="image/png" href="assets/logo-rocket-circle.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Syne:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #10141c;
+      --bg-overlay: radial-gradient(circle at 20% 20%, rgba(100, 181, 246, 0.25), transparent 45%), radial-gradient(circle at 80% 0%, rgba(255, 128, 193, 0.18), transparent 40%);
+      --bg-grid: rgba(255, 255, 255, 0.05);
+      --text-primary: #e8eaed;
+      --accent: #64b5f6;
+      --accent-faded: rgba(100, 181, 246, 0.18);
+      --sheet: #fffaf3;
+      --sheet-border: rgba(16, 24, 40, 0.12);
+      --sheet-shadow: 0 45px 120px rgba(0, 0, 0, 0.45);
+      --button-text: #0a0b0f;
+      --page-gutter: clamp(20px, 4vw, 64px);
+    }
+
+    :root[data-mode="light"] {
+      --bg-primary: #dfe6f4;
+      --bg-overlay: radial-gradient(circle at 20% 10%, rgba(100, 181, 246, 0.35), transparent 42%), radial-gradient(circle at 80% 0%, rgba(255, 128, 193, 0.15), transparent 38%);
+      --bg-grid: rgba(38, 58, 94, 0.08);
+      --text-primary: #1f2430;
+      --accent: #1f8ceb;
+      --accent-faded: rgba(31, 140, 235, 0.18);
+      --sheet-border: rgba(31, 41, 55, 0.15);
+      --sheet-shadow: 0 50px 80px rgba(31, 41, 55, 0.25);
+      --button-text: #ffffff;
+    }
+
+    :root[data-mode="hacker"] {
+      --bg-primary: #050d08;
+      --bg-overlay: radial-gradient(circle at 25% 25%, rgba(123, 228, 149, 0.15), transparent 50%), radial-gradient(circle at 80% 10%, rgba(63, 255, 198, 0.12), transparent 45%);
+      --bg-grid: rgba(123, 228, 149, 0.08);
+      --text-primary: #d9ffe8;
+      --accent: #7be495;
+      --accent-faded: rgba(123, 228, 149, 0.22);
+      --sheet-border: rgba(6, 17, 9, 0.3);
+      --sheet-shadow: 0 50px 120px rgba(0, 0, 0, 0.55);
+      --button-text: #03110a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: var(--page-gutter);
+      position: relative;
+      overflow: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      background: var(--bg-overlay);
+    }
+
+    body::after {
+      background-image: linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px), linear-gradient(0deg, var(--bg-grid) 1px, transparent 1px);
+      background-size: 80px 80px;
+      opacity: 0.4;
+    }
+
+    main {
+      width: min(960px, 100%);
+      position: relative;
+      z-index: 1;
+    }
+
+    .resume-card {
+      background: var(--sheet);
+      border-radius: 32px;
+      border: 1px solid var(--sheet-border);
+      box-shadow: var(--sheet-shadow);
+      padding: clamp(42px, 6vw, 80px);
+      min-height: clamp(780px, calc(100vh + 200px), 1200px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(24px, 4vw, 32px);
+    }
+
+    .resume-header {
+      display: flex;
+      align-items: flex-start;
+      gap: clamp(24px, 4vw, 72px);
+    }
+
+    .resume-info {
+      flex: 1;
+      color: #1a1c23;
+    }
+
+    .resume-name {
+      font-family: 'Syne', 'Space Grotesk', 'Inter', sans-serif;
+      margin: 0;
+      font-size: clamp(60px, 9vw, 110px);
+      letter-spacing: 0.06em;
+      color: #1d1f29;
+      text-transform: uppercase;
+    }
+
+    .resume-title {
+      font-family: 'Syne', 'Space Grotesk', 'Inter', sans-serif;
+      margin: 6px 0 0;
+      font-size: clamp(22px, 3vw, 34px);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: rgba(20, 30, 38, 0.9);
+    }
+
+    .resume-divider {
+      height: 3px;
+      background: linear-gradient(90deg, rgba(20, 30, 38, 0), rgba(20, 30, 38, 0.25) 15%, rgba(20, 30, 38, 0.25) 85%, rgba(20, 30, 38, 0));
+      margin: 28px 0 0;
+    }
+
+    .resume-note {
+      margin: 42px 0 0;
+      font-size: clamp(18px, 3vw, 28px);
+      color: rgba(20, 30, 38, 0.8);
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .resume-note a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(100, 181, 246, 0.4);
+    }
+
+    :root[data-mode="light"] .resume-note a {
+      border-bottom-color: rgba(31, 140, 235, 0.4);
+    }
+
+    :root[data-mode="hacker"] .resume-note a {
+      border-bottom-color: rgba(123, 228, 149, 0.4);
+    }
+
+    .home-link {
+      margin: 32px auto 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 32px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: var(--button-text);
+      text-decoration: none;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 20px 35px rgba(0, 0, 0, 0.15);
+    }
+
+    .home-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 26px 45px rgba(0, 0, 0, 0.2);
+    }
+
+    .resume-photo {
+      width: clamp(150px, 20vw, 220px);
+      height: clamp(150px, 20vw, 220px);
+      border-radius: 50%;
+      border: 4px solid var(--accent-faded);
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 25px 55px rgba(0, 0, 0, 0.15);
+    }
+
+    .resume-photo img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      padding: 6px;
+    }
+
+    .resume-body {
+      flex: 0 0 clamp(120px, 18vh, 200px);
+      border-radius: 22px;
+      border: 1px dashed rgba(20, 30, 38, 0.08);
+      background: repeating-linear-gradient(180deg, rgba(20, 30, 38, 0.04), rgba(20, 30, 38, 0.04) 2px, transparent 2px, transparent 40px);
+      opacity: 0.35;
+    }
+
+    .resume-card-filler {
+      flex: 1 1 clamp(140px, 20vh, 320px);
+    }
+
+    .return-home-wrapper {
+      margin-top: clamp(12px, 2vw, 24px);
+      text-align: center;
+    }
+
+    .or-text {
+      margin: 0 0 16px 0;
+      font-size: clamp(18px, 3vw, 28px);
+      color: rgba(20, 30, 38, 0.7);
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      .resume-header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .resume-photo {
+        margin: 20px auto 0;
+      }
+
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <article class="resume-card" aria-labelledby="resume-title">
+      <header class="resume-header">
+        <div class="resume-info">
+          <h1 class="resume-name" id="resume-title">404</h1>
+          <p class="resume-title">Resume does not exist...</p>
+          <div class="resume-divider"></div>
+        </div>
+        <div class="resume-photo" aria-hidden="true">
+          <img id="resumePhoto" src="/assets/mode_icons/dark.png" alt="Duck illustration">
+        </div>
+      </header>
+      <p class="resume-note">
+        ...so create it using one of the <a href="/gallery">available templates</a>!
+      </p>
+      <div class="resume-body" aria-hidden="true"></div>
+      <div class="return-home-wrapper">
+        <p class="or-text">or</p>
+        <a class="home-link" id="returnHomeLink" href="/">Return to main page</a>
+      </div>
+      <div class="resume-card-filler" aria-hidden="true"></div>
+    </article>
+  </main>
+
+  <script>
+    (function () {
+      const MODE_STORAGE_KEY = 'mode';
+      const DEFAULT_MODE = 'dark';
+      const SUPPORTED_MODES = ['dark', 'light', 'hacker'];
+
+      const getMode = () => {
+        try {
+          const storedMode = localStorage.getItem(MODE_STORAGE_KEY);
+          if (storedMode && SUPPORTED_MODES.includes(storedMode)) {
+            return storedMode;
+          }
+        } catch (error) {
+          console.error('Unable to read mode from localStorage:', error);
+        }
+        return DEFAULT_MODE;
+      };
+
+      const resolvedMode = getMode();
+      const mode = SUPPORTED_MODES.includes(resolvedMode) ? resolvedMode : DEFAULT_MODE;
+      document.documentElement.dataset.mode = mode;
+
+      const portrait = document.getElementById('resumePhoto');
+      const setPortrait = (variant) => {
+        portrait.src = `/assets/mode_icons/${variant}.png`;
+        portrait.alt = `${variant} mode duck illustration`;
+      };
+
+      setPortrait(mode);
+
+      portrait.addEventListener('error', () => {
+        if (mode !== DEFAULT_MODE) {
+          setPortrait(DEFAULT_MODE);
+        }
+      });
+    })();
+
+    (async function setReturnLinkFromConfig() {
+      const returnLink = document.getElementById('returnHomeLink');
+      if (!returnLink) {
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/config');
+        if (response.ok) {
+          const config = await response.json();
+          if (config.appUrl) {
+            returnLink.href = config.appUrl;
+          }
+        }
+      } catch (error) {
+        console.warn('Unable to load config for return link:', error);
+      }
+    })();
+  </script>
+</body>
+</html>

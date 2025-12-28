@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<script>
+(function() {
+  try {
+    const savedMode = localStorage.getItem('displayMode') || 'dark';
+    document.documentElement.setAttribute('data-mode', savedMode);
+  } catch (e) {
+    document.documentElement.setAttribute('data-mode', 'dark');
+  }
+
+  const loader = document.createElement('div');
+  loader.id = 'mode-loader';
+  loader.innerHTML = '<div class="loader-bar"></div>';
+  document.documentElement.appendChild(loader);
+})();
+</script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>cre8ive.cv | Your ultimate resume creator</title>
+  <meta name="description" content="Free, privacy-first resume creator for IT professionals. Build stunning resumes from JSON, choose from multiple themes, export to PDF. No signup, no tracking, fully open-source.">
+  <meta name="keywords" content="free resume builder,JSON resume,CV creator,IT resume,developer resume,privacy-first CV,PDF generator,online resume maker,resume templates,open source resume">
+  <meta name="author" content="cre8ive.cv">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://cre8ive.cv/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="cre8ive.cv | Your ultimate resume creator">
+  <meta property="og:description" content="Free, privacy-first resume creator for IT professionals. Build stunning resumes from JSON, choose from multiple themes, export to PDF. No signup, no tracking, fully open-source.">
+  <meta property="og:url" content="https://cre8ive.cv/">
+  <meta property="og:site_name" content="cre8ive.cv">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://cre8ive.cv/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="cre8ive.cv - Privacy-first resume creator">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="cre8ive.cv | Your ultimate resume creator">
+  <meta name="twitter:description" content="Free, privacy-first resume creator for IT professionals. Build stunning resumes from JSON, choose from multiple themes, export to PDF. No signup, no tracking, fully open-source.">
+  <meta name="twitter:image" content="https://cre8ive.cv/assets/og-image.png">
+  <meta name="theme-color" content="#10141c">
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon-180x180.png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet">
+  <!-- Preload Critical CSS -->
+  <link rel="preload" href="css/variables.css" as="style">
+  <link rel="preload" href="css/layout.css" as="style">
+  <!-- CodeMirror CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/foldgutter.css">
+  <!-- Application CSS -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/editor-modals.css">
+  <link rel="stylesheet" href="css/utilities.css">
+
+  <!-- Matomo -->
+<script>
+  var _paq = window._paq = window._paq || [];
+  
+  _paq.push(['disableCookies']);
+  
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://matomo.palej.dev/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '3']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+
+
+<!-- End Matomo Code -->
+
+<!-- Cloudflare Turnstile -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+
+<!-- Structured Data (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "cre8ive.cv",
+  "description": "Privacy-first resume creator for IT specialists. Create beautiful PDF resumes from JSON templates.",
+  "url": "https://cre8ive.cv/",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "featureList": [
+    "JSON-based resume editor",
+    "PDF export",
+    "Multiple themes",
+    "Privacy-first (no tracking)",
+    "Self-hostable"
+  ]
+}
+</script>
+
+</head>
+<body>
+  <div class="container">
+    <!-- Left Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-grid">
+        <div class="logo-main">
+          <div class="logo-heading">
+          <h1 class="logo-title">
+            <a href="#" class="logo-title-link">
+              <span class="logo-emoji" data-emoji="🚀">🚀</span>
+              cre8ive.cv
+            </a>
+          </h1>
+            <p class="logo-subtitle">Your ultimate resume creator</p>
+          </div>
+          <div class="header-actions">
+            <a class="logo-link gallery-link" href="/gallery">
+              <i class="fas fa-images"></i>
+              <span class="logo-link-text">Templates Gallery</span>
+            </a>
+            <label for="fileInputMobile" class="btn btn-neutral json-action-btn file-btn mobile-import-json-btn">
+              <i class="fas fa-code"></i>
+              <span class="mobile-import-text">Import JSON</span>
+              <input type="file" id="fileInputMobile" accept=".json" style="display: none;">
+            </label>
+            <div class="mode-switcher" id="modeSwitcher">
+              <button
+                type="button"
+                class="mode-switcher-toggle"
+                id="modeSwitcherToggle"
+                aria-haspopup="true"
+                aria-expanded="false"
+                title="Switch display mode"
+              >
+                <span id="modeSwitcherIcon" aria-hidden="true"></span>
+              </button>
+              <div class="mode-switcher-menu" id="modeSwitcherMenu" role="menu" aria-label="Available modes"></div>
+            </div>
+          </div>
+        </div>
+        <div class="logo-links-row"></div>
+      </div>
+      </div>
+
+      <div class="sidebar-scroll">
+      <div class="control-section">
+        <div class="button-group button-row">
+          <div class="button-with-label">
+            <span class="button-label mobile-only-label">Template starter</span>
+            <button id="loadExampleBtn" class="btn btn-primary">
+              <i class="fas fa-file-import"></i> Load Template
+            </button>
+          </div>
+          <div class="photo-upload-wrapper">
+            <span class="button-label" id="photoUploadLabel">Recommended aspect ratio: 1:1</span>
+            <label for="photoInput" class="btn btn-secondary file-btn photo-upload-btn" id="photoUploadBtn">
+              <span class="photo-label-main">
+                <i class="fas fa-portrait"></i>
+                Upload Photo
+              </span>
+              <input type="file" id="photoInput" accept="image/jpeg,image/png,image/jpg" style="display: none;">
+            </label>
+            <button class="btn btn-danger photo-remove-btn" id="photoRemoveBtn" style="display: none;">
+              <i class="fas fa-trash-alt"></i>
+              Remove Photo
+            </button>
+          </div>
+          <div class="button-with-label">
+            <span class="button-label" style="opacity: 0">.</span>
+            <label for="fileInput" class="btn btn-neutral json-action-btn file-btn">
+              <i class="fas fa-code"></i> Import JSON
+              <input type="file" id="fileInput" accept=".json" style="display: none;">
+            </label>
+          </div>
+        </div>
+
+        <!-- Mobile/Tablet View Toggle -->
+        <div class="mobile-view-toggle-container" style="display: none;">
+          <div class="mobile-view-toggle-wrapper">
+            <button class="mobile-view-option active" id="mobileEditorOption" data-mode="editor">
+              <i class="fas fa-pen"></i>
+              <span>Editor</span>
+            </button>
+            <button class="mobile-view-option" id="mobilePreviewOption" data-mode="preview">
+              <i class="fas fa-eye"></i>
+              <span>Preview</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile/Tablet Status Messages -->
+        <div id="mobilePreviewStatus" class="preview-status mobile-status"></div>
+
+        <div class="mobile-editor-actions" id="mobileEditorActions"></div>
+
+        <div id="dataStatus" class="status-message"></div>
+      </div>
+
+      <div class="control-section sections-panel" id="sectionsPanel">
+        <h3>
+        </h3>
+        <div id="sectionList" class="section-list">
+          <!-- Sections will be dynamically populated here -->
+        </div>
+      </div>
+
+      <!-- Hidden textarea for internal JSON storage -->
+      <textarea id="jsonEditor" style="display: none;"></textarea>
+
+      <div class="control-section appearance-section">
+        <div class="watermark-checkbox-inline">
+          <label class="checkbox-label">
+            <input type="checkbox" id="showWatermarkCheckbox" checked>
+            <span class="checkbox-text">I enjoy this tool and want to help others discover it too by leaving a discrete reference</span>
+          </label>
+        </div>
+        <div class="watermark-checkbox-inline terms-checkbox-inline desktop-terms">
+          <label class="checkbox-label">
+            <input type="checkbox" id="termsAcceptanceCheckboxDesktop" class="terms-checkbox-sync">
+            <span class="checkbox-text">
+              I have read and accept
+              <a href="/terms-and-conditions.html" target="_blank" rel="noopener noreferrer">Terms &amp; Privacy Policy</a>
+              <span class="checkbox-required-star" aria-hidden="true">*</span>
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <div class="control-section desktop-export-buttons">
+        <div class="export-row">
+          <button id="previewPdfBtnDesktop" class="btn btn-success preview-pdf-btn export-btn-sync" disabled>
+            <i class="fas fa-eye"></i> PDF Preview &amp; Download
+          </button>
+          <button id="exportHtmlBtnDesktop" class="btn btn-info export-html-btn export-btn-sync" disabled>
+            <i class="fas fa-file-code"></i> Export HTML
+          </button>
+          <button id="exportJsonBtnDesktop" class="btn btn-neutral json-action-btn export-json-btn export-btn-sync" disabled>
+            <i class="fas fa-code"></i> Export JSON
+          </button>
+        </div>
+      </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="preview-header">
+        <div class="appearance-toolbar">
+          <div class="form-group stacked-form">
+            <label for="themeSelect" class="stacked-label">Theme</label>
+            <div class="stacked-input">
+              <select id="themeSelect" class="select-input theme-select-native" aria-hidden="true" tabindex="-1">
+              </select>
+              <div class="dropup" id="themeDropup">
+                <button type="button" class="dropup-button" id="themeDropupButton" aria-haspopup="listbox" aria-expanded="false">
+                  <span id="themeDropupLabel"></span>
+                  <i class="fas fa-chevron-down dropup-icon" aria-hidden="true"></i>
+                </button>
+                <div class="dropup-menu" id="themeDropupMenu" role="listbox" aria-labelledby="themeDropupButton"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group stacked-form" id="colorGroup" style="display: none;">
+            <label for="colorSelect" class="stacked-label">Color</label>
+            <div class="stacked-input">
+              <select id="colorSelect" class="select-input color-select-native" aria-hidden="true" tabindex="-1">
+              </select>
+              <div class="dropup color-dropup" id="colorDropup">
+                <button type="button" class="dropup-button" id="colorDropupButton" aria-haspopup="listbox" aria-expanded="false">
+                  <span id="colorDropupLabel"></span>
+                  <span class="dropup-swatch" id="colorDropupSwatch" aria-hidden="true"></span>
+                  <i class="fas fa-chevron-down dropup-icon" aria-hidden="true"></i>
+                </button>
+                <div class="dropup-menu" id="colorDropupMenu" role="listbox" aria-labelledby="colorDropupButton"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="previewStatus" class="preview-status"></div>
+      </div>
+
+      <div class="preview-container" id="previewContainer">
+        <div class="preview-placeholder">
+          <i class="fas fa-file-alt"></i>
+          <p>Load the demo template or import you own JSON</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Terms & Export Buttons (repositioned for mobile) -->
+    <div class="mobile-preview-actions">
+      <div class="control-section appearance-section">
+        <div class="watermark-checkbox-inline terms-checkbox-inline">
+          <label class="checkbox-label">
+            <input type="checkbox" id="termsAcceptanceCheckbox">
+            <span class="checkbox-text">
+              I have read and accept
+              <a href="/terms-and-conditions.html" target="_blank" rel="noopener noreferrer">Terms &amp; Privacy Policy</a>
+              <span class="checkbox-required-star" aria-hidden="true">*</span>
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <div class="control-section">
+        <div class="export-row">
+          <button id="previewPdfBtn" class="btn btn-success preview-pdf-btn" disabled>
+            <i class="fas fa-eye"></i> PDF Preview &amp; Download
+          </button>
+          <button id="exportHtmlBtn" class="btn btn-info export-html-btn" disabled>
+            <i class="fas fa-file-code"></i> Export HTML
+          </button>
+          <button id="exportJsonBtn" class="btn btn-neutral json-action-btn export-json-btn" disabled>
+            <i class="fas fa-code"></i> Export JSON
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Projects Management Modal -->
+  <div id="projectsModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>
+          <span id="projectsModalTitle">🚀 Side Projects</span>
+          <button class="btn-rename-section-modal" id="renameProjectsSectionBtn" title="Rename section">
+            <i class="fas fa-pen"></i>
+          </button>
+        </h2>
+        <button id="closeProjectsModalBtn" class="btn-icon modal-close" title="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="projects-list-container">
+          <div id="projectsList" class="projects-list">
+            <!-- Projects will be populated here -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="modal-footer-left">
+          <button id="addProjectBtn" class="btn btn-primary btn-compact">
+            <i class="fas fa-plus"></i> Add new entry
+          </button>
+        </div>
+        <div class="modal-footer-right">
+          <button id="closeProjectsModalFooterBtn" class="btn btn-success">
+            <i class="fas fa-check"></i> Done
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project Form Modal -->
+  <div id="projectFormModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>
+          <i class="fas fa-code-branch"></i>
+          <span id="projectFormTitle">Edit Project</span>
+        </h2>
+        <button id="closeProjectFormBtn" class="btn-icon modal-close" title="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="projectFormError" class="modal-error-message"></div>
+        <form id="projectForm" class="experience-form">
+          <div class="form-field">
+            <label for="projectName">Project Name *</label>
+            <input type="text" id="projectName" required>
+          </div>
+          <div class="form-field">
+            <label for="projectDescription">Description (optional)</label>
+            <textarea id="projectDescription" rows="3"></textarea>
+          </div>
+          <div class="form-field">
+            <label for="projectTechnologies">Technologies (optional)</label>
+            <input type="text" id="projectTechnologies">
+          </div>
+          <div class="form-field">
+            <label for="projectLink">Project Link (optional)</label>
+            <input type="text" id="projectLink">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer modal-footer-form">
+        <div class="modal-footer-left">
+          <button id="cancelProjectFormBtn" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+        </div>
+        <div class="modal-footer-right">
+          <button id="saveProjectFormBtn" class="btn btn-success">
+            <i class="fas fa-check"></i> Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Skills Management Modal -->
+  <div id="skillsModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>
+          <span id="skillsModalTitle">💡 Skills</span>
+          <button class="btn-rename-section-modal" id="renameSkillsSectionBtn" title="Rename section">
+            <i class="fas fa-pen"></i>
+          </button>
+        </h2>
+        <button id="closeSkillsModalBtn" class="btn-icon modal-close" title="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="skills-list-container">
+          <div id="skillsList" class="skills-list">
+            <!-- Skills will be populated here -->
+          </div>
+          <div class="skills-controls-row">
+            <div id="skillsWeightsPanel" class="skills-weights-panel">
+              <!-- Inline weight controls will be populated here -->
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="modal-footer-left">
+          <button id="addSkillBtn" class="btn btn-primary btn-compact">
+            <i class="fas fa-plus"></i> Add skill group
+          </button>
+        </div>
+        <div class="modal-footer-right">
+          <button id="closeSkillsModalFooterBtn" class="btn btn-success">
+            <i class="fas fa-check"></i> Done
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Skill Form Modal -->
+  <div id="skillFormModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>
+          <i class="fas fa-code"></i>
+          <span id="skillFormTitle">Add skill group</span>
+        </h2>
+        <button id="closeSkillFormBtn" class="btn-icon modal-close" title="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="skillFormError" class="modal-error-message"></div>
+        <form id="skillForm" class="experience-form skills-form">
+          <div class="skill-group-layout">
+            <div class="form-field skill-group-name">
+              <label for="skillCategoryName">Group name *</label>
+              <input type="text" id="skillCategoryName" required>
+            </div>
+            <div class="skill-group-action">
+              <button type="button" id="addSkillItemBtn" class="btn btn-secondary btn-small">
+                <i class="fas fa-plus"></i> Add another skill
+              </button>
+            </div>
+          </div>
+
+          <div class="form-field skill-items-field">
+            <label>Skills in this group *</label>
+            <div id="skillItemsList" class="skill-items-list">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer modal-footer-form">
+        <div class="modal-footer-left">
+          <button id="cancelSkillFormBtn" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+        </div>
+        <div class="modal-footer-right">
+          <button id="saveSkillFormBtn" class="btn btn-success">
+            <i class="fas fa-check"></i> Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Experience Management Modal -->
+  <div id="experienceModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>
+          <span id="experienceModalTitle">💼 Experience</span>
+          <button class="btn-rename-section-modal" id="renameExperienceSectionBtn" title="Rename section">
+            <i class="fas fa-pen"></i>
+          </button>
+        </h2>
+        <button id="closeExperienceModalBtn" class="btn-icon modal-close" title="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="experience-list-container">
+          <div id="experienceList" class="experience-list">
+            <!-- Experience items will be populated here -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="modal-footer-left">
+          <button id="addExperienceBtn" class="btn btn-primary btn-compact">
+            <i class="fas fa-plus"></i> Add new entry
+          </button>
+        </div>
+        <div class="modal-footer-right">
+          <button id="closeExperienceModalFooterBtn" class="btn btn-success">
+            <i class="fas fa-check"></i> Done
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Education Management Modal -->
+  <div id="educationModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>
+          <span id="educationModalTitle">🎓 Education</span>
+          <button class="btn-rename-section-modal" id="renameEducationSectionBtn" title="Rename section">
+            <i class="fas fa-pen"></i>
+          </button>
+        </h2>
+        <button id="closeEducationModalBtn" class="btn-icon modal-close" title="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="experience-list-container">
+          <div id="educationList" class="experience-list">
+            <!-- Education items will be populated here -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="modal-footer-left">
+          <button id="addEducationBtn" class="btn btn-primary btn-compact">
+            <i class="fas fa-plus"></i> Add new entry
+          </button>
+        </div>
+        <div class="modal-footer-right">
+          <button id="closeEducationModalFooterBtn" class="btn btn-success">
+            <i class="fas fa-check"></i> Done
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Education Form Modal -->
+  <div id="educationFormModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>
+          <i class="fas fa-graduation-cap"></i>
+          <span id="educationFormTitle">Edit Education</span>
+        </h2>
+        <span id="educationDateWarning" class="date-validation-warning"></span>
+        <button id="closeEducationFormBtn" class="btn-icon modal-close" title="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="educationFormError" class="modal-error-message"></div>
+        <form id="educationForm" class="experience-form">
+          <div class="form-row">
+            <div class="form-field">
+              <label for="edDegree">Field of Study *</label>
+              <input type="text" id="edDegree" required placeholder="e.g., Computer Science">
+            </div>
+            <div class="form-field">
+              <label for="edLevel">Degree Level *</label>
+              <input type="text" id="edLevel" required placeholder="e.g., Bachelor studies">
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="edInstitution">Institution *</label>
+            <input type="text" id="edInstitution" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="edStartDateYear">Start Date *</label>
+              <div class="date-input-group">
+                <input type="text" id="edStartDateYear" class="date-part-year" required placeholder="YYYY" maxlength="4" pattern="\d{4}">
+                <span class="date-separator">-</span>
+                <input type="text" id="edStartDateMonth" class="date-part-month" required placeholder="MM" maxlength="2" pattern="\d{2}">
+              </div>
+            </div>
+            <div class="form-field">
+              <label for="edGraduationDateYear">Graduation Date</label>
+              <div class="date-input-group">
+                <input type="text" id="edGraduationDateYear" class="date-part-year" placeholder="YYYY" maxlength="4" pattern="\d{4}">
+                <span class="date-separator">-</span>
+                <input type="text" id="edGraduationDateMonth" class="date-part-month" placeholder="MM" maxlength="2" pattern="\d{2}">
+              </div>
+              <label class="checkbox-label">
+                <input type="checkbox" id="edStillStudying" class="date-nullable-checkbox">
+                <span>Still studying</span>
+              </label>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer modal-footer-form">
+        <div class="modal-footer-left">
+          <button id="cancelEducationFormBtn" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+        </div>
+        <div class="modal-footer-right">
+          <button id="saveEducationFormBtn" class="btn btn-success">
+            <i class="fas fa-check"></i> Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Experience Form Modal -->
+  <div id="experienceFormModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>
+          <i class="fas fa-briefcase"></i>
+          <span id="experienceFormTitle">Professional Experience</span>
+        </h2>
+        <span id="experienceDateWarning" class="date-validation-warning"></span>
+        <button id="closeExperienceFormBtn" class="btn-icon modal-close" title="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="experienceFormError" class="modal-error-message"></div>
+        <form id="experienceForm" class="experience-form">
+          <div class="form-row">
+            <div class="form-field">
+              <label for="expPosition">Position *</label>
+              <input type="text" id="expPosition" required>
+            </div>
+            <div class="form-field">
+              <label for="expCompany">Company *</label>
+              <input type="text" id="expCompany" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="expStartDateYear">Start Date *</label>
+              <div class="date-input-group">
+                <input type="text" id="expStartDateYear" class="date-part-year" required placeholder="YYYY" maxlength="4" pattern="\d{4}">
+                <span class="date-separator">-</span>
+                <input type="text" id="expStartDateMonth" class="date-part-month" required placeholder="MM" maxlength="2" pattern="\d{2}">
+              </div>
+            </div>
+            <div class="form-field">
+              <label for="expEndDateYear">End Date</label>
+              <div class="date-input-group">
+                <input type="text" id="expEndDateYear" class="date-part-year" placeholder="YYYY" maxlength="4" pattern="\d{4}">
+                <span class="date-separator">-</span>
+                <input type="text" id="expEndDateMonth" class="date-part-month" placeholder="MM" maxlength="2" pattern="\d{2}">
+              </div>
+              <label class="checkbox-label">
+                <input type="checkbox" id="expStillWorking" class="date-nullable-checkbox">
+                <span>Still working</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-field responsibilities-field">
+            <div class="field-header">
+              <label>Responsibilities</label>
+              <button type="button" id="addResponsibilityBtn" class="btn btn-secondary btn-small">
+                <i class="fas fa-plus"></i> Add Responsibility
+              </button>
+            </div>
+            <div id="responsibilitiesList" class="responsibilities-list">
+              <!-- Responsibilities will be populated here -->
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer modal-footer-form">
+        <div class="modal-footer-left">
+          <button id="cancelExperienceFormBtn" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+        </div>
+        <div class="modal-footer-right">
+          <button id="saveExperienceFormBtn" class="btn btn-success">
+            <i class="fas fa-check"></i> Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Personal Information Form Modal -->
+  <div id="personalInfoModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>
+          <i class="fas fa-user"></i>
+          <span>Personal Information</span>
+        </h2>
+        <button id="closePersonalInfoModalBtn" class="btn-icon modal-close" title="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="personalInfoFormError" class="modal-error-message"></div>
+        <form id="personalInfoForm" class="personal-info-form">
+          <div class="form-row">
+            <div class="form-field">
+              <label for="piName">Full Name *</label>
+              <input type="text" id="piName" required>
+            </div>
+            <div class="form-field">
+              <label for="piTitle">Job Title</label>
+              <input type="text" id="piTitle">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="piEmail">Email address</label>
+              <input type="email" id="piEmail">
+            </div>
+            <div class="form-field">
+              <label for="piPhone">Phone number</label>
+              <input type="text" id="piPhone">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="piLinkedin">LinkedIn (optional)</label>
+              <div class="input-group">
+                <span class="input-group-prepend">linkedin.com/in/</span>
+                <input type="text" id="piLinkedin">
+              </div>
+            </div>
+            <div class="form-field">
+              <label for="piGithub">GitHub (optional)</label>
+              <div class="input-group">
+                <span class="input-group-prepend">github.com/</span>
+                <input type="text" id="piGithub">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="piWebsite">Website (optional)</label>
+              <input type="text" id="piWebsite">
+            </div>
+            <div class="form-field">
+              <label for="piLocation">Location (optional)</label>
+              <input type="text" id="piLocation">
+            </div>
+          </div>
+
+          <div class="form-field full-width-field">
+            <label for="piBio">Bio (optional)</label>
+            <textarea id="piBio" rows="4"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer modal-footer-form">
+        <div class="modal-footer-left">
+          <button id="cancelPersonalInfoBtn" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+        </div>
+        <div class="modal-footer-right">
+          <button id="savePersonalInfoBtn" class="btn btn-success">
+            <i class="fas fa-check"></i> Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GDPR Clause Editor Modal -->
+  <div id="gdprModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>
+          <i class="fas fa-shield-alt"></i>
+          <span>GDPR Clause</span>
+        </h2>
+        <button id="closeGdprModalBtn" class="btn-icon modal-close" title="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="gdprFormError" class="modal-error-message"></div>
+        <div class="bio-editor-container">
+          <label for="gdprTextarea">Enter the GDPR consent clause to include at the bottom of your resume:</label>
+          <textarea id="gdprTextarea" class="bio-textarea"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer modal-footer-form">
+        <div class="modal-footer-left">
+          <button id="cancelGdprBtn" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+        </div>
+        <div class="modal-footer-right">
+          <button id="saveGdprBtn" class="btn btn-success">
+            <i class="fas fa-check"></i> Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF Preview Modal -->
+  <div id="pdfPreviewModal" class="modal pdf-preview-modal">
+    <div class="modal-content pdf-preview-content">
+      <div class="modal-header pdf-preview-header">
+        <div class="pdf-preview-title-group">
+          <h2>
+            <i class="fas fa-file-pdf"></i>
+            <span>PDF Preview</span>
+          </h2>
+          <button id="downloadPdfPreviewBtn" class="btn btn-success pdf-preview-download-btn" type="button" disabled>
+            <i class="fas fa-download"></i>
+            <span>Download PDF</span>
+          </button>
+        </div>
+        <button id="closePdfPreviewBtn" class="btn-icon modal-close" title="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body pdf-preview-body">
+        <div id="pdfPreviewContainer" class="pdf-preview-iframe-container">
+          <!-- PDF preview iframe will be inserted here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section Editor Modal -->
+  <div id="jsonEditorModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>
+          <i id="modalSectionIcon" class="fas fa-code"></i>
+          <span id="modalSectionTitle">Edit Section</span>
+        </h2>
+        <button id="closeModalBtn" class="btn-icon modal-close" title="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="expandedJsonEditor"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="formatJsonBtn" class="btn btn-secondary">
+          <i class="fas fa-align-left"></i> Format and Validate JSON
+        </button>
+        <div class="modal-actions">
+          <button id="cancelModalBtn" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+        <button id="saveModalBtn" class="btn btn-success">
+          <i class="fas fa-check"></i> Save Changes
+        </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global Modal Backdrop -->
+  <div id="modal-backdrop"></div>
+
+  <!-- CodeMirror JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/foldcode.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/foldgutter.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/brace-fold.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    // Configure PDF.js worker
+    if (typeof pdfjsLib !== 'undefined') {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+  </script>
+  <script src="js/turnstile.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/stateManagement.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/preview.js"></script>
+  <script src="js/sections.js"></script>
+  <script src="js/pdfPreview.js"></script>
+  <script src="js/events.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+node_modules
+npm-debug.log
+output
+previews
+.git
+.gitignore
+README.md
+.env
+*.md
+temp/*
+!temp/.gitkeep
+src/database/*.db

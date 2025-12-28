@@ -1,0 +1,29 @@
+{
+  "name": "cre8ive.cv Resume Creator",
+  "short_name": "cre8ive.cv",
+  "description": "Privacy-first resume creator for IT professionals",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#10141c",
+  "theme_color": "#10141c",
+  "icons": [
+    {
+      "src": "assets/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/logo-rocket-circle.png",
+      "sizes": "1080x1080",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

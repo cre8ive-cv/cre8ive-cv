@@ -1,0 +1,35 @@
+{
+  "name": "cre8ive.cv",
+  "version": "1.0.0",
+  "description": "Minimal cre8ive.cv app from JSON to HTML and PDF",
+  "main": "src/index.js",
+  "scripts": {
+    "generate": "node src/index.js",
+    "start": "node src/index.js",
+    "start:web": "node src/server.js",
+    "dev:web": "nodemon src/server.js",
+    "gallery:update": "node generate-gallery-data.js"
+  },
+  "keywords": [
+    "resume",
+    "cv",
+    "pdf",
+    "html",
+    "generator"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^12.5.0",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.2",
+    "puppeteer": "^24.33.0",
+    "puppeteer-cluster": "^0.25.0",
+    "sanitize-html": "^2.13.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
