@@ -40,7 +40,7 @@ function getStyles() {
       line-height: 1.6;
       color: #1a1a1a;
       background: #fff;
-      padding: 40px;
+      padding: 20px 40px 40px;
       max-width: 900px;
       margin: 0 auto;
       display: flex;
@@ -58,7 +58,7 @@ function getStyles() {
 
     header {
       border-bottom: 2px solid #1a1a1a;
-      padding-bottom: 20px;
+      padding-bottom: 12px;
       margin-bottom: 24px;
       position: relative;
       padding-left: 15px;
@@ -77,7 +77,7 @@ function getStyles() {
 
     .header-name {
       margin-right: 0;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
       grid-column: 1;
       grid-row: 1;
     }
@@ -90,6 +90,7 @@ function getStyles() {
       align-items: flex-start;
       justify-content: flex-end;
       padding-left: var(--header-photo-gap);
+      margin-top: -5px;
     }
 
     .header-bio {
@@ -104,8 +105,8 @@ function getStyles() {
     header.has-photo .header-bio::before {
       content: '';
       float: right;
-      width: calc(var(--header-photo-size) + var(--header-photo-gap) - 30px);
-      height: calc(var(--header-photo-size) - 10px);
+      width: calc(var(--header-photo-size) + var(--header-photo-gap) + 8px);
+      height: calc(var(--header-photo-size) + 22px);
       shape-outside: margin-box;
       /* Pull up to align with photo at header top - base case (name only + no contacts) */
       margin-top: -70px;
@@ -148,7 +149,7 @@ function getStyles() {
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 15px;
+      font-size: 13px;
       color: #333;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-width: 0;
@@ -189,23 +190,26 @@ function getStyles() {
     }
 
     h1 {
-      font-size: 36px;
+      font-size: 34px;
       color: #1a1a1a;
       margin-bottom: 0;
       font-weight: 700;
       letter-spacing: -0.5px;
+      line-height: 1;
     }
 
     .title {
-      font-size: 20px;
+      font-size: 18px;
       color: #4a4a4a;
-      margin-bottom: 0;
+      margin-bottom: 5px;
+      line-height: 1.1;
+      margin-top: 4px;
       font-weight: 400;
       font-style: italic;
     }
 
     .bio {
-      font-size: 15px;
+      font-size: 13px;
       line-height: 1.8;
       color: #333;
       margin-top: 0;
@@ -467,11 +471,11 @@ function getStyles() {
       }
 
       h1 {
-        font-size: 28px;
+        font-size: 26px;
       }
 
       .title {
-        font-size: 16px;
+        font-size: 14px;
       }
 
       h2 {
@@ -485,7 +489,7 @@ function getStyles() {
 
       .contact-item {
         width: 100%;
-        font-size: 14px;
+        font-size: 12px;
       }
 
       .projects-grid {
@@ -548,11 +552,11 @@ function getStyles() {
       }
 
       h1 {
-        font-size: 24px;
+        font-size: 22px;
       }
 
       .title {
-        font-size: 14px;
+        font-size: 12px;
       }
 
       h2 {
@@ -571,7 +575,7 @@ function getStyles() {
 
     @media print {
       body {
-        padding: 20px;
+        padding: 5px 20px 20px;
         display: flex;
         flex-direction: column;
         min-height: 100vh;
@@ -590,6 +594,10 @@ function getStyles() {
         min-height: 180px !important;
         print-color-adjust: exact;
         -webkit-print-color-adjust: exact;
+      }
+
+      .header-photo {
+        margin-top: 0;
       }
 
       h2 {
