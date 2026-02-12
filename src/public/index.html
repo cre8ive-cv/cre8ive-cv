@@ -126,10 +126,26 @@
             <p class="logo-subtitle">Your ultimate resume creator</p>
           </div>
           <div class="header-actions">
-            <a class="logo-link gallery-link" href="/gallery">
-              <i class="fas fa-images"></i>
-              <span class="logo-link-text">Templates Gallery</span>
-            </a>
+            <div class="gallery-dropdown-wrapper" id="galleryDropdownWrapper">
+              <a class="logo-link gallery-link" href="/gallery" aria-haspopup="true">
+                <i class="fas fa-images"></i>
+                <span class="logo-link-text">Templates Gallery</span>
+                <i class="fas fa-chevron-down gallery-link-chevron" aria-hidden="true"></i>
+              </a>
+              <div class="gallery-dropdown" id="galleryDropdown" role="menu" aria-label="Choose a template">
+                <div class="gallery-dropdown-header">
+                  <span class="gallery-dropdown-title">Templates</span>
+                </div>
+                <div class="gallery-dropdown-grid" id="galleryDropdownGrid">
+                  <!-- Populated by JS on first hover -->
+                </div>
+                <a href="/gallery" class="gallery-dropdown-footer" tabindex="0">
+                  <i class="fas fa-th-large"></i>
+                  <span>Browse full gallery</span>
+                  <i class="fas fa-arrow-right gallery-dropdown-footer-arrow"></i>
+                </a>
+              </div>
+            </div>
             <label for="fileInputMobile" class="btn btn-neutral json-action-btn file-btn mobile-import-json-btn">
               <i class="fas fa-code"></i>
               <span class="mobile-import-text">Import JSON</span>
@@ -930,6 +946,7 @@
   <script src="js/sections.js"></script>
   <script src="js/pdfPreview.js"></script>
   <script src="js/events.js"></script>
+  <script src="js/gallery-dropdown.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
