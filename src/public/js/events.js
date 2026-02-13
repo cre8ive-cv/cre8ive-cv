@@ -41,6 +41,7 @@ function setupEventListeners() {
     });
   }
   elements.showWatermarkCheckbox.addEventListener('change', handleWatermarkChange);
+  elements.tightLayoutCheckbox.addEventListener('change', handleTightLayoutChange);
   if (elements.termsAcceptanceCheckbox) {
     elements.termsAcceptanceCheckbox.addEventListener('change', handleTermsAcceptanceChange);
   }

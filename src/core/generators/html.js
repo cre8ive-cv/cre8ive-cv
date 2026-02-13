@@ -152,7 +152,7 @@ function stripProtocol(url) {
   return url.replace(/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//, '');
 }
 
-function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, customSectionNames = {}, showWatermark = true, labels = {}) {
+function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, customSectionNames = {}, showWatermark = true, labels = {}, tightLayout = false) {
   if (!theme) {
     throw new Error('Theme is required to generate HTML.');
   }
@@ -257,7 +257,7 @@ function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, custo
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji">
   <style>${themeStyles}</style>
 </head>
-<body>
+<body${tightLayout ? ' class="tight-layout"' : ''}>
   <div class="content-wrapper">
     <header class="${headerClassList}">
       <div class="header-name">

@@ -1923,7 +1923,8 @@ body {
     transform: translateY(0);
   }
 
-  .header-actions .gallery-link {
+  .header-actions .gallery-link,
+  .header-actions .gallery-dropdown-wrapper {
     align-self: flex-start;
   }
 
@@ -1939,6 +1940,12 @@ body {
 
   .gallery-link-accent {
     font-size: 14px;
+  }
+
+  .logo-links-row .gallery-dropdown-wrapper {
+    flex: 0 0 auto;
+    width: auto;
+    max-width: max-content;
   }
 
   .logo-links-row .gallery-link {
@@ -1962,6 +1969,14 @@ body {
     white-space: nowrap;
   }
 
+  .logo-links-row .gallery-link-chevron {
+    display: none;
+  }
+
+  .gallery-dropdown {
+    display: none;
+  }
+
   .logo-links-row .source-link {
     padding: 4px 6px;
     gap: 3px;
@@ -1976,6 +1991,10 @@ body {
 
   .logo-links-row .source-link i {
     font-size: 16px;
+  }
+
+  #tightLayoutGroup {
+    display: none;
   }
 }
 

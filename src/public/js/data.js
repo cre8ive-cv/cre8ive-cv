@@ -507,6 +507,16 @@ async function handleWatermarkChange(event) {
   saveStateToLocalStorage();
 }
 
+async function handleTightLayoutChange(event) {
+  state.tightLayout = event.target.checked;
+
+  // Auto-generate preview
+  await autoGeneratePreview('tightLayout');
+
+  // Save to localStorage
+  saveStateToLocalStorage();
+}
+
 function handleTermsAcceptanceChange(event) {
   const checkbox = event?.target || elements.termsAcceptanceCheckbox || elements.termsAcceptanceCheckboxDesktop;
   state.termsAccepted = Boolean(checkbox?.checked);

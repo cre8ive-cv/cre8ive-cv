@@ -47,10 +47,10 @@ function getStyles(palette) {
 
     body {
       font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
-      line-height: 1.55;
+      line-height: 1.47;
       color: #222;
       background: #fff;
-      padding: 20px 40px 40px;
+      padding: 16px 34px 34px;
       max-width: 900px;
       margin: 0 auto;
       display: flex;
@@ -69,7 +69,7 @@ function getStyles(palette) {
     header {
       border-bottom: 3px solid transparent;
       padding-bottom: 12px;
-      margin-bottom: 30px;
+      margin-bottom: 24px;
       position: relative;
       display: grid;
       grid-template-columns: 1fr;
@@ -150,7 +150,7 @@ function getStyles(palette) {
       display: grid;
       grid-template-columns: minmax(0, 1.0fr) minmax(0, 1.0fr);
       width: 100%;
-      gap: 8px 12px;
+      gap: 6px 10px;
     }
 
     .contact-item {
@@ -197,7 +197,7 @@ function getStyles(palette) {
     }
 
     h1 {
-      font-size: 34px;
+      font-size: 31px;
       color: #1a1a1a;
       margin-bottom: 0;
       font-weight: 700;
@@ -206,7 +206,7 @@ function getStyles(palette) {
     }
 
     .title {
-      font-size: 18px;
+      font-size: 16px;
       color: #555;
       margin-bottom: 5px;
       font-weight: 500;
@@ -215,8 +215,8 @@ function getStyles(palette) {
     }
 
     .bio {
-      font-size: 13px;
-      line-height: 1.8;
+      font-size: 12px;
+      line-height: 1.65;
       color: #444;
       margin-top: 0;
       margin-bottom: 0;
@@ -224,16 +224,16 @@ function getStyles(palette) {
     }
 
     section {
-      margin-bottom: 30px;
+      margin-bottom: 24px;
     }
 
     h2 {
-      font-size: 22px;
+      font-size: 20px;
       color: #fff;
       background: ${palette.primary};
-      padding: 8px 15px;
+      padding: 7px 15px;
       margin-top: 0;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
       letter-spacing: 2px;
       font-weight: 600;
       page-break-after: avoid;
@@ -241,7 +241,7 @@ function getStyles(palette) {
     }
 
     .experience-item, .education-item, .project-item {
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       page-break-inside: avoid;
       padding-left: 15px;
       border-left: 3px solid ${palette.accent};
@@ -255,13 +255,13 @@ function getStyles(palette) {
     }
 
     .position, .degree, .project-name {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
       color: #222;
     }
 
     .company, .institution {
-      font-size: 16px;
+      font-size: 15px;
       color: ${palette.accent};
       margin-bottom: 3px;
       font-weight: 600;
@@ -274,34 +274,32 @@ function getStyles(palette) {
     }
 
     .date-location {
-      font-size: 16px;
+      font-size: 15px;
       color: ${palette.primary};
       font-style: italic;
       font-weight: 500;
-      padding: 4px 12px;
     }
 
     ul {
-      margin-left: 20px;
-      margin-top: 8px;
+      margin-left: 18px;
+      margin-top: 6px;
     }
 
     li {
-      margin-bottom: 5px;
+      margin-bottom: 4px;
       font-size: 14px;
       color: #444;
-      line-height: 1.6;
     }
 
     .skills-grid {
       display: flex;
       flex-wrap: nowrap;
-      gap: 15px;
+      gap: 12px;
     }
 
     .skill-category {
       background: #f5f5f5;
-      padding: 15px;
+      padding: 12px;
       border-radius: 0;
       border-left: 4px solid ${palette.accent};
       min-width: 0;
@@ -309,9 +307,9 @@ function getStyles(palette) {
     }
 
     .skill-category h3 {
-      font-size: 16px;
+      font-size: 15px;
       color: ${palette.primary};
-      margin-bottom: 8px;
+      margin-bottom: 7px;
       font-weight: 700;
       letter-spacing: 0.5px;
     }
@@ -319,12 +317,12 @@ function getStyles(palette) {
     .skill-tags {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px;
     }
 
     .skill-tag {
       background: #fff;
-      padding: 5px 12px;
+      padding: 4px 10px;
       border-radius: 0;
       font-size: 13px;
       color: #333;
@@ -354,15 +352,14 @@ function getStyles(palette) {
     .projects-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-      column-gap: 30px;
+      gap: 17px;
+      column-gap: 26px;
     }
 
     .project-description {
       font-size: 14px;
       color: #444;
       margin-bottom: 5px;
-      line-height: 1.6;
     }
 
     .technologies {
@@ -382,7 +379,7 @@ function getStyles(palette) {
 
     .gdpr-clause {
       padding-top: 3px;
-      border-top: 1px solid ${palette.primary};
+      border-top: none;
       font-size: 10px;
       color: #666;
       line-height: 1.4;
@@ -410,6 +407,112 @@ function getStyles(palette) {
 
     .watermark a:hover {
       text-decoration: underline;
+    }
+
+    @media (min-width: 701px) {
+      /* Tight layout overrides */
+      body.tight-layout {
+        line-height: 1.4;
+        padding: 12px 28px 28px;
+      }
+
+      body.tight-layout header {
+        margin-bottom: 18px;
+      }
+
+      body.tight-layout header.has-photo .header-bio::before {
+        height: calc(var(--header-photo-size) + 44px);
+      }
+
+      body.tight-layout h1 {
+        font-size: 28px;
+      }
+
+      body.tight-layout h2 {
+        font-size: 18px;
+        padding: 5px 15px;
+        margin-bottom: 10px;
+      }
+
+      body.tight-layout .title {
+        font-size: 15px;
+      }
+
+      body.tight-layout .bio {
+        font-size: 11px;
+        line-height: 1.5;
+      }
+
+      body.tight-layout section {
+        margin-bottom: 18px;
+      }
+
+      body.tight-layout .experience-item,
+      body.tight-layout .education-item,
+      body.tight-layout .project-item {
+        margin-bottom: 12px;
+      }
+
+      body.tight-layout .position,
+      body.tight-layout .degree,
+      body.tight-layout .project-name {
+        font-size: 15px;
+      }
+
+      body.tight-layout .company,
+      body.tight-layout .institution {
+        font-size: 14px;
+      }
+
+      body.tight-layout .date-location {
+        font-size: 13px;
+      }
+
+      body.tight-layout ul {
+        margin-top: 4px;
+        margin-left: 16px;
+      }
+
+      body.tight-layout li {
+        font-size: 13px;
+        margin-bottom: 3px;
+      }
+
+      body.tight-layout .contact-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 5px 8px;
+      }
+
+      body.tight-layout .contact-item {
+        font-size: 12px;
+      }
+
+      body.tight-layout .skills-grid {
+        gap: 10px;
+      }
+
+      body.tight-layout .skill-category {
+        padding: 10px;
+      }
+
+      body.tight-layout .skill-category h3 {
+        font-size: 14px;
+        margin-bottom: 6px;
+      }
+
+      body.tight-layout .skill-tags {
+        gap: 5px;
+      }
+
+      body.tight-layout .skill-tag {
+        padding: 3px 9px;
+        font-size: 12px;
+      }
+
+      body.tight-layout .projects-grid {
+        gap: 14px;
+        column-gap: 22px;
+      }
     }
 
     /* Mobile responsive styles */

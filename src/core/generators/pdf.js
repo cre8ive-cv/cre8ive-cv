@@ -99,135 +99,122 @@ async function generatePDF(htmlContent, page) {
       // Continue anyway - Font Awesome should still work
     }
 
+    // Switch to print media BEFORE measuring so that @media print CSS rules are
+    // active during both the measurement evaluate() and the final page.pdf() call.
+    // page.pdf() always renders in print mode — measuring in screen mode caused
+    // body padding and element heights to differ between measurement and render,
+    // leading to gdprWrapper overflowing the body by a few pixels and getting
+    // split across pages or pushed to a new page.
+    try {
+      await page.emulateMediaType('print');
+    } catch (err) {
+      console.warn('Failed to emulate print media type, GDPR positioning may be slightly off:', err.message);
+    }
+
     // SECURITY: Dynamic GDPR positioning with timeout to prevent infinite loops
     try {
       await Promise.race([
         page.evaluate(() => {
-      // A4 dimensions: 210mm x 297mm
-      // Thresholds for detecting which scenario applies (with buffer for variations)
-      const ONE_PAGE_THRESHOLD = 280; // mm (detection threshold)
-      const TWO_PAGE_THRESHOLD = 590; // mm (detection threshold)
-
-      // Actual body heights to ensure GDPR ends (not starts) at bottom of page
-      const ONE_PAGE_BODY_HEIGHT = 277; // mm (1 page minus margins)
-      const TWO_PAGE_BODY_HEIGHT = 568; // mm (2 pages minus margins)
+      // Page height in CSS pixels for A4 with margins top=20px, bottom=15px at 96 DPI.
+      // A4 = 297mm × (96px / 25.4mm) = 1122.52px; printable = 1122.52 − 20 − 15 = 1087.52px.
+      // Use 1087 (rounded down) — 0.52px buffer ensures body never overflows its page count.
+      // All arithmetic stays in integer pixels, avoiding mm→px conversion rounding errors.
+      const PAGE_HEIGHT_PX = 1087;
 
       const body = document.body;
       const gdprWrapper = document.querySelector('.gdpr-watermark-wrapper');
+      const contentWrapper = document.querySelector('.content-wrapper');
 
-      if (!gdprWrapper) {
-        return;
-      }
+      if (!gdprWrapper) return;
 
-      // Prepare body for measurement
+      // --- MEASUREMENT PHASE ---
+      // Use block layout with auto height so scrollHeight is reliable.
+      // Zero paddingBottom so measurement matches the render phase.
       body.style.display = 'block';
       body.style.minHeight = 'auto';
       body.style.height = 'auto';
       body.style.position = 'relative';
       body.style.overflow = 'visible';
       body.style.boxSizing = 'border-box';
+      body.style.paddingBottom = '0';
 
-      // Style content wrapper
-      const contentWrapper = document.querySelector('.content-wrapper');
       if (contentWrapper) {
         contentWrapper.style.display = 'block';
         contentWrapper.style.flex = 'none';
       }
 
-      // Temporarily hide GDPR wrapper to measure content height
+      // Measure content height without the footer
       gdprWrapper.style.display = 'none';
-      const contentHeight = body.scrollHeight;
+      const contentHeightPx = body.scrollHeight;
 
-      // Show GDPR wrapper and measure total height
+      // Measure the footer block's natural height
       gdprWrapper.style.display = 'block';
-      const FOOTER_PULL_PX = 18;
-      gdprWrapper.style.position = 'relative';
+      gdprWrapper.style.position = 'static';
       gdprWrapper.style.margin = '0';
-      gdprWrapper.style.marginBottom = `-${FOOTER_PULL_PX}px`;
+      const gdprHeightPx = gdprWrapper.offsetHeight;
 
-      const totalHeight = body.scrollHeight;
-      const gdprHeight = totalHeight - contentHeight;
+      // --- PAGE COUNT CALCULATION ---
+      // How much vertical space remains on the last page of content?
+      const contentRemainder = contentHeightPx % PAGE_HEIGHT_PX;
+      const spaceOnLastPage = contentRemainder === 0 ? PAGE_HEIGHT_PX : (PAGE_HEIGHT_PX - contentRemainder);
+      const gdprFitsOnLastPage = gdprHeightPx <= spaceOnLastPage;
 
-      // Convert pixels to mm (96 DPI: 1mm ≈ 3.78px)
-      const contentHeightMm = contentHeight / 3.78;
-      const gdprHeightMm = gdprHeight / 3.78;
-      let totalHeightMm = totalHeight / 3.78;
-
-      // Page dimensions
-      const FIRST_PAGE_HEIGHT_MM = 277;
-      const ADDITIONAL_PAGE_HEIGHT_MM = 291;
-      const OVERLAP_SAFETY_MARGIN = -20; // !!! - GDPR overlap parameter
-
-      // Calculate how much space is left on the page where content ends
-      let spaceLeftOnLastPage;
-      if (contentHeightMm <= FIRST_PAGE_HEIGHT_MM) {
-        // Content is on page 1
-        spaceLeftOnLastPage = FIRST_PAGE_HEIGHT_MM - contentHeightMm;
+      let numberOfPages;
+      if (gdprFitsOnLastPage) {
+        numberOfPages = Math.ceil((contentHeightPx + gdprHeightPx) / PAGE_HEIGHT_PX) || 1;
       } else {
-        // Content spans multiple pages
-        const remainingAfterFirstPage = contentHeightMm - FIRST_PAGE_HEIGHT_MM;
-        const spaceUsedOnLastPage = remainingAfterFirstPage % ADDITIONAL_PAGE_HEIGHT_MM;
-        spaceLeftOnLastPage = ADDITIONAL_PAGE_HEIGHT_MM - spaceUsedOnLastPage;
+        numberOfPages = Math.ceil(contentHeightPx / PAGE_HEIGHT_PX) + 1;
+      }
+      numberOfPages = Math.max(1, numberOfPages);
+
+      const bodyHeightPx = numberOfPages * PAGE_HEIGHT_PX;
+
+      // --- RENDER PHASE ---
+      // Strategy: flex column layout where content-wrapper grows (flex:1) to fill
+      // all space above gdprWrapper, anchoring gdpr to the exact bottom of the body.
+      //
+      // WHY FLEX INSTEAD OF A SPACER DIV:
+      // The previous approach inserted a fixed-height spacer calculated in mm, then
+      // set body height in mm. Converting scrollHeight (px) → mm → CSS mm string →
+      // back to px by Chromium introduced rounding errors that could push gdpr past
+      // a page boundary. Using integer pixels end-to-end (body height, flex sizing)
+      // eliminates that error source entirely.
+      //
+      // WHY THIS WORKS: bodyHeightPx = N × 1087px. Each page's printable height is
+      // 1087.52px, so N × 1087px always fits within N pages with 0.52px to spare.
+      // The flex engine expands content-wrapper to exactly (bodyHeightPx − gdprHeightPx),
+      // placing gdpr at the precise bottom of the body without any unit conversion.
+      body.style.display = 'flex';
+      body.style.flexDirection = 'column';
+      body.style.height = bodyHeightPx + 'px';
+      body.style.minHeight = '0';
+      body.style.paddingBottom = '0';
+      // box-sizing: border-box must stay so that the explicit height covers padding too
+      // (already set above in the measurement phase and unchanged here)
+
+      if (contentWrapper) {
+        contentWrapper.style.flex = '1';
+        contentWrapper.style.display = 'block';
       }
 
-      // Check if GDPR would overlap with content - if so, force page break
-      let needsPageBreak = false;
-      if (gdprHeightMm + OVERLAP_SAFETY_MARGIN > spaceLeftOnLastPage) {
-        // Not enough space - force GDPR to next page to prevent overlap
-        gdprWrapper.style.pageBreakBefore = 'always';
-        needsPageBreak = true;
+      gdprWrapper.style.position = 'static';
+      gdprWrapper.style.margin = '0';
+      gdprWrapper.style.flexShrink = '0';
+      gdprWrapper.style.breakBefore = 'avoid';
+      gdprWrapper.style.pageBreakBefore = 'avoid';
+      gdprWrapper.style.breakInside = 'avoid';
+      gdprWrapper.style.pageBreakInside = 'avoid';
 
-        // When page break is forced, GDPR moves to a completely new page
-        // Calculate content pages
-        const contentPages = Math.ceil(contentHeightMm <= FIRST_PAGE_HEIGHT_MM ? 1 :
-          1 + (contentHeightMm - FIRST_PAGE_HEIGHT_MM) / ADDITIONAL_PAGE_HEIGHT_MM);
-
-        // Add FULL additional page for GDPR (not just GDPR height)
-        // This ensures we move to the next page scenario
-        const contentHeightTotal = contentPages === 1 ? FIRST_PAGE_HEIGHT_MM :
-          FIRST_PAGE_HEIGHT_MM + (contentPages - 1) * ADDITIONAL_PAGE_HEIGHT_MM;
-
-        // Add a full additional page height to force next scenario
-        totalHeightMm = contentHeightTotal + ADDITIONAL_PAGE_HEIGHT_MM;
+      // Prevent any break between the two child elements inside the wrapper
+      const gdprClause = gdprWrapper.querySelector('.gdpr-clause');
+      const watermark = gdprWrapper.querySelector('.watermark');
+      if (gdprClause) {
+        gdprClause.style.breakAfter = 'avoid';
+        gdprClause.style.pageBreakAfter = 'avoid';
       }
-
-      // Determine positioning strategy based on total content height
-      if (totalHeightMm <= ONE_PAGE_THRESHOLD) {
-        // SCENARIO 1: Content fits on one page - fix GDPR wrapper at bottom of page 1
-        body.style.height = ONE_PAGE_BODY_HEIGHT + 'mm';
-        gdprWrapper.style.position = 'absolute';
-        gdprWrapper.style.bottom = `-${FOOTER_PULL_PX}px`;
-        gdprWrapper.style.left = '0';
-        gdprWrapper.style.right = '0';
-      } else if (totalHeightMm <= TWO_PAGE_THRESHOLD) {
-        // SCENARIO 2: Content fits on two pages - fix GDPR wrapper at bottom of page 2
-        body.style.height = TWO_PAGE_BODY_HEIGHT + 'mm';
-        gdprWrapper.style.position = 'absolute';
-        gdprWrapper.style.bottom = `-${FOOTER_PULL_PX}px`;
-        gdprWrapper.style.left = '0';
-        gdprWrapper.style.right = '0';
-      } else {
-        // SCENARIO 3: Content exceeds two pages - place GDPR wrapper at bottom of last page
-        // Calculate number of pages needed for content + GDPR
-        let numberOfPages;
-        if (totalHeightMm <= FIRST_PAGE_HEIGHT_MM) {
-          numberOfPages = 1;
-        } else {
-          const remainingHeight = totalHeightMm - FIRST_PAGE_HEIGHT_MM;
-          numberOfPages = 1 + Math.ceil(remainingHeight / ADDITIONAL_PAGE_HEIGHT_MM);
-        }
-
-        // Calculate body height to match number of pages
-        const bodyHeightMm = numberOfPages === 1
-          ? FIRST_PAGE_HEIGHT_MM
-          : FIRST_PAGE_HEIGHT_MM + (numberOfPages - 1) * ADDITIONAL_PAGE_HEIGHT_MM;
-
-        // Set body height to match number of pages and position GDPR at bottom
-        body.style.height = bodyHeightMm + 'mm';
-        gdprWrapper.style.position = 'absolute';
-        gdprWrapper.style.bottom = `-${FOOTER_PULL_PX}px`;
-        gdprWrapper.style.left = '0';
-        gdprWrapper.style.right = '0';
+      if (watermark) {
+        watermark.style.breakBefore = 'avoid';
+        watermark.style.pageBreakBefore = 'avoid';
       }
     }),
         new Promise((_, reject) =>
@@ -247,7 +234,7 @@ async function generatePDF(htmlContent, page) {
       margin: {
         top: '20px',
         right: '20px',
-        bottom: '0px',
+        bottom: '15px',
         left: '20px'
       }
     }),

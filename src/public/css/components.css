@@ -326,8 +326,8 @@
   align-items: center;
   justify-content: center;
   gap: 14px;
-  flex-wrap: wrap;
-  max-width: 460px;
+  flex-wrap: nowrap;
+  max-width: 560px;
   width: 100%;
   z-index: 1;
 }
@@ -352,6 +352,67 @@
 
 .appearance-toolbar .color-dropup {
   width: 170px;
+}
+
+/* Tight layout toggle */
+.tight-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-secondary);
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 0.2s;
+  white-space: nowrap;
+}
+
+.tight-toggle:hover {
+  border-color: var(--accent-primary);
+}
+
+.tight-toggle input[type="checkbox"] {
+  display: none;
+}
+
+.tight-toggle-track {
+  position: relative;
+  width: 30px;
+  height: 16px;
+  background: var(--bg-medium);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  transition: background 0.2s, border-color 0.2s;
+  flex-shrink: 0;
+}
+
+.tight-toggle-track::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--text-secondary);
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.tight-toggle input[type="checkbox"]:checked + .tight-toggle-track {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.tight-toggle input[type="checkbox"]:checked + .tight-toggle-track::after {
+  transform: translateX(14px);
+  background: #fff;
+}
+
+.tight-toggle-text {
+  font-size: 13px;
+  color: var(--text-primary);
 }
 
 .dropup {

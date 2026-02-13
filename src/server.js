@@ -470,7 +470,7 @@ app.get('/api/terms/last-modified', (req, res) => {
 
 async function handleGenerateHtmlPreview(req, res) {
   try {
-    const { resumeData, themeName, colorName, photoBase64, customSectionNames, showWatermark } = req.body;
+    const { resumeData, themeName, colorName, photoBase64, customSectionNames, showWatermark, tightLayout } = req.body;
 
     if (!resumeData) {
       return res.status(400).json({ error: 'Resume data is required' });
@@ -522,7 +522,8 @@ async function handleGenerateHtmlPreview(req, res) {
       palette,
       resolvedCustomSectionNames,
       resolvedShowWatermark,
-      config.labels
+      config.labels,
+      tightLayout === true
     );
     res.json({ html: htmlContent });
   } catch (error) {
@@ -544,6 +545,7 @@ app.post('/api/export-html', validateTurnstile, async (req, res) => {
       photoBase64,
       customSectionNames,
       showWatermark,
+      tightLayout,
       analyticsMeta
     } = req.body;
 
@@ -590,6 +592,8 @@ app.post('/api/export-html', validateTurnstile, async (req, res) => {
           ? metaFromPayload.showWatermark
           : true);
 
+    const resolvedTightLayout = typeof tightLayout === 'boolean' ? tightLayout : false;
+
     const htmlContent = generateHTML(
       sanitizedResumeData,
       validatedPhoto,
@@ -597,7 +601,8 @@ app.post('/api/export-html', validateTurnstile, async (req, res) => {
       palette,
       resolvedCustomSectionNames,
       resolvedShowWatermark,
-      config.labels
+      config.labels,
+      resolvedTightLayout
     );
 
     const sanitizedMetaFromPayload = { ...metaFromPayload };
@@ -696,6 +701,7 @@ app.post('/api/export-pdf', validateTurnstile, async (req, res) => {
       photoBase64,
       customSectionNames,
       showWatermark,
+      tightLayout,
       analyticsMeta
     } = req.body;
 
@@ -776,6 +782,7 @@ app.post('/api/export-pdf', validateTurnstile, async (req, res) => {
       photoBase64: validatedPhoto,
       customSectionNames: resolvedCustomSectionNames,
       showWatermark: resolvedShowWatermark,
+      tightLayout: tightLayout === true,
       analyticsMeta: analyticsMetaPayload,
       theme,
       palette

@@ -187,7 +187,8 @@ async function generatePreview() {
         colorName: state.selectedColor,
         photoBase64: state.photoBase64,
         customSectionNames: state.customSectionNames,
-        showWatermark: state.showWatermark
+        showWatermark: state.showWatermark,
+        tightLayout: state.tightLayout
       })
     });
 
@@ -264,6 +265,7 @@ async function exportToHtml() {
         photoBase64: state.photoBase64,
         customSectionNames: state.customSectionNames,
         showWatermark: state.showWatermark,
+        tightLayout: state.tightLayout,
         analyticsMeta
       })
     });
@@ -442,6 +444,7 @@ function buildResumeMetaSnapshot({
     selectedTheme: state.selectedTheme,
     selectedColor: state.selectedColor,
     showWatermark: state.showWatermark,
+    tightLayout: state.tightLayout,
     customSectionNames: { ...state.customSectionNames }
   };
 }
@@ -655,6 +658,10 @@ function applyMetaSettings(meta, options = {}) {
   // Apply watermark setting (default to true if not specified)
   state.showWatermark = meta.showWatermark !== undefined ? meta.showWatermark : true;
   elements.showWatermarkCheckbox.checked = state.showWatermark;
+
+  // Apply tight layout setting (default to false if not specified)
+  state.tightLayout = meta.tightLayout === true;
+  elements.tightLayoutCheckbox.checked = state.tightLayout;
 
   updateButtonStates();
 }
