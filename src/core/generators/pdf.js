@@ -99,6 +99,9 @@ async function generatePDF(htmlContent, page) {
       // Continue anyway - Font Awesome should still work
     }
 
+    // Detect sidebar layout from HTML content
+    const isSidebarLayout = htmlContent.includes('class="sidebar-layout"');
+
     // Switch to print media BEFORE measuring so that @media print CSS rules are
     // active during both the measurement evaluate() and the final page.pdf() call.
     // page.pdf() always renders in print mode — measuring in screen mode caused
@@ -111,10 +114,79 @@ async function generatePDF(htmlContent, page) {
       console.warn('Failed to emulate print media type, GDPR positioning may be slightly off:', err.message);
     }
 
-    // SECURITY: Dynamic GDPR positioning with timeout to prevent infinite loops
+    // SECURITY: Dynamic layout positioning with timeout to prevent infinite loops
     try {
       await Promise.race([
-        page.evaluate(() => {
+        page.evaluate((sidebarMode) => {
+      if (sidebarMode) {
+        // --- SIDEBAR LAYOUT POSITIONING ---
+        // A4 at 96 DPI with 0 margins: full page = 1122.52px, use 1122 (rounded down).
+        const PAGE_HEIGHT_PX = 1122;
+
+        const body = document.body;
+        const sidebar = document.querySelector('.sidebar');
+        const sidebarContainer = document.querySelector('.sidebar-container');
+        const mainContent = document.querySelector('.main-content');
+
+        if (!sidebar || !sidebarContainer) return;
+
+        // --- MEASUREMENT PHASE ---
+        // Let everything flow naturally so we can measure true heights.
+        body.style.display = 'block';
+        body.style.height = 'auto';
+        body.style.minHeight = 'auto';
+        body.style.overflow = 'visible';
+        body.style.boxSizing = 'border-box';
+
+        sidebar.style.height = 'auto';
+        sidebar.style.maxHeight = 'none';
+        sidebar.style.minHeight = '0';
+
+        sidebarContainer.style.display = 'flex';
+        sidebarContainer.style.minHeight = 'auto';
+        sidebarContainer.style.height = 'auto';
+
+        if (mainContent) {
+          mainContent.style.minHeight = '0';
+        }
+
+        // Measure both columns independently to find the tallest
+        const sidebarHeight = sidebar.scrollHeight;
+        const mainHeight = mainContent ? mainContent.scrollHeight : 0;
+        const tallestColumn = Math.max(sidebarHeight, mainHeight);
+
+        // Only use as many pages as the content actually needs
+        const numberOfPages = Math.max(1, Math.ceil(tallestColumn / PAGE_HEIGHT_PX));
+        const bodyHeightPx = numberOfPages * PAGE_HEIGHT_PX;
+
+        // --- RENDER PHASE ---
+        body.style.display = 'block';
+        body.style.height = bodyHeightPx + 'px';
+        body.style.minHeight = '0';
+        body.style.overflow = 'hidden';
+
+        sidebarContainer.style.display = 'flex';
+        sidebarContainer.style.height = bodyHeightPx + 'px';
+        sidebarContainer.style.minHeight = '0';
+        sidebarContainer.style.alignItems = 'stretch';
+
+        // Sidebar: exactly 1 page tall, GDPR at bottom via flex
+        sidebar.style.height = PAGE_HEIGHT_PX + 'px';
+        sidebar.style.maxHeight = PAGE_HEIGHT_PX + 'px';
+        sidebar.style.overflow = 'hidden';
+        sidebar.style.display = 'flex';
+        sidebar.style.flexDirection = 'column';
+        sidebar.style.flexShrink = '0';
+        sidebar.style.alignSelf = 'flex-start';
+
+        if (mainContent) {
+          mainContent.style.minHeight = bodyHeightPx + 'px';
+        }
+
+        return;
+      }
+
+      // --- STANDARD/COMPACT LAYOUT GDPR POSITIONING ---
       // Page height in CSS pixels for A4 with margins top=20px, bottom=15px at 96 DPI.
       // A4 = 297mm × (96px / 25.4mm) = 1122.52px; printable = 1122.52 − 20 − 15 = 1087.52px.
       // Use 1087 (rounded down) — 0.52px buffer ensures body never overflows its page count.
@@ -170,27 +242,11 @@ async function generatePDF(htmlContent, page) {
       const bodyHeightPx = numberOfPages * PAGE_HEIGHT_PX;
 
       // --- RENDER PHASE ---
-      // Strategy: flex column layout where content-wrapper grows (flex:1) to fill
-      // all space above gdprWrapper, anchoring gdpr to the exact bottom of the body.
-      //
-      // WHY FLEX INSTEAD OF A SPACER DIV:
-      // The previous approach inserted a fixed-height spacer calculated in mm, then
-      // set body height in mm. Converting scrollHeight (px) → mm → CSS mm string →
-      // back to px by Chromium introduced rounding errors that could push gdpr past
-      // a page boundary. Using integer pixels end-to-end (body height, flex sizing)
-      // eliminates that error source entirely.
-      //
-      // WHY THIS WORKS: bodyHeightPx = N × 1087px. Each page's printable height is
-      // 1087.52px, so N × 1087px always fits within N pages with 0.52px to spare.
-      // The flex engine expands content-wrapper to exactly (bodyHeightPx − gdprHeightPx),
-      // placing gdpr at the precise bottom of the body without any unit conversion.
       body.style.display = 'flex';
       body.style.flexDirection = 'column';
       body.style.height = bodyHeightPx + 'px';
       body.style.minHeight = '0';
       body.style.paddingBottom = '0';
-      // box-sizing: border-box must stay so that the explicit height covers padding too
-      // (already set above in the measurement phase and unchanged here)
 
       if (contentWrapper) {
         contentWrapper.style.flex = '1';
@@ -216,27 +272,27 @@ async function generatePDF(htmlContent, page) {
         watermark.style.breakBefore = 'avoid';
         watermark.style.pageBreakBefore = 'avoid';
       }
-    }),
+    }, isSidebarLayout),
         new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('GDPR positioning timeout')), TIMEOUTS.SCRIPT_EXECUTION)
+          setTimeout(() => reject(new Error('Layout positioning timeout')), TIMEOUTS.SCRIPT_EXECUTION)
         )
       ]);
     } catch (err) {
-      console.warn('GDPR positioning script timed out or failed, using default layout:', err.message);
+      console.warn('Layout positioning script timed out or failed, using default layout:', err.message);
       // Continue with default layout
     }
+
+    // PDF margins: 0 for sidebar (edge-to-edge), standard margins for other layouts
+    const pdfMargin = isSidebarLayout
+      ? { top: '0px', right: '0px', bottom: '0px', left: '0px' }
+      : { top: '20px', right: '20px', bottom: '15px', left: '20px' };
 
     // SECURITY: Wrap PDF generation with timeout to prevent hanging
     const pdfBuffer = await Promise.race([
       page.pdf({
       format: 'A4',
       printBackground: true,
-      margin: {
-        top: '20px',
-        right: '20px',
-        bottom: '15px',
-        left: '20px'
-      }
+      margin: pdfMargin
     }),
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error('PDF generation timeout - possible infinite loop or memory exhaustion')), TIMEOUTS.PDF_GENERATION)

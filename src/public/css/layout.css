@@ -1815,13 +1815,8 @@ body {
   background: transparent;
   border-radius: 8px;
   min-height: calc(100vh - 120px);
-  overflow: auto;
-}
-
-.preview-container:has(iframe) {
-  background: white;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  border: 1px solid var(--border-dark);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .preview-placeholder {
@@ -1854,8 +1849,12 @@ body {
 /* Resume Preview Iframe */
 #resumePreview {
   width: 100%;
-  border: none;
   min-height: calc(100vh - 120px);
+  display: block;
+  margin: 0 auto;
+  background: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border-dark);
 }
 
 /* Scrollbar Styling */

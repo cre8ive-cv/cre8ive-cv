@@ -207,6 +207,10 @@ async function generatePreview() {
     // Display preview in iframe
     elements.previewContainer.innerHTML = '<iframe id="resumePreview"></iframe>';
     const iframe = document.getElementById('resumePreview');
+    // Lock iframe to A4 width (794px at 96 DPI) so the HTML preview matches
+    // the PDF output. max-width ensures no horizontal overflow on narrow screens.
+    iframe.style.width = '794px';
+    iframe.style.maxWidth = '100%';
     iframe.srcdoc = data.html;
     if (previousScroll && elements.previewContainer) {
       elements.previewContainer.scrollTop = previousScroll.containerScroll || 0;

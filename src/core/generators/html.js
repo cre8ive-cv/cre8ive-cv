@@ -244,7 +244,7 @@ function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, custo
   // Extract clean name for document title and metadata
   const cleanName = stripHtmlTags(personalInfo.name) || 'Resume';
 
-  return `<!DOCTYPE html>
+  const htmlHead = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -256,8 +256,50 @@ function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, custo
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji">
   <style>${themeStyles}</style>
-</head>
-<body${layout === 'compact' ? ' class="compact-layout"' : layout === 'sidebar' ? ' class="sidebar-layout"' : ''}>
+</head>`;
+
+  // Sidebar layout: completely different HTML structure
+  if (layout === 'sidebar') {
+    const gdprWatermarkHtml = (resumeData.gdprClause || showWatermark) ? `
+        <div class="sidebar-bottom">
+          ${resumeData.gdprClause ? `<div class="gdpr-clause">${isolateUserContent(resumeData.gdprClause)}</div>` : ''}
+          ${showWatermark ? '<div class="watermark" style="text-transform: none !important;">Designed with <a href="https://cre8ive.cv" target="_blank" rel="noopener noreferrer">cre8ive.cv</a></div>' : ''}
+        </div>` : '';
+
+    return `${htmlHead}
+<body class="sidebar-layout">
+  <div class="sidebar-bg"></div>
+  <div class="sidebar-container">
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        ${hasPhoto ? `<div class="sidebar-photo"><img src="${photoBase64}" alt="photo-image" class="profile-photo"></div>` : ''}
+        <div class="sidebar-name">
+          <h1>${isolateUserContent(personalInfo.name)}</h1>
+          ${personalInfo.title ? `<div class="title">${isolateUserContent(personalInfo.title)}</div>` : ''}
+        </div>
+        ${hasContacts ? `<div class="sidebar-contacts">
+          ${contactLinks.email ? `<div class="contact-item"><i class="fas fa-envelope"></i><a href="mailto:${contactLinks.email}">${isolateUserContent(contactLinks.email)}</a></div>` : ''}
+          ${contactLinks.phone ? `<div class="contact-item"><i class="fas fa-phone"></i><a href="tel:${contactLinks.phone}">${isolateUserContent(contactLinks.phone)}</a></div>` : ''}
+          ${contactLinks.linkedin ? `<div class="contact-item"><i class="fab fa-linkedin"></i><a href="${contactLinks.linkedin}" target="_blank">${isolateUserContent(contactDisplay.linkedin)}</a></div>` : ''}
+          ${contactLinks.github ? `<div class="contact-item"><i class="fab fa-github"></i><a href="${contactLinks.github}" target="_blank">${isolateUserContent(contactDisplay.github)}</a></div>` : ''}
+          ${contactLinks.website ? `<div class="contact-item"><i class="fas fa-globe"></i><a href="${contactLinks.website}" target="_blank">${isolateUserContent(contactDisplay.website)}</a></div>` : ''}
+          ${(personalInfo.location || '').trim() ? `<div class="contact-item"><i class="fas fa-map-marker-alt"></i>${isolateUserContent(personalInfo.location)}</div>` : ''}
+        </div>` : ''}
+        ${bio ? `<div class="sidebar-bio"><p class="bio">${isolateUserContent(bio)}</p></div>` : ''}
+      </div>
+      ${gdprWatermarkHtml}
+    </aside>
+    <main class="main-content">
+      ${sections}
+    </main>
+  </div>
+</body>
+</html>`;
+  }
+
+  // Standard and compact layouts: original HTML structure
+  return `${htmlHead}
+<body${layout === 'compact' ? ' class="compact-layout"' : ''}>
   <div class="content-wrapper">
     <header class="${headerClassList}">
       <div class="header-name">
