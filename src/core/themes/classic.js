@@ -57,9 +57,7 @@ function getStyles() {
     }
 
     header {
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 12px;
-      margin-bottom: 21px;
+      margin-bottom: 34px;
       position: relative;
       padding-left: 15px;
       padding-right: 15px;
@@ -494,6 +492,10 @@ function getStyles() {
       body.tight-layout .contact-grid {
         grid-template-columns: repeat(3, 1fr);
         gap: 5px 8px;
+      }
+
+      body.tight-layout .contact-grid:has(> :nth-child(4):last-child) {
+        grid-template-columns: repeat(2, 1fr);
       }
 
       body.tight-layout .contact-item {

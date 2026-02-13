@@ -162,12 +162,13 @@ function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, custo
   const themeStyles = theme.getStyles(paletteToUse);
 
   // Normalize external links to avoid double protocols
+  // Trim all values so empty strings and whitespace-only strings count as empty
   const contactLinks = {
-    email: personalInfo.email,
-    phone: personalInfo.phone,
-    linkedin: personalInfo.linkedin ? normalizeUrl(personalInfo.linkedin) : '',
-    github: personalInfo.github ? normalizeUrl(personalInfo.github) : '',
-    website: personalInfo.website ? normalizeUrl(personalInfo.website) : ''
+    email: (personalInfo.email || '').trim(),
+    phone: (personalInfo.phone || '').trim(),
+    linkedin: (personalInfo.linkedin || '').trim() ? normalizeUrl(personalInfo.linkedin.trim()) : '',
+    github: (personalInfo.github || '').trim() ? normalizeUrl(personalInfo.github.trim()) : '',
+    website: (personalInfo.website || '').trim() ? normalizeUrl(personalInfo.website.trim()) : ''
   };
 
   // Helper to extract slug from social media URLs
@@ -271,7 +272,7 @@ function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, custo
           ${contactLinks.linkedin ? `<span class="contact-item"><i class="fab fa-linkedin"></i><a href="${contactLinks.linkedin}" target="_blank">${isolateUserContent(contactDisplay.linkedin)}</a></span>` : ''}
           ${contactLinks.github ? `<span class="contact-item"><i class="fab fa-github"></i><a href="${contactLinks.github}" target="_blank">${isolateUserContent(contactDisplay.github)}</a></span>` : ''}
           ${contactLinks.website ? `<span class="contact-item"><i class="fas fa-globe"></i><a href="${contactLinks.website}" target="_blank">${isolateUserContent(contactDisplay.website)}</a></span>` : ''}
-          ${personalInfo.location ? `<span class="contact-item"><i class="fas fa-map-marker-alt"></i>${isolateUserContent(personalInfo.location)}</span>` : ''}
+          ${(personalInfo.location || '').trim() ? `<span class="contact-item"><i class="fas fa-map-marker-alt"></i>${isolateUserContent(personalInfo.location)}</span>` : ''}
         </div>
       </div>` : ''}
       ${bio ? `<div class="header-bio">
