@@ -252,7 +252,20 @@ function getStyles() {
       color: #1a1a1a;
     }
 
-    .company, .institution {
+    .company {
+      font-size: 13px;
+      color: #333;
+      opacity: 0.65;
+      font-weight: 400;
+    }
+
+    .company * {
+      display: inline !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .institution {
       font-size: 15px;
       color: #333;
       margin-bottom: 3px;

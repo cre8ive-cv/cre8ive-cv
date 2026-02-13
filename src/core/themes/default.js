@@ -254,7 +254,20 @@ function getStyles(palette) {
       color: ${palette.primary};
     }
 
-    .company, .institution {
+    .company {
+      font-size: 13px;
+      color: ${palette.accent};
+      opacity: 0.65;
+      font-weight: 400;
+    }
+
+    .company * {
+      display: inline !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .institution {
       font-size: 15px;
       color: ${palette.accent};
       margin-bottom: 3px;

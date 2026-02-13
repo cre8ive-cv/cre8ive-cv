@@ -45,8 +45,7 @@ function generateExperienceSection(experience, sectionName = 'Professional Exper
       <div class="experience-item">
         <div class="experience-header">
           <div>
-            <div class="position">${isolateUserContent(exp.position)}</div>
-            <div class="company">${isolateUserContent(exp.company)}</div>
+            <div class="position">${isolateUserContent(exp.position)} <span class="company">(${isolateUserContent(exp.company)})</span></div>
           </div>
           <div class="date-location">
             ${formatDate(exp.startDate, labels)} - ${formatDate(exp.endDate, labels)}
@@ -130,7 +129,7 @@ function generateProjectsSection(projects, projectsIntro, sectionName = 'Side Pr
             <div class="technologies">${labels.technologies || 'Technologies'}: ${isolateUserContent(project.technologies.join(', '))}</div>
           ` : ''}
           ${project.link ? `
-            <div class="project-link-line">${labels.link || 'Link'}: <a href="${normalizeUrl(project.link)}" target="_blank" rel="noopener noreferrer" class="project-link" title="View project">${isolateUserContent(stripProtocol(project.link || ''))} <i class="fas fa-external-link-alt"></i></a></div>
+            <div class="project-link-line">${labels.link || 'Link'}: <a href="${normalizeUrl(project.link)}" target="_blank" rel="noopener noreferrer" class="project-link" title="View project">${isolateUserContent(stripProtocol(project.link || ''))}</a></div>
           ` : ''}
         </div>
       `).join('')}
