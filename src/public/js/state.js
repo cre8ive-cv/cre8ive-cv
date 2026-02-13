@@ -16,7 +16,7 @@ const state = {
   selectedColor: null,
   lastSelectedColor: null,
   showWatermark: true, // Whether to show the watermark
-  tightLayout: false, // Whether to use tighter spacing in the resume
+  layout: 'standard', // Resume layout: 'standard', 'compact', or 'sidebar'
   termsAccepted: false, // Whether the user accepted the terms
   currentHtml: null,
   pdfPreviewUrl: null,
@@ -176,7 +176,10 @@ const elements = {
   colorDropupMenu: document.getElementById('colorDropupMenu'),
   colorGroup: document.getElementById('colorGroup'),
   showWatermarkCheckbox: document.getElementById('showWatermarkCheckbox'),
-  tightLayoutCheckbox: document.getElementById('tightLayoutCheckbox'),
+  layoutDropup: document.getElementById('layoutDropup'),
+  layoutDropupButton: document.getElementById('layoutDropupButton'),
+  layoutDropupLabel: document.getElementById('layoutDropupLabel'),
+  layoutDropupMenu: document.getElementById('layoutDropupMenu'),
   termsAcceptanceCheckbox: document.getElementById('termsAcceptanceCheckbox'),
   previewPdfBtn: document.getElementById('previewPdfBtn'),
   exportHtmlBtn: document.getElementById('exportHtmlBtn'),

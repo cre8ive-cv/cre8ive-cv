@@ -470,7 +470,7 @@ app.get('/api/terms/last-modified', (req, res) => {
 
 async function handleGenerateHtmlPreview(req, res) {
   try {
-    const { resumeData, themeName, colorName, photoBase64, customSectionNames, showWatermark, tightLayout } = req.body;
+    const { resumeData, themeName, colorName, photoBase64, customSectionNames, showWatermark, layout } = req.body;
 
     if (!resumeData) {
       return res.status(400).json({ error: 'Resume data is required' });
@@ -515,6 +515,8 @@ async function handleGenerateHtmlPreview(req, res) {
           ? metaFromPayload.showWatermark
           : true);
 
+    const resolvedLayout = typeof layout === 'string' ? layout : 'standard';
+
     const htmlContent = generateHTML(
       previewResumeData,
       validatedPhoto,
@@ -523,7 +525,7 @@ async function handleGenerateHtmlPreview(req, res) {
       resolvedCustomSectionNames,
       resolvedShowWatermark,
       config.labels,
-      tightLayout === true
+      resolvedLayout
     );
     res.json({ html: htmlContent });
   } catch (error) {
@@ -545,7 +547,7 @@ app.post('/api/export-html', validateTurnstile, async (req, res) => {
       photoBase64,
       customSectionNames,
       showWatermark,
-      tightLayout,
+      layout,
       analyticsMeta
     } = req.body;
 
@@ -592,7 +594,7 @@ app.post('/api/export-html', validateTurnstile, async (req, res) => {
           ? metaFromPayload.showWatermark
           : true);
 
-    const resolvedTightLayout = typeof tightLayout === 'boolean' ? tightLayout : false;
+    const resolvedLayout = typeof layout === 'string' ? layout : 'standard';
 
     const htmlContent = generateHTML(
       sanitizedResumeData,
@@ -602,7 +604,7 @@ app.post('/api/export-html', validateTurnstile, async (req, res) => {
       resolvedCustomSectionNames,
       resolvedShowWatermark,
       config.labels,
-      resolvedTightLayout
+      resolvedLayout
     );
 
     const sanitizedMetaFromPayload = { ...metaFromPayload };
@@ -701,7 +703,7 @@ app.post('/api/export-pdf', validateTurnstile, async (req, res) => {
       photoBase64,
       customSectionNames,
       showWatermark,
-      tightLayout,
+      layout,
       analyticsMeta
     } = req.body;
 
@@ -782,7 +784,7 @@ app.post('/api/export-pdf', validateTurnstile, async (req, res) => {
       photoBase64: validatedPhoto,
       customSectionNames: resolvedCustomSectionNames,
       showWatermark: resolvedShowWatermark,
-      tightLayout: tightLayout === true,
+      layout: typeof layout === 'string' ? layout : 'standard',
       analyticsMeta: analyticsMetaPayload,
       theme,
       palette

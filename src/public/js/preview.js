@@ -188,7 +188,7 @@ async function generatePreview() {
         photoBase64: state.photoBase64,
         customSectionNames: state.customSectionNames,
         showWatermark: state.showWatermark,
-        tightLayout: state.tightLayout
+        layout: state.layout
       })
     });
 
@@ -265,7 +265,7 @@ async function exportToHtml() {
         photoBase64: state.photoBase64,
         customSectionNames: state.customSectionNames,
         showWatermark: state.showWatermark,
-        tightLayout: state.tightLayout,
+        layout: state.layout,
         analyticsMeta
       })
     });
@@ -444,7 +444,7 @@ function buildResumeMetaSnapshot({
     selectedTheme: state.selectedTheme,
     selectedColor: state.selectedColor,
     showWatermark: state.showWatermark,
-    tightLayout: state.tightLayout,
+    layout: state.layout,
     customSectionNames: { ...state.customSectionNames }
   };
 }
@@ -659,9 +659,13 @@ function applyMetaSettings(meta, options = {}) {
   state.showWatermark = meta.showWatermark !== undefined ? meta.showWatermark : true;
   elements.showWatermarkCheckbox.checked = state.showWatermark;
 
-  // Apply tight layout setting (default to false if not specified)
-  state.tightLayout = meta.tightLayout === true;
-  elements.tightLayoutCheckbox.checked = state.tightLayout;
+  // Apply layout setting (with backward compat for old tightLayout boolean)
+  if (meta.layout) {
+    state.layout = meta.layout;
+  } else {
+    state.layout = meta.tightLayout === true ? 'compact' : 'standard';
+  }
+  syncLayoutDropupFromState();
 
   updateButtonStates();
 }

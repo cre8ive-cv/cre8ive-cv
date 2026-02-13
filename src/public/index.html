@@ -305,14 +305,16 @@
             </div>
           </div>
 
-          <div class="form-group stacked-form" id="tightLayoutGroup">
+          <div class="form-group stacked-form" id="layoutGroup">
             <span class="stacked-label">Layout</span>
             <div class="stacked-input">
-              <label class="tight-toggle" for="tightLayoutCheckbox">
-                <input type="checkbox" id="tightLayoutCheckbox">
-                <span class="tight-toggle-track"></span>
-                <span class="tight-toggle-text">Tight</span>
-              </label>
+              <div class="dropup" id="layoutDropup">
+                <button type="button" class="dropup-button" id="layoutDropupButton" aria-haspopup="listbox" aria-expanded="false">
+                  <span id="layoutDropupLabel">Standard</span>
+                  <i class="fas fa-chevron-down dropup-icon" aria-hidden="true"></i>
+                </button>
+                <div class="dropup-menu" id="layoutDropupMenu" role="listbox" aria-labelledby="layoutDropupButton"></div>
+              </div>
             </div>
           </div>
         </div>

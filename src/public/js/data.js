@@ -507,11 +507,12 @@ async function handleWatermarkChange(event) {
   saveStateToLocalStorage();
 }
 
-async function handleTightLayoutChange(event) {
-  state.tightLayout = event.target.checked;
+async function handleLayoutChange(value) {
+  state.layout = value;
+  syncLayoutDropupFromState();
 
   // Auto-generate preview
-  await autoGeneratePreview('tightLayout');
+  await autoGeneratePreview('layout');
 
   // Save to localStorage
   saveStateToLocalStorage();

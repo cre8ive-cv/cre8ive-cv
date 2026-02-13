@@ -198,6 +198,64 @@ function closeColorDropup() {
   elements.colorDropupButton?.setAttribute('aria-expanded', 'false');
 }
 
+const LAYOUT_OPTIONS = [
+  { value: 'standard', label: 'Standard' },
+  { value: 'compact', label: 'Compact' },
+  { value: 'sidebar', label: 'Sidebar' }
+];
+
+function buildLayoutDropupOptions() {
+  if (!elements.layoutDropupMenu) return;
+  elements.layoutDropupMenu.innerHTML = '';
+  const fragment = document.createDocumentFragment();
+
+  LAYOUT_OPTIONS.forEach(option => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'dropup-option';
+    btn.textContent = option.label;
+    btn.dataset.value = option.value;
+    btn.addEventListener('click', () => {
+      closeLayoutDropup();
+      if (state.layout !== option.value) {
+        handleLayoutChange(option.value);
+      }
+    });
+    fragment.appendChild(btn);
+  });
+
+  elements.layoutDropupMenu.appendChild(fragment);
+  syncLayoutDropupFromState();
+}
+
+function syncLayoutDropupFromState() {
+  if (!elements.layoutDropupLabel) return;
+  const current = LAYOUT_OPTIONS.find(o => o.value === state.layout) || LAYOUT_OPTIONS[0];
+  elements.layoutDropupLabel.textContent = current.label;
+
+  if (elements.layoutDropupMenu) {
+    elements.layoutDropupMenu.querySelectorAll('.dropup-option').forEach(btn => {
+      btn.classList.toggle('selected', btn.dataset.value === state.layout);
+    });
+  }
+}
+
+function toggleLayoutDropup(event) {
+  if (!elements.layoutDropup) return;
+  event.stopPropagation();
+  if (elements.layoutDropupMenu?.children.length === 0) {
+    buildLayoutDropupOptions();
+  }
+  const isOpen = elements.layoutDropup.classList.toggle('open');
+  elements.layoutDropupButton?.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+}
+
+function closeLayoutDropup() {
+  if (!elements.layoutDropup) return;
+  elements.layoutDropup.classList.remove('open');
+  elements.layoutDropupButton?.setAttribute('aria-expanded', 'false');
+}
+
 function handleDropupOutsideInteraction(event) {
   const target = event.target;
 
@@ -207,6 +265,10 @@ function handleDropupOutsideInteraction(event) {
 
   if (elements.colorDropup?.classList.contains('open') && !elements.colorDropup.contains(target)) {
     closeColorDropup();
+  }
+
+  if (elements.layoutDropup?.classList.contains('open') && !elements.layoutDropup.contains(target)) {
+    closeLayoutDropup();
   }
 }
 
@@ -222,6 +284,7 @@ function attachPreviewInteractionHandlers(iframe) {
         () => {
           closeThemeDropup();
           closeColorDropup();
+          closeLayoutDropup();
         },
         { passive: true }
       );

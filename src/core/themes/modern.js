@@ -444,107 +444,111 @@ function getStyles(palette) {
 
     @media (min-width: 701px) {
       /* Tight layout overrides */
-      body.tight-layout {
+      body.compact-layout {
         line-height: 1.4;
         padding: 12px 28px 28px;
       }
 
-      body.tight-layout header {
+      body.compact-layout header {
         margin-bottom: 18px;
       }
 
-      body.tight-layout header.has-photo .header-bio::before {
+      body.compact-layout header.has-photo .header-bio::before {
         height: calc(var(--header-photo-size) + 44px);
       }
 
-      body.tight-layout h1 {
+      body.compact-layout h1 {
         font-size: 28px;
       }
 
-      body.tight-layout h2 {
+      body.compact-layout h2 {
         font-size: 18px;
         padding: 5px 15px;
         margin-bottom: 10px;
       }
 
-      body.tight-layout .title {
+      body.compact-layout .title {
         font-size: 15px;
       }
 
-      body.tight-layout .bio {
+      body.compact-layout .bio {
         font-size: 11px;
         line-height: 1.5;
       }
 
-      body.tight-layout section {
+      body.compact-layout section {
         margin-bottom: 18px;
       }
 
-      body.tight-layout .experience-item,
-      body.tight-layout .education-item,
-      body.tight-layout .project-item {
+      body.compact-layout .experience-item,
+      body.compact-layout .education-item,
+      body.compact-layout .project-item {
         margin-bottom: 12px;
       }
 
-      body.tight-layout .position,
-      body.tight-layout .degree,
-      body.tight-layout .project-name {
+      body.compact-layout .position,
+      body.compact-layout .degree,
+      body.compact-layout .project-name {
         font-size: 15px;
       }
 
-      body.tight-layout .company,
-      body.tight-layout .institution {
+      body.compact-layout .company,
+      body.compact-layout .institution {
         font-size: 14px;
       }
 
-      body.tight-layout .date-location {
+      body.compact-layout .date-location {
         font-size: 13px;
       }
 
-      body.tight-layout ul {
+      body.compact-layout ul {
         margin-top: 4px;
         margin-left: 16px;
       }
 
-      body.tight-layout li {
+      body.compact-layout li {
         font-size: 13px;
         margin-bottom: 3px;
       }
 
-      body.tight-layout .contact-grid {
+      body.compact-layout .contact-grid {
         grid-template-columns: repeat(3, 1fr);
         gap: 5px 8px;
       }
 
-      body.tight-layout .contact-item {
+      body.compact-layout .contact-item {
         font-size: 12px;
       }
 
-      body.tight-layout .skills-grid {
+      body.compact-layout .skills-grid {
         gap: 10px;
       }
 
-      body.tight-layout .skill-category {
+      body.compact-layout .skill-category {
         padding: 10px;
       }
 
-      body.tight-layout .skill-category h3 {
+      body.compact-layout .skill-category h3 {
         font-size: 14px;
         margin-bottom: 6px;
       }
 
-      body.tight-layout .skill-tags {
+      body.compact-layout .skill-tags {
         gap: 5px;
       }
 
-      body.tight-layout .skill-tag {
+      body.compact-layout .skill-tag {
         padding: 3px 9px;
         font-size: 12px;
       }
 
-      body.tight-layout .projects-grid {
+      body.compact-layout .projects-grid {
         gap: 14px;
         column-gap: 22px;
+      }
+
+      /* Sidebar layout — currently maps to standard; styles to be implemented */
+      body.sidebar-layout {
       }
     }
 

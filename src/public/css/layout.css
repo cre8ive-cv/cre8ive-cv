@@ -1993,7 +1993,7 @@ body {
     font-size: 16px;
   }
 
-  #tightLayoutGroup {
+  #layoutGroup {
     display: none;
   }
 }
