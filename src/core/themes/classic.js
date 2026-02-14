@@ -738,6 +738,7 @@ function getStyles() {
       width: 70%;
       padding: 18px 22px 16px 20px;
       font-variant-emoji: text;
+      background: #fff;
     }
 
     body.sidebar-layout .main-content section {
