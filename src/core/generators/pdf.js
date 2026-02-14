@@ -176,14 +176,14 @@ async function generatePDF(htmlContent, page) {
         sidebarContainer.style.minHeight = '0';
         sidebarContainer.style.alignItems = 'stretch';
 
-        // Sidebar: exactly 1 page tall, GDPR at bottom via flex
-        sidebar.style.height = PAGE_HEIGHT_PX + 'px';
-        sidebar.style.maxHeight = PAGE_HEIGHT_PX + 'px';
+        // Sidebar: full document height so it always reaches the bottom edge
+        sidebar.style.height = bodyHeightPx + 'px';
+        sidebar.style.maxHeight = 'none';
         sidebar.style.overflow = 'hidden';
         sidebar.style.display = 'flex';
         sidebar.style.flexDirection = 'column';
         sidebar.style.flexShrink = '0';
-        sidebar.style.alignSelf = 'flex-start';
+        sidebar.style.alignSelf = 'stretch';
 
         if (mainContent) {
           mainContent.style.minHeight = bodyHeightPx + 'px';

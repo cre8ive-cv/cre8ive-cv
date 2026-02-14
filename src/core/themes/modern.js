@@ -192,7 +192,9 @@ function getStyles(palette) {
       aspect-ratio: 1 !important;
       border-radius: 50%;
       object-fit: cover;
-      border: 5px solid ${palette.primary};
+      border: 5px solid transparent;
+      background: linear-gradient(white, white) padding-box,
+                  linear-gradient(135deg, ${palette.accent}, color-mix(in srgb, ${palette.primary} 60%, ${palette.accent}), ${palette.accent}) border-box;
       box-shadow: 0 8px 16px ${palette.primary}33;
       flex-shrink: 0 !important;
       flex-grow: 0 !important;
@@ -608,6 +610,7 @@ function getStyles(palette) {
       color: #ecf0f1;
       min-height: 100vh;
       font-variant-emoji: text;
+      background: ${palette.primary};
       print-color-adjust: exact;
       -webkit-print-color-adjust: exact;
     }
@@ -655,8 +658,9 @@ function getStyles(palette) {
       min-height: 160px !important;
       margin: 0 auto;
       display: block;
-      border-color: rgba(255,255,255,0.7);
-      border-width: 3px;
+      border: 3px solid transparent;
+      background: linear-gradient(${palette.primary}, ${palette.primary}) padding-box,
+                  linear-gradient(135deg, ${palette.accent}, color-mix(in srgb, ${palette.primary} 60%, ${palette.accent}), ${palette.accent}) border-box;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
       print-color-adjust: exact;
       -webkit-print-color-adjust: exact;
