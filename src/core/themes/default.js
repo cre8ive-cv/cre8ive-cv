@@ -673,7 +673,7 @@ function getStyles(palette) {
     }
 
     body.sidebar-layout .sidebar-bio .bio {
-      font-size: 10px;
+      font-size: 13px;
       line-height: 1.5;
       color: rgba(255,255,255,0.75);
       font-style: italic;
@@ -690,7 +690,7 @@ function getStyles(palette) {
     }
 
     body.sidebar-layout .main-content h2 {
-      font-size: 16px;
+      font-size: 14px;
       padding-bottom: 4px;
       margin-bottom: 8px;
       letter-spacing: 0.8px;
@@ -710,23 +710,23 @@ function getStyles(palette) {
     body.sidebar-layout .main-content .position,
     body.sidebar-layout .main-content .degree,
     body.sidebar-layout .main-content .project-name {
-      font-size: 13px;
+      font-size: 11px;
     }
 
     body.sidebar-layout .main-content .company {
-      font-size: 12px;
+      font-size: 10px;
     }
 
     body.sidebar-layout .main-content .institution {
-      font-size: 13px;
+      font-size: 11px;
     }
 
     body.sidebar-layout .main-content .education-level {
-      font-size: 12px;
+      font-size: 10px;
     }
 
     body.sidebar-layout .main-content .date-location {
-      font-size: 12px;
+      font-size: 10px;
     }
 
     body.sidebar-layout .main-content ul {
@@ -735,7 +735,7 @@ function getStyles(palette) {
     }
 
     body.sidebar-layout .main-content li {
-      font-size: 12px;
+      font-size: 10px;
       margin-bottom: 2px;
       color: #555;
     }
@@ -749,7 +749,7 @@ function getStyles(palette) {
     }
 
     body.sidebar-layout .main-content .skill-category h3 {
-      font-size: 13px;
+      font-size: 11px;
       margin-bottom: 5px;
     }
 
@@ -759,7 +759,7 @@ function getStyles(palette) {
 
     body.sidebar-layout .main-content .skill-tag {
       padding: 2px 7px;
-      font-size: 11px;
+      font-size: 9px;
     }
 
     body.sidebar-layout .main-content .projects-grid {
@@ -769,19 +769,19 @@ function getStyles(palette) {
     }
 
     body.sidebar-layout .main-content .project-description {
-      font-size: 12px;
+      font-size: 10px;
     }
 
     body.sidebar-layout .main-content .technologies {
-      font-size: 11px;
+      font-size: 9px;
     }
 
     body.sidebar-layout .main-content .project-link-line {
-      font-size: 11px;
+      font-size: 9px;
     }
 
     body.sidebar-layout .main-content .projects-intro {
-      font-size: 12px;
+      font-size: 10px;
     }
 
     /* Mobile responsive styles */
