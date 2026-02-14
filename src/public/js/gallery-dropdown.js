@@ -31,21 +31,30 @@
     btn.type = 'button';
     btn.className = 'gallery-dropdown-item gallery-dropdown-item--starter';
     btn.setAttribute('role', 'menuitem');
-    btn.setAttribute('title', 'Starter Demo');
+    btn.setAttribute('title', 'Demo Starter');
 
     btn.innerHTML = `
       <div class="gallery-dropdown-starter-body" aria-hidden="true">
         <span class="gallery-dropdown-starter-icon">🚀</span>
       </div>
-      <div class="gallery-dropdown-item-label">Starter Demo</div>
+      <div class="gallery-dropdown-item-label">Demo Starter</div>
     `;
 
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       if (state.templateLoaded) {
         const confirmed = confirm('Are you sure you want to load a new template? Your current data will be lost. This action cannot be undone.');
         if (!confirmed) return;
       }
-      loadExampleData();
+      const wrapper = document.getElementById('galleryDropdownWrapper');
+      // Proactively close/lock the dropdown before loading example data
+      if (wrapper) {
+        wrapper.classList.remove('is-open');
+        forceCloseDropdown(wrapper);
+      }
+      btn.blur();
+      const link = wrapper ? wrapper.querySelector('.gallery-link') : null;
+      if (link) link.blur();
+      await loadExampleData();
     });
 
     grid.appendChild(btn);
