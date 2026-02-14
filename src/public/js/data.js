@@ -309,11 +309,11 @@ async function handleFileUpload(event) {
       // Auto-generate preview
       await autoGeneratePreview('json');
 
-      // Transform button to "Clear Data" mode
+      // Keep primary action as "New Resume" after import
       state.templateLoaded = true;
       const btn = elements.loadExampleBtn;
-      btn.className = 'btn btn-danger';
-      btn.innerHTML = '<i class="fas fa-trash-alt"></i> Clear All Data';
+      btn.className = 'btn btn-success';
+      btn.innerHTML = '<i class="fas fa-plus"></i> New Resume';
 
       // Save to localStorage
       saveStateToLocalStorage();
