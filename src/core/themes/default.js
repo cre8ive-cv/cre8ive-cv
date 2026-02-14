@@ -522,6 +522,7 @@ function getStyles(palette) {
 
     /* ===== Sidebar layout ===== */
     body.sidebar-layout {
+      display: block;
       padding: 0;
       margin: 0;
       /* Prefer A4 width (794px at 96 DPI) so HTML preview matches PDF proportions.
@@ -537,7 +538,7 @@ function getStyles(palette) {
       position: fixed;
       top: 0;
       left: 0;
-      width: 25%;
+      width: 30%;
       height: 100%;
       background: ${palette.primary};
       z-index: 0;
@@ -547,13 +548,14 @@ function getStyles(palette) {
 
     body.sidebar-layout .sidebar-container {
       display: flex;
+      width: 100%;
       min-height: 100vh;
       position: relative;
       z-index: 1;
     }
 
     body.sidebar-layout .sidebar {
-      width: 25%;
+      width: 30%;
       flex-shrink: 0;
       padding: 22px 16px 16px;
       display: flex;
@@ -592,17 +594,21 @@ function getStyles(palette) {
     }
 
     body.sidebar-layout .sidebar-photo {
-      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       margin-bottom: 14px;
     }
 
     body.sidebar-layout .sidebar-photo .profile-photo {
-      width: 140px !important;
-      height: 140px !important;
-      max-width: 140px !important;
-      max-height: 140px !important;
-      min-width: 140px !important;
-      min-height: 140px !important;
+      width: 160px !important;
+      height: 160px !important;
+      max-width: 160px !important;
+      max-height: 160px !important;
+      min-width: 160px !important;
+      min-height: 160px !important;
+      margin: 0 auto;
+      display: block;
       border-color: rgba(255,255,255,0.7);
       border-width: 3px;
       print-color-adjust: exact;
@@ -675,7 +681,7 @@ function getStyles(palette) {
 
     /* Main content area */
     body.sidebar-layout .main-content {
-      width: 75%;
+      width: 70%;
       padding: 18px 22px 16px 20px;
     }
 

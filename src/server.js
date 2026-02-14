@@ -65,6 +65,7 @@ function buildAnalyticsContext(req, providedMeta = {}, {
   const normalizedMeta = {
     selectedTheme: providedMeta?.selectedTheme || themeName || null,
     selectedColor: providedMeta?.selectedColor || colorName || null,
+    selectedLayout: providedMeta?.layout || null,
     showWatermark: typeof providedMeta?.showWatermark === 'boolean'
       ? providedMeta.showWatermark
       : Boolean(
@@ -93,6 +94,7 @@ function recordExportAnalytics({ exportType, meta = {}, mode = null, sourceUrl =
     const sanitizedMeta = {
       selectedTheme: meta.selectedTheme || null,
       selectedColor: meta.selectedColor || null,
+      selectedLayout: meta.selectedLayout || meta.layout || null,
       showWatermark: typeof meta.showWatermark === 'boolean'
         ? meta.showWatermark
         : Boolean(meta.showWatermark),
