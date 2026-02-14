@@ -207,14 +207,20 @@ async function generatePreview() {
     // Display preview in iframe
     elements.previewContainer.innerHTML = '<iframe id="resumePreview"></iframe>';
     const iframe = document.getElementById('resumePreview');
-    // Lock iframe to A4 width (794px at 96 DPI) so the HTML preview matches
-    // the PDF output. max-width ensures no horizontal overflow on narrow screens.
-    iframe.style.width = '794px';
-    iframe.style.maxWidth = '100%';
-    // Enforce at least A4 aspect ratio (210:297) as the minimum height so the
-    // preview always resembles an A4 page rather than a wide short strip.
-    const containerWidth = elements.previewContainer.clientWidth || 794;
-    const iframeWidth = Math.min(794, containerWidth);
+    // Always render at A4 width (794px at 96 DPI) so the resume content layout
+    // is correct and matches the PDF output. Scale the entire iframe element up
+    // via CSS zoom so it fills ~90% of the container without distorting the
+    // resume content — zoom scales the element visually without changing the
+    // internal viewport, preserving all proportions.
+    const containerWidth = elements.previewContainer.clientWidth || 820;
+    const A4_PX = 794;
+    iframe.style.width = A4_PX + 'px';
+    iframe.style.maxWidth = 'none';
+    const previewZoom = containerWidth >= A4_PX
+      ? (containerWidth * 0.9 - 20) / A4_PX
+      : containerWidth / A4_PX;
+    iframe.style.zoom = previewZoom;
+    const iframeWidth = A4_PX;
     iframe.style.minHeight = Math.round(iframeWidth * 297 / 210) + 'px';
     iframe.srcdoc = data.html;
     // Resize to full content height once loaded so there is never an internal
