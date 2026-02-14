@@ -225,10 +225,8 @@ async function generatePreview() {
     iframe.srcdoc = data.html;
     // Resize to full content height once loaded so there is never an internal
     // iframe scrollbar (which would reduce content width vs the PDF renderer).
-    // .preview-container is the direct scrollable parent of the iframe, so
-    // Chromium naturally propagates wheel/touch events from the iframe up to
-    // .preview-container without any JS forwarding needed.
     autoResizePreviewIframe(iframe);
+    forwardPreviewScroll(iframe);
     if (previousScroll) {
       const sc = getPreviewScrollContainer();
       if (sc) sc.scrollTop = previousScroll.containerScroll || 0;
@@ -794,8 +792,13 @@ let previewContainerScrollListenerAttached = false;
  */
 function getPreviewScrollContainer() {
   // Walk up from previewContainer looking for the first element that actually scrolls.
+  // Include document.body in the walk — on narrow viewports (≤1024px) the layout
+  // switches to a page-level scroll (body gets overflow-y:auto) and .preview-container
+  // gets scrollbar-width:none, making its scroll invisible.  Stopping before body
+  // caused forwardPreviewScroll to target the invisible .preview-container scroll
+  // instead of body, consuming all wheel events without visible effect.
   let el = elements.previewContainer?.parentElement;
-  while (el && el !== document.body) {
+  while (el && el !== document.documentElement) {
     const style = window.getComputedStyle(el);
     const oy = style.overflowY;
     if ((oy === 'auto' || oy === 'scroll') && el.scrollHeight > el.clientHeight) {
@@ -970,32 +973,12 @@ function forwardPreviewScroll(iframe) {
     const scrollEl = getIframeScrollElement(doc);
     if (!doc || !scrollEl) return;
 
+    const sc = getPreviewScrollContainer();
     let lastTouchY = null;
 
-    const forward = (deltaY) => {
-      // Use the real scrollable ancestor (e.g. .main-content), not the
-      // preview-container which only has min-height and never actually scrolls.
-      getPreviewScrollContainer()?.scrollBy({ top: deltaY, behavior: 'auto' });
-    };
-
-    const canScroll = (delta) => {
-      const sc = getPreviewScrollContainer();
-      if (!sc) return false;
-      const atBottom = sc.scrollTop + sc.clientHeight >= sc.scrollHeight - 1;
-      const atTop = sc.scrollTop <= 0;
-      return (delta > 0 && !atBottom) || (delta < 0 && !atTop);
-    };
-
     const onWheel = (event) => {
-      const delta = event.deltaY;
-      // Only intercept (and prevent default) when the scroll container can
-      // actually move in the requested direction.  At boundaries we must NOT
-      // call preventDefault – otherwise the event is silently consumed and the
-      // user feels the scroll is "stuck".
-      if (canScroll(delta)) {
-        forward(delta);
-        event.preventDefault();
-      }
+      event.preventDefault();
+      sc?.scrollBy({ top: event.deltaY, behavior: 'auto' });
     };
 
     const onTouchStart = (event) => {
@@ -1006,13 +989,8 @@ function forwardPreviewScroll(iframe) {
     const onTouchMove = (event) => {
       if (event.touches.length !== 1 || lastTouchY === null) return;
       const currentY = event.touches[0].clientY;
-      const delta = lastTouchY - currentY;
-
-      if (canScroll(delta)) {
-        forward(delta);
-        event.preventDefault();
-      }
-
+      event.preventDefault();
+      sc?.scrollBy({ top: lastTouchY - currentY, behavior: 'auto' });
       lastTouchY = currentY;
     };
 
@@ -1020,15 +998,11 @@ function forwardPreviewScroll(iframe) {
       lastTouchY = null;
     };
 
-    // Listen inside the iframe document (where wheel events land when the
-    // cursor is over the resume content).
     scrollEl.addEventListener('wheel', onWheel, { passive: false });
     scrollEl.addEventListener('touchstart', onTouchStart, { passive: true });
     scrollEl.addEventListener('touchmove', onTouchMove, { passive: false });
     scrollEl.addEventListener('touchend', onTouchEnd, { passive: true });
     scrollEl.addEventListener('touchcancel', onTouchEnd, { passive: true });
-    // Fallback: the iframe element itself catches wheel events in browsers that
-    // deliver them to the parent frame before entering the child document.
     iframe.addEventListener('wheel', onWheel, { passive: false });
     iframe.addEventListener('touchstart', onTouchStart, { passive: true });
     iframe.addEventListener('touchmove', onTouchMove, { passive: false });
