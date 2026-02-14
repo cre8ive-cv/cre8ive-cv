@@ -5,7 +5,7 @@ const defaultMaxConcurrency = Math.min(Math.max(2, cpuCount), 4);
 const defaultMinConcurrency = Math.max(1, Math.min(defaultMaxConcurrency, Math.floor(defaultMaxConcurrency / 2)));
 
 const config = {
-  version: '0.1.0',
+  version: '0.2.0',
   appUrl: 'https://cre8ive.cv',
   defaultTheme: 'default',
   defaultColor: 'blue',

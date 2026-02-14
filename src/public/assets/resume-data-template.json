@@ -8,7 +8,7 @@
     "linkedin": "https://linkedin.com/in/patryk-palej",
     "github": "https://github.com/cre8ive-cv",
     "location": null,
-    "bio": "<span style=\"font-family: monospace; font-size: 0.85em; color: #555;\">Status: <span style=\"color: #16a34a\">● Online</span> | v0.1.0</span><br>\n\nYou are about to use <strong style=\"font-family:'Space Grotesk','Segoe UI',sans-serif;font-size:1.15rem;font-weight:800;letter-spacing:-0.5px; font-style:normal; text-transform:lowercase;background:linear-gradient(135deg,#64B5F6 0%,#42A5F5 50%,#2196F3 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:inline-block;filter:drop-shadow(0 2px 24px rgba(100,181,246,0.5));\">cre8ive.cv </strong> – a free tool for generating a highly customizable resume. Its data layer is just a pure <code>JSON</code> object which can be exported and reimported. Why developers love it?\n<ul>\n <li><b>Flexibility:</b> Go beyond themes. Use custom HTML in any field – the final look depends only on your <strong style=\"font-family:'Space Grotesk','Segoe UI',sans-serif;font-size:1.05rem;font-weight:800;letter-spacing:-0.5px; font-style:normal; text-transform:lowercase;background:linear-gradient(135deg,#64B5F6 0%,#42A5F5 50%,#2196F3 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:inline-block;filter:drop-shadow(0 2px 24px rgba(100,181,246,0.5));\">cre8ivity </strong>!</li>\n <li><b>Convenience:</b> Real-time WYSIWYG interface with <b>no user account</b> needed</li>\n <li><b style=\"font-style:normal\">Privacy focused:</b> Client-side data storage (no personal data is stored on the server after PDF rendering)</li>\n</ul>\n\n<span style=\"color: #6b7280; font-family: monospace;\">/* Any feedback? The project is vibe coded so bugs are possible. In order to <strong>contact the author</strong> use the links above or create an issue on the GitHub repository.*/</span>"
+    "bio": "<span style=\"font-family: monospace; font-size: 0.85em; color: #555;\">Status: <span style=\"color: #16a34a\">● Online</span> | v0.2.0</span><br>\n\nYou are about to use <strong style=\"font-family:'Space Grotesk','Segoe UI',sans-serif;font-size:1.15rem;font-weight:800;letter-spacing:-0.5px; font-style:normal; text-transform:lowercase;background:linear-gradient(135deg,#64B5F6 0%,#42A5F5 50%,#2196F3 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:inline-block;filter:drop-shadow(0 2px 24px rgba(100,181,246,0.5));\">cre8ive.cv </strong> – a free tool for generating a highly customizable resume. Its data layer is just a pure <code>JSON</code> object which can be exported and reimported. Why developers love it?\n<ul>\n <li><b>Flexibility:</b> Go beyond themes. Use custom HTML in any field – the final look depends only on your <strong style=\"font-family:'Space Grotesk','Segoe UI',sans-serif;font-size:1.05rem;font-weight:800;letter-spacing:-0.5px; font-style:normal; text-transform:lowercase;background:linear-gradient(135deg,#64B5F6 0%,#42A5F5 50%,#2196F3 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:inline-block;filter:drop-shadow(0 2px 24px rgba(100,181,246,0.5));\">cre8ivity </strong>!</li>\n <li><b>Convenience:</b> Real-time WYSIWYG interface with <b>no user account</b> needed</li>\n <li><b style=\"font-style:normal\">Privacy focused:</b> Client-side data storage (no personal data is stored on the server after PDF rendering)</li>\n</ul>\n\n<span style=\"color: #6b7280; font-family: monospace;\">/* Any feedback? The project is vibe coded so bugs are possible. In order to <strong>contact the author</strong> use the links above or create an issue on the GitHub repository.*/</span>"
   },
   "skills": [
     {
@@ -20,7 +20,7 @@
         "Live HTML preview",
         "Export to PDF, HTML and JSON",
         "Custom <span style='font-family:monospace; font-weight:bold; background:#f1f5f9; border:1px solid #cbd5e1; border-bottom:2px solid #cbd5e1; padding:0 5px; border-radius:4px; color:#334155; font-size:0.9em;'>HTML</span> support",
-        "Themes and colors",
+        "Themes, colors and layouts",
         "Toggle, reorder and rename sections",
         "No personal data is stored on the server",
         "No user account needed",
@@ -35,7 +35,7 @@
         "Optional watermark to support the project",
         "Gallery of templates to start with",
         "Your resume can be version-controlled with Git",
-        "<div style='display:block; margin-top:4px; padding:8px 12px; background:#f8fafc; border-radius:4px; font-size:0.9em; color:#475569; line-height:1.5;'><span style='font-weight:700; color:#0f172a;'>💡 Protip:</span> You can combine your <span style='font-weight:800; background:linear-gradient(135deg,#64B5F6 0%,#2196F3 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent;'>cre8ivity</span> with <code style='background:#e2e8f0; color:#334155; padding:2px 5px; border-radius:4px; font-family:monospace; font-size:0.9em; border:1px solid #cbd5e1;'>AI</code> to power up your <code style='background:#e2e8f0; color:#334155; padding:2px 5px; border-radius:4px; font-family:monospace; font-size:0.9em; border:1px solid #cbd5e1;'>HTML</code> customizations</div>"
+        "<div style='display:block; margin-top:4px; padding:8px 12px; background:#f8fafc; border-radius:4px; font-size:0.9em; color:#475569; line-height:1.5;'><span style='font-weight:700; color:#0f172a;'>💡 Protip:</span> You can combine your <span style='font-weight:800; background:linear-gradient(135deg,#64B5F6 0%,#2196F3 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent;'>cre8ivity</span> with <code style='background:#e2e8f0; color:#334155; padding:2px 5px; border-radius:4px; font-family:monospace; font-size:0.9em; border:1px solid #cbd5e1;'>AI</code> to boost your <code style='background:#e2e8f0; color:#334155; padding:2px 5px; border-radius:4px; font-family:monospace; font-size:0.9em; border:1px solid #cbd5e1;'>HTML</code> customizations</div>"
       ]
     },
     {
@@ -65,10 +65,21 @@
   ],
   "experience": [
     {
+      "position": "v0.2.0",
+      "company": "2026-02-15",
+      "startDate": "2026-02",
+      "endDate": null,
+      "responsibilities": [
+        "Improvement of resume aesthetics",
+        "New layouts implemented: 'Compact' and 'Sidebar'",
+        "New templates"
+      ]
+    },
+    {
       "position": "v0.1.0",
       "company": "2025-12-28",
       "startDate": "2025-12",
-      "endDate": null,
+      "endDate": "2026-02",
       "responsibilities": [
         "Basic UI with three modes available",
         "Themes and color palettes",
@@ -79,7 +90,7 @@
   "education": [],
   "gdprClause": "MIT License\n\nCopyright (c) 2025 Patryk Palej\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.",
   "_meta": {
-    "version": "0.1.0",
+    "version": "0.2.0",
     "enabledSections": {
       "personalInfo": true,
       "bio": true,
