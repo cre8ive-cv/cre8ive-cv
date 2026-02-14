@@ -278,17 +278,27 @@ function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, custo
   //     overflow:hidden on <html> inside an iframe caps scrollHeight in
   //     Chromium to the current rendered height (one A4 page), which breaks
   //     autoResizePreviewIframe.  Instead we set scrollbar-width:none /
-  //     ::-webkit-scrollbar{width:0} to make the scrollbar zero-width while
-  //     keeping the element scrollable — scrollHeight then returns the full
-  //     content height in every browser.
+  //     ::-webkit-scrollbar{width:0} to make the scrollbar zero-width so it
+  //     does not steal content width, without suppressing scrollHeight.
   //
-  //  2. Padding compensation for non-sidebar layouts — the inlined @media print
+  //  2. Remove the min-height:100vh constraint from body.  The theme CSS sets
+  //     body{min-height:100vh} so the watermark is pushed to the bottom of the
+  //     first page in the PDF.  Inside an iframe whose viewport = one A4 page,
+  //     Chromium interprets this as an effective height cap, causing
+  //     document.documentElement.scrollHeight to return only one page worth of
+  //     height.  autoResizePreviewIframe then sets the iframe to one page tall
+  //     and all content beyond the first page is invisible.  Setting
+  //     body{min-height:0} lets the body grow to its true content height so
+  //     scrollHeight is accurate.
+  //
+  //  3. Padding compensation for non-sidebar layouts — the inlined @media print
   //     already sets body padding: 5px 20px 20px.  Puppeteer also applies PDF
   //     page margins (top:20px, right:20px, bottom:15px, left:20px) which add
   //     to the visual whitespace.  Total effective padding = body-print +
   //     page-margin = 25px top, 40px sides, 35px bottom.
   const previewMarginStyle = forPreview ? `<style>
-html{scrollbar-width:none}html::-webkit-scrollbar{width:0;display:none}${layout !== 'sidebar' ? '\nbody:not(.sidebar-layout){padding:25px 40px 35px!important}' : ''}
+html{scrollbar-width:none}html::-webkit-scrollbar{width:0;display:none}
+body{min-height:0!important}${layout !== 'sidebar' ? '\nbody:not(.sidebar-layout){padding:25px 40px 35px!important}' : ''}
 </style>` : '';
 
 

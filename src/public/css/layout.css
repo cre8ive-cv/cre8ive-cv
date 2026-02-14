@@ -1854,10 +1854,6 @@ body {
   background: white;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   border: 1px solid var(--border-dark);
-  /* Pointer events pass through the iframe to the parent document.
-     This lets wheel events reach .main-content and scroll it naturally
-     in every browser, with no JS forwarding hacks required. */
-  pointer-events: none;
 }
 
 /* Scrollbar Styling */

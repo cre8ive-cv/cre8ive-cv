@@ -220,6 +220,11 @@ async function generatePreview() {
     // Resize to full content height once loaded so there is never an internal
     // iframe scrollbar (which would reduce content width vs the PDF renderer).
     autoResizePreviewIframe(iframe);
+    // Forward wheel/touch events from inside the iframe to the outer scroll
+    // container.  Without pointer-events:none on the iframe, Chromium delivers
+    // wheel events to the iframe document first; forwardPreviewScroll ensures
+    // they still reach .main-content even when the iframe has no overflow.
+    forwardPreviewScroll(iframe);
     if (previousScroll) {
       const sc = getPreviewScrollContainer();
       if (sc) sc.scrollTop = previousScroll.containerScroll || 0;
@@ -822,11 +827,11 @@ function capturePreviewScrollPosition() {
 
 /**
  * Resizes the preview iframe to its full content height after the page and
- * all fonts have loaded.  This eliminates the internal scrollbar (which would
- * steal ~15 px of content width and cause text to wrap at different positions
- * than in the PDF).  Scrolling is handled by the outer .main-content container
- * via the native browser scroll mechanism (the iframe has pointer-events: none
- * in CSS so wheel events pass through directly to the parent document).
+ * all fonts have loaded.  This eliminates any internal iframe scrollbar (which
+ * would steal ~15 px of content width and cause text to wrap at different
+ * positions than in the PDF).  With the iframe exactly as tall as its content
+ * there is nothing to scroll inside it, so Chromium chains wheel events up to
+ * the outer .main-content scroll container naturally.
  */
 function autoResizePreviewIframe(iframe) {
   const resize = () => {
