@@ -1,14 +1,14 @@
 {
   "personalInfo": {
     "name": "Jack Duck",
-    "title": "<i class=\"fa-solid fa-brain\" style=\"font-size:30px;background:linear-gradient(90deg,#2196F3,#0D47A1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;\"></i> AI Engineer",
+    "title": "\ud83e\udde0 AI Engineer",
     "email": "jack@duck.dev",
     "phone": "+00 123 456 789",
     "website": null,
     "linkedin": "https://linkedin.com/in/jack-duck",
     "github": "https://github.com/jackduckdev",
     "location": null,
-    "bio": "<div style=\"font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2c3e50; line-height: 1.6;\">\n  \n <div style=\"display: inline-block; border-left: 5px solid #1565c0; margin-bottom: 20px; background: #e3f2fd; padding: 15px; border-radius: 0 10px 10px 0;\">\n    <h2 style=\"margin: 0; color: #0d47a1; font-size: 1.5em;\">AI Engineer</h2>\n    <span style=\"font-size: 0.9em; color: #1976d2; letter-spacing: 1px; font-weight: bold;\">4+ YEARS EXPERIENCE | MATHEMATICS BACKGROUND</span>\n</div>\n\n  <p style=\"margin-bottom: 20px; font-size: 1.05em;\">\n    Passionate AI developer bridging the gap between <strong style=\"color: #0d47a1;\">theoretical mathematics</strong> and practical application. Specializing in Generative AI, Computer Vision, and optimizing inference pipelines for production environments.\n  </p>\n  <p style=\"font-size: 0.9em; color: #546e7a; border-top: 1px solid #cfd8dc; padding-top: 10px;\">\n    <em>\"Turning complex data lakes into actionable intelligence.\"</em>\n  </p>\n</div>"
+    "bio": "<div style=\"font-size: 0.95em; line-height: 1.6; color: inherit;\">\n  <p style=\"margin: 0 0 10px 0;\"><strong>AI engineer</strong> with a mathematics background, shipping models to production and keeping inference lean.</p>\n  <ul style=\"margin: 0 0 10px 0; padding-left: 18px;\">\n    <li>Builds RAG and vision systems end to end (data, evaluation, serving).</li>\n    <li>Optimizes GPUs/CPUs with quantization, batching, and observability.</li>\n    <li>Turns research ideas into API-ready features with clear guardrails.</li>\n  </ul>\n  <p style=\"margin: 0; font-style: italic; opacity: 0.85;\">\"Turning complex data into actionable signals.\"</p>\n</div>"
   },
   "skills": [
     {
@@ -125,6 +125,7 @@
     },
     "selectedTheme": "corpo",
     "selectedColor": "blue",
+    "selectedLayout": "compact",
     "showWatermark": true,
     "customSectionNames": {
       "experience": "🖥️ Professional Experience",

@@ -322,6 +322,13 @@ body {
     transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.gallery-dropdown-wrapper.is-locked-closed .gallery-dropdown {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: translateY(-8px) scale(0.97) !important;
+}
+
 /* Dropdown header row */
 .gallery-dropdown-header {
   display: flex;

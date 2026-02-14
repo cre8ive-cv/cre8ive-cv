@@ -84,7 +84,7 @@ async function loadBlankTemplate() {
 async function loadTemplateFromGallery(template) {
   if (state.templateLoaded) {
     const confirmed = confirm('Are you sure you want to load a new template? Your current data will be lost. This action cannot be undone.');
-    if (!confirmed) return;
+    if (!confirmed) return false;
   }
 
   // Reset state
@@ -142,10 +142,12 @@ async function loadTemplateFromGallery(template) {
 
     saveStateToLocalStorage();
     flashPreviewStatus(`Template "${template.label}" loaded`, 'status-success');
+    return true;
   } catch (error) {
     console.error('Error loading template:', error);
     flashPreviewStatus('Error loading template', 'status-error');
     renderPreviewPlaceholder();
+    return false;
   }
 }
 

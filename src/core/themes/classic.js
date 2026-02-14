@@ -215,6 +215,25 @@ function getStyles() {
       font-style: italic;
     }
 
+    .bio p,
+    .bio ul,
+    .bio ol,
+    .bio li {
+      font: inherit;
+      color: inherit;
+      line-height: inherit;
+      margin: 0 0 6px 0;
+    }
+
+    .bio ul,
+    .bio ol {
+      padding-left: 16px;
+    }
+
+    .bio li {
+      margin: 0 0 4px 0;
+    }
+
     section {
       margin-bottom: 24px;
     }
@@ -450,7 +469,7 @@ function getStyles() {
       }
 
       body.compact-layout .bio {
-        font-size: 11px;
+        font-size: 12px;
         line-height: 1.5;
       }
 

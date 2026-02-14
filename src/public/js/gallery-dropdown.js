@@ -3,6 +3,14 @@
   let initialized = false;
   let templatesCache = null;
 
+  function forceCloseDropdown(wrapper) {
+    if (!wrapper) return;
+    wrapper.classList.remove('is-open');
+    wrapper.classList.add('is-locked-closed');
+    const onLeave = () => wrapper.classList.remove('is-locked-closed');
+    wrapper.addEventListener('mouseleave', onLeave, { once: true });
+  }
+
   // Touch device with enough width to show the dropdown (tablet)
   function isTabletTouch() {
     return window.matchMedia('(pointer: coarse) and (min-width: 701px)').matches;
@@ -73,8 +81,16 @@
       btn.appendChild(img);
       btn.appendChild(label);
 
-      btn.addEventListener('click', () => {
-        loadTemplateFromGallery(template);
+      btn.addEventListener('click', async () => {
+        const loaded = await loadTemplateFromGallery(template);
+        if (loaded) {
+          const wrapper = document.getElementById('galleryDropdownWrapper');
+          forceCloseDropdown(wrapper);
+          const link = wrapper.querySelector('.gallery-link');
+          if (link) {
+            link.blur();
+          }
+        }
       });
 
       grid.appendChild(btn);

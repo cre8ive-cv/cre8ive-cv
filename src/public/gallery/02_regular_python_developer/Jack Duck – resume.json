@@ -1,14 +1,14 @@
 {
   "personalInfo": {
     "name": "Jack Duck",
-    "title": "<i class=\"fa-brands fa-python\" style=\"font-size:30px;background:linear-gradient(90deg,#306998,#FFD43B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;\"></i> Regular Python Developer",
+    "title": "\ud83d\udc0d Regular Python Developer",
     "email": "jack@duck.dev",
     "phone": "+00 123 456 789",
     "website": null,
     "linkedin": "https://linkedin.com/in/jack-duck",
     "github": "https://github.com/jackduckdev",
     "location": null,
-    "bio": "<div style=\"font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; line-height: 1.6; max-width: 800px;\">\n  \n  <h2 style=\"color: #2e7d32; border-bottom: 2px solid #81c784; padding-bottom: 5px; margin-bottom: 15px;\">\n    <strong>Python Developer</strong> <span style=\"color: #666; font-weight: normal; font-size: 0.8em;\">| 4+ Years Experience</span>\n  </h2>\n\n  <p style=\"margin-bottom: 15px;\">\n    Dynamic and detail-oriented Developer specializing in \n    <strong style=\"color: #1565c0;\">designing, developing, and deploying</strong> \n    scalable web applications and microservices.\n  </p>\n\n  <div style=\"margin-bottom: 20px;\">\n    <span style=\"background-color: #e3f2fd; color: #0d47a1; padding: 4px 10px; border-radius: 15px; font-size: 0.9em; font-weight: bold; margin-right: 5px;\">Django</span>\n    <span style=\"background-color: #e8f5e9; color: #1b5e20; padding: 4px 10px; border-radius: 15px; font-size: 0.9em; font-weight: bold; margin-right: 5px;\">FastAPI</span>\n    <span style=\"background-color: #fff3e0; color: #e65100; padding: 4px 10px; border-radius: 15px; font-size: 0.9em; font-weight: bold; margin-right: 5px;\">SOLID Principles</span>\n    <span style=\"background-color: #f3e5f5; color: #4a148c; padding: 4px 10px; border-radius: 15px; font-size: 0.9em; font-weight: bold;\">Agile/Scrum</span>\n  </div>\n\n  <ul style=\"list-style-type: none; padding-left: 0;\">\n    <li style=\"margin-bottom: 8px;\">\n      <span style=\"color: #2e7d32; margin-right: 8px;\">✔</span> \n      Proven track record of <strong>optimizing database performance</strong>.\n    </li>\n    <li style=\"margin-bottom: 8px;\">\n      <span style=\"color: #2e7d32; margin-right: 8px;\">✔</span> \n      Expert in <strong>integrating third-party APIs</strong> and microservices orchestration.\n    </li>\n    <li style=\"margin-bottom: 8px;\">\n      <span style=\"color: #2e7d32; margin-right: 8px;\">✔</span> \n      Focused on writing <strong>clean, maintainable code</strong> that scales.\n    </li>\n  </ul>\n  \n</div>"
+    "bio": "<div style=\"font-size: 0.95em; line-height: 1.6; color: inherit;\">\n  <p style=\"margin: 0 0 10px 0;\"><strong>Backend-focused Python developer</strong> building APIs and services that stay readable and fast.</p>\n  <ul style=\"margin: 0 0 10px 0; padding-left: 18px;\">\n    <li>Designs FastAPI/Django backends with typing, linting, and pragmatic tests.</li>\n    <li>Tunes SQL/Redis workloads for predictable performance at scale.</li>\n    <li>Ships API integrations and async workers with clear monitoring in place.</li>\n  </ul>\n  <div style=\"display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;\">\n    <span style=\"padding: 4px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 600; background: #e3f2fd; color: #0d47a1; border: 1px solid rgba(0,0,0,0.05);\">FastAPI</span>\n    <span style=\"padding: 4px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 600; background: #e8f5e9; color: #1b5e20; border: 1px solid rgba(0,0,0,0.05);\">Django</span>\n    <span style=\"padding: 4px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 600; background: #fff3e0; color: #e65100; border: 1px solid rgba(0,0,0,0.05);\">Asyncio</span>\n    <span style=\"padding: 4px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 600; background: #f3e5f5; color: #4a148c; border: 1px solid rgba(0,0,0,0.05);\">PostgreSQL</span>\n  </div>\n</div>"
   },
   "experience": [
     {
@@ -127,6 +127,7 @@
     },
     "selectedTheme": "default",
     "selectedColor": "blue",
+    "selectedLayout": "sidebar",
     "showWatermark": true,
     "customSectionNames": {
       "experience": "Experience"
