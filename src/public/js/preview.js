@@ -220,8 +220,9 @@ async function generatePreview() {
     // Resize to full content height once loaded so there is never an internal
     // iframe scrollbar (which would reduce content width vs the PDF renderer).
     autoResizePreviewIframe(iframe);
-    if (previousScroll && elements.previewContainer) {
-      elements.previewContainer.scrollTop = previousScroll.containerScroll || 0;
+    if (previousScroll) {
+      const sc = getPreviewScrollContainer();
+      if (sc) sc.scrollTop = previousScroll.containerScroll || 0;
     }
     restorePreviewScrollPosition(iframe);
     trackPreviewScroll(iframe);
@@ -775,13 +776,34 @@ function showLoading(isLoading) {
 
 let previewContainerScrollListenerAttached = false;
 
+/**
+ * Returns the nearest ancestor of the preview area that actually has scrollable
+ * overflow.  In the desktop layout that is `.main-content` (flex: 1; overflow-y:
+ * auto inside the 100vh container), NOT `.preview-container` which has only
+ * min-height and just grows to fit its content.  Falling back to the container
+ * itself keeps things safe if the layout ever changes.
+ */
+function getPreviewScrollContainer() {
+  // Walk up from previewContainer looking for the first element that actually scrolls.
+  let el = elements.previewContainer?.parentElement;
+  while (el && el !== document.body) {
+    const style = window.getComputedStyle(el);
+    const oy = style.overflowY;
+    if ((oy === 'auto' || oy === 'scroll') && el.scrollHeight > el.clientHeight) {
+      return el;
+    }
+    el = el.parentElement;
+  }
+  return elements.previewContainer || document.documentElement;
+}
+
 function getIframeScrollElement(doc) {
   if (!doc) return null;
   return doc.scrollingElement || doc.documentElement || doc.body || null;
 }
 
 function capturePreviewScrollPosition() {
-  const containerScroll = elements.previewContainer?.scrollTop || 0;
+  const containerScroll = getPreviewScrollContainer()?.scrollTop || 0;
   const iframe = document.getElementById('resumePreview');
   const doc = iframe?.contentDocument;
   const scrollEl = getIframeScrollElement(doc);
@@ -802,7 +824,9 @@ function capturePreviewScrollPosition() {
  * Resizes the preview iframe to its full content height after the page and
  * all fonts have loaded.  This eliminates the internal scrollbar (which would
  * steal ~15 px of content width and cause text to wrap at different positions
- * than in the PDF).  The outer .preview-container handles scrolling instead.
+ * than in the PDF).  Scrolling is handled by the outer .main-content container
+ * via the native browser scroll mechanism (the iframe has pointer-events: none
+ * in CSS so wheel events pass through directly to the parent document).
  */
 function autoResizePreviewIframe(iframe) {
   const resize = () => {
@@ -830,8 +854,9 @@ function restorePreviewScrollPosition(iframe) {
     const scrollEl = getIframeScrollElement(doc);
     const saved = state.previewScroll;
 
-    if (elements.previewContainer && saved.containerScroll !== undefined) {
-      elements.previewContainer.scrollTop = saved.containerScroll || 0;
+    const scrollContainer = getPreviewScrollContainer();
+    if (scrollContainer && saved.containerScroll !== undefined) {
+      scrollContainer.scrollTop = saved.containerScroll || 0;
     }
 
     if (!doc || !scrollEl) return;
@@ -868,14 +893,16 @@ function trackPreviewScroll(iframe) {
   if (!iframe) return;
 
   const ensureContainerListener = () => {
-    if (previewContainerScrollListenerAttached || !elements.previewContainer) return;
+    if (previewContainerScrollListenerAttached) return;
+    const scrollContainer = getPreviewScrollContainer();
+    if (!scrollContainer) return;
 
-    elements.previewContainer.addEventListener(
+    scrollContainer.addEventListener(
       'scroll',
       () => {
         state.previewScroll = {
           ...(state.previewScroll || {}),
-          containerScroll: elements.previewContainer.scrollTop || 0
+          containerScroll: getPreviewScrollContainer()?.scrollTop || 0
         };
       },
       { passive: true }
@@ -898,7 +925,7 @@ function trackPreviewScroll(iframe) {
         ...(state.previewScroll || {}),
         iframeScrollTop: scrollTop,
         iframeRatio: scrollHeight ? scrollTop / scrollHeight : 0,
-        containerScroll: elements.previewContainer?.scrollTop || 0
+        containerScroll: getPreviewScrollContainer()?.scrollTop || 0
       };
     };
 
@@ -910,6 +937,89 @@ function trackPreviewScroll(iframe) {
     attachListener();
   } else {
     iframe.addEventListener('load', attachListener, { once: true });
+  }
+}
+
+// Forward wheel/touch scrolls that happen over the iframe to the outer
+// scrollable container so long previews remain reachable.
+function forwardPreviewScroll(iframe) {
+  if (!iframe) return;
+
+  const register = () => {
+    const doc = iframe.contentDocument;
+    const scrollEl = getIframeScrollElement(doc);
+    if (!doc || !scrollEl) return;
+
+    let lastTouchY = null;
+
+    const forward = (deltaY) => {
+      // Use the real scrollable ancestor (e.g. .main-content), not the
+      // preview-container which only has min-height and never actually scrolls.
+      getPreviewScrollContainer()?.scrollBy({ top: deltaY, behavior: 'auto' });
+    };
+
+    const canScroll = (delta) => {
+      const sc = getPreviewScrollContainer();
+      if (!sc) return false;
+      const atBottom = sc.scrollTop + sc.clientHeight >= sc.scrollHeight - 1;
+      const atTop = sc.scrollTop <= 0;
+      return (delta > 0 && !atBottom) || (delta < 0 && !atTop);
+    };
+
+    const onWheel = (event) => {
+      const delta = event.deltaY;
+      // Only intercept (and prevent default) when the scroll container can
+      // actually move in the requested direction.  At boundaries we must NOT
+      // call preventDefault – otherwise the event is silently consumed and the
+      // user feels the scroll is "stuck".
+      if (canScroll(delta)) {
+        forward(delta);
+        event.preventDefault();
+      }
+    };
+
+    const onTouchStart = (event) => {
+      if (event.touches.length !== 1) return;
+      lastTouchY = event.touches[0].clientY;
+    };
+
+    const onTouchMove = (event) => {
+      if (event.touches.length !== 1 || lastTouchY === null) return;
+      const currentY = event.touches[0].clientY;
+      const delta = lastTouchY - currentY;
+
+      if (canScroll(delta)) {
+        forward(delta);
+        event.preventDefault();
+      }
+
+      lastTouchY = currentY;
+    };
+
+    const onTouchEnd = () => {
+      lastTouchY = null;
+    };
+
+    // Listen inside the iframe document (where wheel events land when the
+    // cursor is over the resume content).
+    scrollEl.addEventListener('wheel', onWheel, { passive: false });
+    scrollEl.addEventListener('touchstart', onTouchStart, { passive: true });
+    scrollEl.addEventListener('touchmove', onTouchMove, { passive: false });
+    scrollEl.addEventListener('touchend', onTouchEnd, { passive: true });
+    scrollEl.addEventListener('touchcancel', onTouchEnd, { passive: true });
+    // Fallback: the iframe element itself catches wheel events in browsers that
+    // deliver them to the parent frame before entering the child document.
+    iframe.addEventListener('wheel', onWheel, { passive: false });
+    iframe.addEventListener('touchstart', onTouchStart, { passive: true });
+    iframe.addEventListener('touchmove', onTouchMove, { passive: false });
+    iframe.addEventListener('touchend', onTouchEnd, { passive: true });
+    iframe.addEventListener('touchcancel', onTouchEnd, { passive: true });
+  };
+
+  if (iframe.contentDocument?.readyState === 'complete') {
+    register();
+  } else {
+    iframe.addEventListener('load', register, { once: true });
   }
 }
 

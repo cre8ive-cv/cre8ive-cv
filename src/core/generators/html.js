@@ -274,11 +274,13 @@ function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, custo
 
   // Preview-mode CSS overrides so the iframe matches the PDF render:
   //
-  //  1. overflow-y:hidden on <html> — prevents a vertical scrollbar from
-  //     appearing inside the iframe. A scrollbar steals ~15 px of content
-  //     width, causing text to wrap at different positions than in the PDF
-  //     (which has no scrollbar). scrollHeight measurement is unaffected by
-  //     overflow:hidden, so auto-resize still gets the correct full height.
+  //  1. Hide the scrollbar on <html> without using overflow:hidden.
+  //     overflow:hidden on <html> inside an iframe caps scrollHeight in
+  //     Chromium to the current rendered height (one A4 page), which breaks
+  //     autoResizePreviewIframe.  Instead we set scrollbar-width:none /
+  //     ::-webkit-scrollbar{width:0} to make the scrollbar zero-width while
+  //     keeping the element scrollable — scrollHeight then returns the full
+  //     content height in every browser.
   //
   //  2. Padding compensation for non-sidebar layouts — the inlined @media print
   //     already sets body padding: 5px 20px 20px.  Puppeteer also applies PDF
@@ -286,7 +288,7 @@ function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, custo
   //     to the visual whitespace.  Total effective padding = body-print +
   //     page-margin = 25px top, 40px sides, 35px bottom.
   const previewMarginStyle = forPreview ? `<style>
-html{overflow-y:hidden!important}${layout !== 'sidebar' ? '\nbody:not(.sidebar-layout){padding:25px 40px 35px!important}' : ''}
+html{scrollbar-width:none}html::-webkit-scrollbar{width:0;display:none}${layout !== 'sidebar' ? '\nbody:not(.sidebar-layout){padding:25px 40px 35px!important}' : ''}
 </style>` : '';
 
 

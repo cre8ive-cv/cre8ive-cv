@@ -275,29 +275,24 @@ function handleDropupOutsideInteraction(event) {
 function attachPreviewInteractionHandlers(iframe) {
   if (!iframe) return;
 
-  const register = () => {
-    try {
-      const doc = iframe.contentDocument || iframe.contentWindow?.document;
-      if (!doc) return;
-      doc.addEventListener(
-        'pointerdown',
-        () => {
-          closeThemeDropup();
-          closeColorDropup();
-          closeLayoutDropup();
-        },
-        { passive: true }
-      );
-    } catch (error) {
-      console.warn('Unable to attach preview interaction handlers:', error);
-    }
-  };
+  // The iframe has pointer-events: none so events never reach the iframe
+  // document. Listen on the parent container instead — any click/tap in the
+  // preview area (which passes through to the parent) will close open dropups.
+  const container = iframe.closest
+    ? (iframe.closest('.preview-container') || elements.previewContainer)
+    : elements.previewContainer;
 
-  if (iframe.contentDocument?.readyState === 'complete') {
-    register();
-  } else {
-    iframe.addEventListener('load', register, { once: true });
-  }
+  if (!container) return;
+
+  container.addEventListener(
+    'pointerdown',
+    () => {
+      closeThemeDropup();
+      closeColorDropup();
+      closeLayoutDropup();
+    },
+    { passive: true }
+  );
 }
 
 // Load available colors
