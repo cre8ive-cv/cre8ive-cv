@@ -59,13 +59,13 @@ function buildAnalyticsContext(req, providedMeta = {}, {
   themeName = null,
   colorName = null,
   showWatermark = false,
-  enabledSections = {},
-  customSectionNames = {}
-} = {}) {
+    enabledSections = {},
+    customSectionNames = {}
+  } = {}) {
   const normalizedMeta = {
     selectedTheme: providedMeta?.selectedTheme || themeName || null,
     selectedColor: providedMeta?.selectedColor || colorName || null,
-    selectedLayout: providedMeta?.layout || null,
+    selectedLayout: providedMeta?.selectedLayout || providedMeta?.layout || null,
     showWatermark: typeof providedMeta?.showWatermark === 'boolean'
       ? providedMeta.showWatermark
       : Boolean(

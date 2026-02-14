@@ -562,6 +562,7 @@ function getStyles(palette) {
       flex-direction: column;
       color: #ecf0f1;
       min-height: 100vh;
+      font-variant-emoji: text; /* Keep symbols (e.g., checkmarks) monochrome so color matches PDF/HTML */
       print-color-adjust: exact;
       -webkit-print-color-adjust: exact;
     }
@@ -618,20 +619,22 @@ function getStyles(palette) {
     body.sidebar-layout .sidebar-name {
       margin-bottom: 14px;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
     body.sidebar-layout .sidebar-name h1 {
       font-size: 26px;
       color: #fff;
       line-height: 1.15;
-      margin-bottom: 3px;
+      margin: 0;
     }
 
     body.sidebar-layout .sidebar-name .title {
       font-size: 14px;
       color: ${palette.light};
-      margin-top: 2px;
-      margin-bottom: 0;
+      margin: 0;
       line-height: 1.2;
     }
 
@@ -677,12 +680,34 @@ function getStyles(palette) {
       line-height: 1.5;
       color: rgba(255,255,255,0.75);
       font-style: italic;
+      /* Ensure user blocks inside bio inherit the intended styles */
+      & p,
+      & ul,
+      & ol {
+        font: inherit;
+        color: inherit;
+        line-height: inherit;
+        margin: 0 0 6px 0;
+      }
+
+      & ul,
+      & ol {
+        padding-left: 16px;
+      }
+
+      & li {
+        font: inherit;
+        color: inherit;
+        line-height: inherit;
+        margin: 0 0 4px 0;
+      }
     }
 
     /* Main content area */
     body.sidebar-layout .main-content {
       width: 70%;
       padding: 18px 22px 16px 20px;
+      font-variant-emoji: text;
     }
 
     body.sidebar-layout .main-content section {

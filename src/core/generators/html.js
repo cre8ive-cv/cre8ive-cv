@@ -332,7 +332,7 @@ html{overflow-y:hidden!important}${layout !== 'sidebar' ? '\nbody:not(.sidebar-l
           ${contactLinks.website ? `<div class="contact-item"><i class="fas fa-globe"></i><a href="${contactLinks.website}" target="_blank">${isolateUserContent(contactDisplay.website)}</a></div>` : ''}
           ${(personalInfo.location || '').trim() ? `<div class="contact-item"><i class="fas fa-map-marker-alt"></i>${isolateUserContent(personalInfo.location)}</div>` : ''}
         </div>` : ''}
-        ${bio ? `<div class="sidebar-bio"><p class="bio">${isolateUserContent(bio)}</p></div>` : ''}
+        ${bio ? `<div class="sidebar-bio"><div class="bio">${isolateUserContent(bio)}</div></div>` : ''}
       </div>
       ${gdprWatermarkHtml}
     </aside>
@@ -365,7 +365,7 @@ html{overflow-y:hidden!important}${layout !== 'sidebar' ? '\nbody:not(.sidebar-l
         </div>
       </div>` : ''}
       ${bio ? `<div class="header-bio">
-        <p class="bio">${isolateUserContent(bio)}</p>
+        <div class="bio">${isolateUserContent(bio)}</div>
       </div>` : ''}
     </header>
 

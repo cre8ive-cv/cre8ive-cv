@@ -49,55 +49,9 @@ async function generatePDF(htmlContent, page) {
       console.warn('Font loading timed out, continuing anyway:', err.message);
     }
 
-    // Add CSS for emoji images (Twemoji) to ensure proper sizing
-    await page.addStyleTag({
-      content: `
-        img.emoji {
-          height: 1em !important;
-          width: 1em !important;
-          max-height: 1em !important;
-          max-width: 1em !important;
-          min-height: 1em !important;
-          min-width: 1em !important;
-          margin: 0 0.05em 0 0.1em;
-          vertical-align: -0.1em;
-          display: inline-block;
-          object-fit: contain;
-        }
-      `
-    });
-
-    // Convert emojis to SVG using Twemoji for reliable PDF rendering
-    try {
-      await page.addScriptTag({
-        url: 'https://cdn.jsdelivr.net/npm/@twemoji/api@latest/dist/twemoji.min.js',
-        timeout: TIMEOUTS.NETWORK_IDLE
-      });
-
-      // SECURITY: Execute emoji parsing with timeout protection
-      await Promise.race([
-        page.evaluate(() => {
-          // Parse emojis and convert to SVG images
-          if (window.twemoji) {
-            twemoji.parse(document.body, {
-              folder: 'svg',
-              ext: '.svg',
-              base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/',
-              className: 'emoji'
-            });
-          }
-        }),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Twemoji parse timeout')), TIMEOUTS.SCRIPT_EXECUTION)
-        )
-      ]);
-
-      // Wait for emoji SVG images to load (with reduced timeout)
-      await new Promise(resolve => setTimeout(resolve, 1500));
-    } catch (err) {
-      console.warn('Twemoji loading failed, emojis may not render correctly:', err.message);
-      // Continue anyway - Font Awesome should still work
-    }
+    // NOTE: We intentionally skip Twemoji SVG replacement here so symbols/emoji
+    // keep the same color as the HTML preview (Twemoji recolors glyphs). Native
+    // font emoji rendering is more faithful to the on-screen preview.
 
     // Detect sidebar layout from HTML content
     const isSidebarLayout = htmlContent.includes('class="sidebar-layout"');

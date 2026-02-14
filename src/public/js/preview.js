@@ -455,8 +455,8 @@ function buildResumeMetaSnapshot({
     enabledSections: resolvedEnabledSections,
     selectedTheme: state.selectedTheme,
     selectedColor: state.selectedColor,
+    selectedLayout: state.layout,
     showWatermark: state.showWatermark,
-    layout: state.layout,
     customSectionNames: { ...state.customSectionNames }
   };
 }
@@ -672,7 +672,9 @@ function applyMetaSettings(meta, options = {}) {
   elements.showWatermarkCheckbox.checked = state.showWatermark;
 
   // Apply layout setting (with backward compat for old tightLayout boolean)
-  if (meta.layout) {
+  if (meta.selectedLayout) {
+    state.layout = meta.selectedLayout;
+  } else if (meta.layout) {
     state.layout = meta.layout;
   } else {
     state.layout = meta.tightLayout === true ? 'compact' : 'standard';
