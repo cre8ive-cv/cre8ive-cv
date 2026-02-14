@@ -86,6 +86,13 @@ async function generatePDF(htmlContent, page) {
 
         // --- MEASUREMENT PHASE ---
         // Let everything flow naturally so we can measure true heights.
+        // Also reset <html> so its viewport-driven min-height (100vh) does not
+        // inflate scrollHeight readings before we set explicit sizes.
+        const docEl = document.documentElement;
+        docEl.style.height = 'auto';
+        docEl.style.minHeight = '0';
+        docEl.style.overflow = 'visible';
+
         body.style.display = 'block';
         body.style.height = 'auto';
         body.style.minHeight = 'auto';
@@ -104,16 +111,61 @@ async function generatePDF(htmlContent, page) {
           mainContent.style.minHeight = '0';
         }
 
-        // Measure both columns independently to find the tallest
+        // Measure both columns independently to find the tallest.
+        // Reading scrollHeight forces a synchronous layout reflow so all of the
+        // style overrides above are guaranteed to be in effect.
         const sidebarHeight = sidebar.scrollHeight;
         const mainHeight = mainContent ? mainContent.scrollHeight : 0;
         const tallestColumn = Math.max(sidebarHeight, mainHeight);
 
-        // Only use as many pages as the content actually needs
-        const numberOfPages = Math.max(1, Math.ceil(tallestColumn / PAGE_HEIGHT_PX));
+        // Determine page count from the bottom edge of the last text node in
+        // main-content rather than from scrollHeight.
+        //
+        // scrollHeight is an integer that includes trailing padding-bottom and
+        // the margin-bottom of the last section — none of which contain text.
+        // Even a modest font-size increase accumulates sub-pixel rounding across
+        // multiple section headers, pushing scrollHeight 2–5 px past PAGE_HEIGHT_PX
+        // while the final line of visible text ends well within page 1.  Using
+        // scrollHeight for the page count would generate a blank extra page.
+        //
+        // getBoundingClientRect() on Range nodes is float-precise and returns
+        // absolute Y positions (scroll offset is always 0 in Puppeteer evaluate).
+        // Walking only the text nodes of main-content gives us the exact pixel
+        // where readable content ends, completely ignoring trailing whitespace,
+        // padding, and margins.
+        let lastTextBottom = 0;
+        const textRoot = mainContent || document.body;
+        const textWalker = document.createTreeWalker(
+          textRoot,
+          NodeFilter.SHOW_TEXT,
+          null
+        );
+        let textNode;
+        while ((textNode = textWalker.nextNode())) {
+          if (!textNode.textContent.trim()) continue;
+          const range = document.createRange();
+          range.selectNode(textNode);
+          const rect = range.getBoundingClientRect();
+          if (rect.height > 0) lastTextBottom = Math.max(lastTextBottom, rect.bottom);
+        }
+
+        // Fall back to scrollHeight if (somehow) no text nodes exist.
+        const effectiveHeight = lastTextBottom > 0 ? lastTextBottom : tallestColumn;
+        const numberOfPages = Math.max(1, Math.ceil(effectiveHeight / PAGE_HEIGHT_PX));
         const bodyHeightPx = numberOfPages * PAGE_HEIGHT_PX;
 
         // --- RENDER PHASE ---
+        // Lock both <html> and <body> to the exact page-stack height.
+        // Puppeteer's PDF renderer paginates against the <html> root element's
+        // height, not <body>.  If <html> is taller than <body> (e.g. because a
+        // theme sets min-height:100vh = viewport height = 1123 px, which is 1 px
+        // above PAGE_HEIGHT_PX = 1122 px), ceil(1123 / 1122.52) = 2 and a blank
+        // second page is generated.  Setting html.height = bodyHeightPx ensures
+        // the root never exceeds the intended page count.
+        docEl.style.height = bodyHeightPx + 'px';
+        docEl.style.minHeight = '0';
+        docEl.style.overflow = 'hidden';
+
         body.style.display = 'block';
         body.style.height = bodyHeightPx + 'px';
         body.style.minHeight = '0';

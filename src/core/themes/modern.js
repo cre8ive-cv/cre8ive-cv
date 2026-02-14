@@ -762,7 +762,7 @@ function getStyles(palette) {
     }
 
     body.sidebar-layout .main-content h2 {
-      font-size: 14.75px;
+      font-size: 15px;
       padding: 4.5px 12px;
       margin-bottom: 7.5px;
       letter-spacing: 0.8px;
