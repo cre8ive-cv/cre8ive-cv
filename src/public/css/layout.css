@@ -1343,7 +1343,8 @@ body {
 /* Main Content */
 .main-content {
   flex: 1;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   padding: 24px;
   background: var(--bg-primary);
 }
@@ -1357,6 +1358,7 @@ body {
 
 .preview-header {
   position: relative;
+  flex-shrink: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1814,7 +1816,8 @@ body {
 .preview-container {
   background: transparent;
   border-radius: 8px;
-  min-height: calc(100vh - 120px);
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
 }

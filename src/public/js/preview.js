@@ -219,12 +219,10 @@ async function generatePreview() {
     iframe.srcdoc = data.html;
     // Resize to full content height once loaded so there is never an internal
     // iframe scrollbar (which would reduce content width vs the PDF renderer).
+    // .preview-container is the direct scrollable parent of the iframe, so
+    // Chromium naturally propagates wheel/touch events from the iframe up to
+    // .preview-container without any JS forwarding needed.
     autoResizePreviewIframe(iframe);
-    // Forward wheel/touch events from inside the iframe to the outer scroll
-    // container.  Without pointer-events:none on the iframe, Chromium delivers
-    // wheel events to the iframe document first; forwardPreviewScroll ensures
-    // they still reach .main-content even when the iframe has no overflow.
-    forwardPreviewScroll(iframe);
     if (previousScroll) {
       const sc = getPreviewScrollContainer();
       if (sc) sc.scrollTop = previousScroll.containerScroll || 0;
@@ -839,7 +837,18 @@ function autoResizePreviewIframe(iframe) {
     if (!doc) return;
     const measure = () => {
       const h = doc.documentElement.scrollHeight;
-      if (h > 0) iframe.style.height = h + 'px';
+      if (h > 0) {
+        // The iframe element uses box-sizing:border-box (inherited from the
+        // global * rule) and has a 1px top+bottom border.  Setting height to
+        // scrollHeight would make the content viewport 2px shorter than the
+        // content, leaving the iframe internally scrollable by 2px.  Chromium
+        // latches onto that tiny overflow and the outer container scroll feels
+        // stuck.  Add the border widths so the viewport equals scrollHeight.
+        const cs = window.getComputedStyle(iframe);
+        const borderH = (parseFloat(cs.borderTopWidth) || 0) +
+                        (parseFloat(cs.borderBottomWidth) || 0);
+        iframe.style.height = (h + borderH) + 'px';
+      }
     };
     // Wait for fonts so text is laid out with accurate metrics before measuring.
     (doc.fonts?.ready ?? Promise.resolve()).then(measure).catch(measure);
