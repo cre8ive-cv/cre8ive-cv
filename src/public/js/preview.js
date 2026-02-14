@@ -207,25 +207,21 @@ async function generatePreview() {
     // Display preview in iframe
     elements.previewContainer.innerHTML = '<iframe id="resumePreview"></iframe>';
     const iframe = document.getElementById('resumePreview');
-    // Always render at A4 width (794px at 96 DPI) so the resume content layout
-    // is correct and matches the PDF output. Scale the entire iframe element up
-    // via CSS zoom so it fills ~90% of the container without distorting the
-    // resume content — zoom scales the element visually without changing the
-    // internal viewport, preserving all proportions.
-    const containerWidth = elements.previewContainer.clientWidth || 820;
+    // Lock iframe to A4 width (794px at 96 DPI) so the HTML preview matches
+    // the PDF output. transform: scale() enlarges it visually to fill ~85% of
+    // the container without affecting scroll mechanics (unlike CSS zoom).
     const A4_PX = 794;
+    const containerWidth = elements.previewContainer.clientWidth || 820;
+    const scale = Math.max(containerWidth * 0.85 / A4_PX, 1);
     iframe.style.width = A4_PX + 'px';
     iframe.style.maxWidth = 'none';
-    const previewZoom = containerWidth >= A4_PX
-      ? (containerWidth * 0.9 - 20) / A4_PX
-      : containerWidth / A4_PX;
-    iframe.style.zoom = previewZoom;
-    const iframeWidth = A4_PX;
-    iframe.style.minHeight = Math.round(iframeWidth * 297 / 210) + 'px';
+    iframe.style.transformOrigin = 'top center';
+    iframe.style.transform = `scale(${scale})`;
+    iframe.dataset.scale = scale;
     iframe.srcdoc = data.html;
-    // Resize to full content height once loaded so there is never an internal
-    // iframe scrollbar (which would reduce content width vs the PDF renderer).
+    // Expand iframe to full content height so .preview-container scrolls it
     autoResizePreviewIframe(iframe);
+    // Forward wheel/touch from iframe to .preview-container
     forwardPreviewScroll(iframe);
     if (previousScroll) {
       const sc = getPreviewScrollContainer();
@@ -856,7 +852,15 @@ function autoResizePreviewIframe(iframe) {
         const cs = window.getComputedStyle(iframe);
         const borderH = (parseFloat(cs.borderTopWidth) || 0) +
                         (parseFloat(cs.borderBottomWidth) || 0);
-        iframe.style.height = (h + borderH) + 'px';
+        const totalH = h + borderH;
+        iframe.style.height = totalH + 'px';
+        // When transform: scale() is active the visual height exceeds the
+        // layout box.  Add margin-bottom so the scroll container's scrollable
+        // area covers the full visual height.
+        const scale = parseFloat(iframe.dataset.scale) || 1;
+        if (scale !== 1) {
+          iframe.style.marginBottom = (totalH * (scale - 1)) + 'px';
+        }
       }
     };
     // Wait for fonts so text is laid out with accurate metrics before measuring.
