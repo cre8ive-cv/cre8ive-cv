@@ -1909,6 +1909,39 @@ body {
   }
 }
 
+/* Tablet / touch devices (≥701px): tap to open dropdown — suppress hover, use .is-open class */
+@media (pointer: coarse) and (min-width: 701px) {
+  /* Disable hover/focus-within triggers */
+  .gallery-dropdown-wrapper:hover .gallery-dropdown,
+  .gallery-dropdown-wrapper:focus-within .gallery-dropdown {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-6px) scaleY(0.97);
+  }
+
+  /* Show dropdown when JS adds .is-open */
+  .gallery-dropdown-wrapper.is-open .gallery-dropdown {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+  }
+
+  /* Reset chevron rotation on hover/focus-within */
+  .gallery-dropdown-wrapper:hover .gallery-link-chevron,
+  .gallery-dropdown-wrapper:focus-within .gallery-link-chevron {
+    transform: none;
+    opacity: 0.6;
+  }
+
+  /* Rotate chevron when open */
+  .gallery-dropdown-wrapper.is-open .gallery-link-chevron {
+    transform: rotate(180deg);
+    opacity: 1;
+  }
+}
+
 /* Mobile responsive styles */
 @media (max-width: 700px) {
   .logo-main {
@@ -1968,7 +2001,7 @@ body {
     white-space: nowrap;
   }
 
-  .logo-links-row .gallery-link-chevron {
+  .gallery-link-chevron {
     display: none;
   }
 

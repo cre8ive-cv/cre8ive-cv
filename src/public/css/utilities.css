@@ -82,6 +82,11 @@
     border-bottom: 1px solid var(--border-color);
     padding: 16px 16px 8px;
     gap: 6px;
+    /* Create a stacking context above the main content so the gallery
+       dropdown (which overflows below the sidebar) paints on top.
+       Must be > .dropup-menu (z-index: 5) which lives in the root context. */
+    position: relative;
+    z-index: 10;
   }
 
   .control-section.editor-section {
@@ -284,7 +289,7 @@
 
   .header-actions .gallery-dropdown-wrapper {
     flex: 1 1 0;
-    width: 0;
+    width: auto; /* flex-basis:0 governs flex context; auto fills grid cells correctly */
     min-width: 0;
     max-width: none;
   }
@@ -756,7 +761,7 @@
 
   .header-actions .gallery-dropdown-wrapper {
     flex: 1 1 0;
-    width: 0;
+    width: auto; /* flex-basis:0 governs flex context; auto fills grid cells correctly */
     min-width: 0;
     max-width: none;
   }
@@ -848,6 +853,10 @@
 
   body.mobile-preview-mode .sidebar,
   body.mobile-preview-mode .sidebar-scroll {
+    /* Both axes must be visible together — if only one is set to visible
+       while the other is non-visible, CSS coerces visible → auto, which
+       keeps the sidebar as a scroll container and clips the dropdown. */
+    overflow-x: visible;
     overflow-y: visible;
   }
 
@@ -943,7 +952,7 @@
   /* Mobile-optimized Gallery Link - Larger and more prominent */
   .header-actions .gallery-dropdown-wrapper {
     flex: 1 1 0;
-    width: 0;
+    width: auto; /* flex-basis:0 governs flex context; auto fills grid cells correctly */
     min-width: 0;
     max-width: none;
   }
@@ -1676,6 +1685,8 @@
 
   body.mobile-preview-mode .sidebar,
   body.mobile-preview-mode .sidebar-scroll {
+    /* Both axes must be visible together — same reason as the rule above. */
+    overflow-x: visible;
     overflow-y: visible;
   }
 

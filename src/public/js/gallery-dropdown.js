@@ -1,7 +1,16 @@
-// Gallery Dropdown — lazy-loads templates on first hover
+// Gallery Dropdown — lazy-loads templates on first hover/touch
 (function () {
   let initialized = false;
   let templatesCache = null;
+
+  // Touch device with enough width to show the dropdown (tablet)
+  function isTabletTouch() {
+    return window.matchMedia('(pointer: coarse) and (min-width: 701px)').matches;
+  }
+
+  function isMobile() {
+    return window.matchMedia('(max-width: 700px)').matches;
+  }
 
   function buildSkeletons(grid, count) {
     grid.innerHTML = Array(count)
@@ -94,25 +103,55 @@
     const grid = document.getElementById('galleryDropdownGrid');
     if (!wrapper || !grid) return;
 
-    // Lazy-load on first mouseenter
+    // Lazy-load on first mouseenter (desktop only — tablet uses touch, mobile has no dropdown)
     wrapper.addEventListener('mouseenter', () => {
+      if (isMobile() || isTabletTouch()) return;
       if (initialized) return;
       initialized = true;
       fetchAndRender(grid);
     }, { once: false });
 
-    // Also handle focus (keyboard nav) — load on first focusin inside wrapper
+    // Also handle focus (keyboard nav) — load on first focusin inside wrapper (desktop only)
     wrapper.addEventListener('focusin', () => {
+      if (isMobile() || isTabletTouch()) return;
       if (initialized) return;
       initialized = true;
       fetchAndRender(grid);
     }, { once: false });
+
+    // Tablet: tap the gallery-link to toggle dropdown (no hover, no navigation)
+    const link = wrapper.querySelector('.gallery-link');
+    if (link) {
+      link.addEventListener('click', e => {
+        if (!isTabletTouch()) return;
+        e.preventDefault();
+        const isOpen = wrapper.classList.contains('is-open');
+        if (!isOpen) {
+          wrapper.classList.add('is-open');
+          if (!initialized) {
+            initialized = true;
+            fetchAndRender(grid);
+          }
+        } else {
+          wrapper.classList.remove('is-open');
+        }
+      });
+    }
+
+    // Tablet: close dropdown when tapping outside the wrapper
+    document.addEventListener('click', e => {
+      if (!isTabletTouch()) return;
+      if (!wrapper.contains(e.target)) {
+        wrapper.classList.remove('is-open');
+      }
+    });
 
     // Close on Escape
     wrapper.addEventListener('keydown', e => {
       if (e.key === 'Escape') {
-        const link = wrapper.querySelector('.gallery-link');
-        if (link) link.blur();
+        wrapper.classList.remove('is-open');
+        const l = wrapper.querySelector('.gallery-link');
+        if (l) l.blur();
       }
     });
   }
