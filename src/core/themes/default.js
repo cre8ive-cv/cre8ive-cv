@@ -730,11 +730,11 @@ function getStyles(palette) {
     }
 
     body.sidebar-layout .main-content section {
-      margin-bottom: 16px;
+      margin-bottom: 17px;
     }
 
     body.sidebar-layout .main-content h2 {
-      font-size: 14px;
+      font-size: 14.75px;
       padding-bottom: 4px;
       margin-bottom: 8px;
       letter-spacing: 0.8px;
@@ -754,23 +754,23 @@ function getStyles(palette) {
     body.sidebar-layout .main-content .position,
     body.sidebar-layout .main-content .degree,
     body.sidebar-layout .main-content .project-name {
-      font-size: 11px;
+      font-size: 11.75px;
     }
 
     body.sidebar-layout .main-content .company {
-      font-size: 10px;
+      font-size: 10.75px;
     }
 
     body.sidebar-layout .main-content .institution {
-      font-size: 11px;
+      font-size: 11.75px;
     }
 
     body.sidebar-layout .main-content .education-level {
-      font-size: 10px;
+      font-size: 10.75px;
     }
 
     body.sidebar-layout .main-content .date-location {
-      font-size: 10px;
+      font-size: 10.75px;
     }
 
     body.sidebar-layout .main-content ul {
@@ -779,7 +779,7 @@ function getStyles(palette) {
     }
 
     body.sidebar-layout .main-content li {
-      font-size: 10px;
+      font-size: 10.75px;
       margin-bottom: 2px;
       color: #555;
     }
@@ -793,7 +793,7 @@ function getStyles(palette) {
     }
 
     body.sidebar-layout .main-content .skill-category h3 {
-      font-size: 11px;
+      font-size: 11.75px;
       margin-bottom: 5px;
     }
 
@@ -803,7 +803,7 @@ function getStyles(palette) {
 
     body.sidebar-layout .main-content .skill-tag {
       padding: 2px 7px;
-      font-size: 9px;
+      font-size: 9.75px;
     }
 
     body.sidebar-layout .main-content .projects-grid {
@@ -813,19 +813,19 @@ function getStyles(palette) {
     }
 
     body.sidebar-layout .main-content .project-description {
-      font-size: 10px;
+      font-size: 10.75px;
     }
 
     body.sidebar-layout .main-content .technologies {
-      font-size: 9px;
+      font-size: 9.75px;
     }
 
     body.sidebar-layout .main-content .project-link-line {
-      font-size: 9px;
+      font-size: 9.75px;
     }
 
     body.sidebar-layout .main-content .projects-intro {
-      font-size: 10px;
+      font-size: 10.75px;
     }
 
     /* Mobile responsive styles */
