@@ -1,6 +1,28 @@
 const { sanitizeUserHtml } = require('../utils/sanitizer');
 
 /**
+ * Extracts the content of the @media print { ... } block and returns it as
+ * unconditional CSS.  This lets the HTML preview match the PDF render without
+ * needing Puppeteer's print-media emulation.
+ */
+function inlinePrintStyles(css) {
+  const idx = css.indexOf('@media print');
+  if (idx === -1) return css;
+  const openBrace = css.indexOf('{', idx);
+  if (openBrace === -1) return css;
+  // Walk forward balancing braces to find the matching closing brace.
+  let depth = 1;
+  let pos = openBrace + 1;
+  while (pos < css.length && depth > 0) {
+    if (css[pos] === '{') depth++;
+    else if (css[pos] === '}') depth--;
+    pos++;
+  }
+  // Replace the whole @media print { ... } with just its inner content.
+  return css.slice(0, idx) + css.slice(openBrace + 1, pos - 1) + css.slice(pos);
+}
+
+/**
  * Sanitizes user-provided content for safe HTML insertion.
  * Returns empty string for null/undefined values.
  */
@@ -151,7 +173,7 @@ function stripProtocol(url) {
   return url.replace(/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//, '');
 }
 
-function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, customSectionNames = {}, showWatermark = true, labels = {}, layout = 'standard') {
+function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, customSectionNames = {}, showWatermark = true, labels = {}, layout = 'standard', forPreview = false) {
   if (!theme) {
     throw new Error('Theme is required to generate HTML.');
   }
@@ -159,7 +181,13 @@ function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, custo
 
   // Load theme styles
   const paletteToUse = theme.monochromatic ? undefined : colorPalette;
-  const themeStyles = theme.getStyles(paletteToUse);
+  let themeStyles = theme.getStyles(paletteToUse);
+
+  // For the HTML preview, inline @media print rules so the preview matches
+  // the PDF render (which uses Puppeteer's print-media emulation).
+  if (forPreview) {
+    themeStyles = inlinePrintStyles(themeStyles);
+  }
 
   // Normalize external links to avoid double protocols
   // Trim all values so empty strings and whitespace-only strings count as empty
@@ -244,6 +272,24 @@ function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, custo
   // Extract clean name for document title and metadata
   const cleanName = stripHtmlTags(personalInfo.name) || 'Resume';
 
+  // Preview-mode CSS overrides so the iframe matches the PDF render:
+  //
+  //  1. overflow-y:hidden on <html> — prevents a vertical scrollbar from
+  //     appearing inside the iframe. A scrollbar steals ~15 px of content
+  //     width, causing text to wrap at different positions than in the PDF
+  //     (which has no scrollbar). scrollHeight measurement is unaffected by
+  //     overflow:hidden, so auto-resize still gets the correct full height.
+  //
+  //  2. Padding compensation for non-sidebar layouts — the inlined @media print
+  //     already sets body padding: 5px 20px 20px.  Puppeteer also applies PDF
+  //     page margins (top:20px, right:20px, bottom:15px, left:20px) which add
+  //     to the visual whitespace.  Total effective padding = body-print +
+  //     page-margin = 25px top, 40px sides, 35px bottom.
+  const previewMarginStyle = forPreview ? `<style>
+html{overflow-y:hidden!important}${layout !== 'sidebar' ? '\nbody:not(.sidebar-layout){padding:25px 40px 35px!important}' : ''}
+</style>` : '';
+
+
   const htmlHead = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -256,6 +302,7 @@ function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, custo
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji">
   <style>${themeStyles}</style>
+  ${previewMarginStyle}
 </head>`;
 
   // Sidebar layout: completely different HTML structure

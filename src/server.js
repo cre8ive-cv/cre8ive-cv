@@ -527,7 +527,8 @@ async function handleGenerateHtmlPreview(req, res) {
       resolvedCustomSectionNames,
       resolvedShowWatermark,
       config.labels,
-      resolvedLayout
+      resolvedLayout,
+      true // forPreview: inline @media print rules and compensate for PDF page margins
     );
     res.json({ html: htmlContent });
   } catch (error) {

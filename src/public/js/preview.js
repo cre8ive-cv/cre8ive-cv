@@ -211,7 +211,15 @@ async function generatePreview() {
     // the PDF output. max-width ensures no horizontal overflow on narrow screens.
     iframe.style.width = '794px';
     iframe.style.maxWidth = '100%';
+    // Enforce at least A4 aspect ratio (210:297) as the minimum height so the
+    // preview always resembles an A4 page rather than a wide short strip.
+    const containerWidth = elements.previewContainer.clientWidth || 794;
+    const iframeWidth = Math.min(794, containerWidth);
+    iframe.style.minHeight = Math.round(iframeWidth * 297 / 210) + 'px';
     iframe.srcdoc = data.html;
+    // Resize to full content height once loaded so there is never an internal
+    // iframe scrollbar (which would reduce content width vs the PDF renderer).
+    autoResizePreviewIframe(iframe);
     if (previousScroll && elements.previewContainer) {
       elements.previewContainer.scrollTop = previousScroll.containerScroll || 0;
     }
@@ -786,6 +794,30 @@ function capturePreviewScrollPosition() {
     iframeScrollTop: scrollTop,
     iframeRatio: scrollHeight ? scrollTop / scrollHeight : 0
   };
+}
+
+/**
+ * Resizes the preview iframe to its full content height after the page and
+ * all fonts have loaded.  This eliminates the internal scrollbar (which would
+ * steal ~15 px of content width and cause text to wrap at different positions
+ * than in the PDF).  The outer .preview-container handles scrolling instead.
+ */
+function autoResizePreviewIframe(iframe) {
+  const resize = () => {
+    const doc = iframe.contentDocument;
+    if (!doc) return;
+    const measure = () => {
+      const h = doc.documentElement.scrollHeight;
+      if (h > 0) iframe.style.height = h + 'px';
+    };
+    // Wait for fonts so text is laid out with accurate metrics before measuring.
+    (doc.fonts?.ready ?? Promise.resolve()).then(measure).catch(measure);
+  };
+  if (iframe.contentDocument?.readyState === 'complete') {
+    resize();
+  } else {
+    iframe.addEventListener('load', resize, { once: true });
+  }
 }
 
 function restorePreviewScrollPosition(iframe) {

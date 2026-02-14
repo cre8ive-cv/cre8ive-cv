@@ -1849,7 +1849,6 @@ body {
 /* Resume Preview Iframe */
 #resumePreview {
   width: 100%;
-  min-height: calc(100vh - 120px);
   display: block;
   margin: 0 auto;
   background: white;
