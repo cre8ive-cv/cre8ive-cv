@@ -33,7 +33,7 @@
         "CLI for local usage",
         "Desktop-first with mobile support",
         "Optional watermark to support the project",
-        "Gallery of templates to start with",
+        "<a href=\"https://cre8ive.cv/gallery/\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"display:inline-flex;align-items:center;gap:4px;text-decoration:underline;font-weight:700;white-space:nowrap;\">Gallery of templates<svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"vertical-align:-2px;\"><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"></path><polyline points=\"15 3 21 3 21 9\"></polyline><line x1=\"10\" y1=\"14\" x2=\"21\" y2=\"3\"></line></svg></a> to start with",
         "Your resume can be version-controlled with Git",
         "<div style='display:block; margin-top:4px; padding:8px 12px; background:#f8fafc; border-radius:4px; font-size:0.9em; color:#475569; line-height:1.5;'><span style='font-weight:700; color:#0f172a;'>💡 Protip:</span> You can combine your <span style='font-weight:800; background:linear-gradient(135deg,#64B5F6 0%,#2196F3 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent;'>cre8ivity</span> with <code style='background:#e2e8f0; color:#334155; padding:2px 5px; border-radius:4px; font-family:monospace; font-size:0.9em; border:1px solid #cbd5e1;'>AI</code> to boost your <code style='background:#e2e8f0; color:#334155; padding:2px 5px; border-radius:4px; font-family:monospace; font-size:0.9em; border:1px solid #cbd5e1;'>HTML</code> customizations</div>"
       ]
