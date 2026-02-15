@@ -588,7 +588,7 @@ function getStyles(palette) {
       flex-direction: column;
       color: #ecf0f1;
       min-height: 100vh;
-      font-variant-emoji: text; /* Keep symbols (e.g., checkmarks) monochrome so color matches PDF/HTML */
+      font-variant-emoji: normal;
       print-color-adjust: exact;
       -webkit-print-color-adjust: exact;
     }
@@ -733,7 +733,7 @@ function getStyles(palette) {
     body.sidebar-layout .main-content {
       width: 70%;
       padding: 18px 22px 16px 20px;
-      font-variant-emoji: text;
+      font-variant-emoji: normal;
       background: #fff;
     }
 

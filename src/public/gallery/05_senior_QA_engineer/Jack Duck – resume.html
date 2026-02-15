@@ -518,16 +518,19 @@
       }
 
       body.compact-layout .contact-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 5px 8px;
-      }
-
-      body.compact-layout .contact-grid:has(> :nth-child(4):last-child) {
-        grid-template-columns: repeat(2, 1fr);
+        display: grid;
+        grid-auto-flow: row;
+        justify-content: start;
+        align-items: center;
+        column-gap: clamp(8px, 2.4vw, 18px);
+        row-gap: 5px;
       }
 
       body.compact-layout .contact-item {
         font-size: 12px;
+        white-space: nowrap;
+        flex: 0 0 auto;
+        gap: 2px;
       }
 
       body.compact-layout .skills-grid {
@@ -598,7 +601,7 @@
       flex-direction: column;
       color: #e8e8e8;
       min-height: 100vh;
-      font-variant-emoji: text;
+      font-variant-emoji: normal;
       print-color-adjust: exact;
       -webkit-print-color-adjust: exact;
     }
@@ -746,7 +749,7 @@
     body.sidebar-layout .main-content {
       width: 70%;
       padding: 18px 22px 16px 20px;
-      font-variant-emoji: text;
+      font-variant-emoji: normal;
       background: #fff;
     }
 
@@ -1066,7 +1069,7 @@
   </style>
   
 </head>
-<body>
+<body class="compact-layout" data-theme="classic">
   <div class="content-wrapper">
     <header class="has-bio has-photo has-contacts">
       <div class="header-name">
@@ -1242,5 +1245,103 @@
 <div class="gdpr-clause">I agree to the processing of personal data provided in this document for realising the recruitment process pursuant to the Personal Data Protection Act of 10 May 2018 (Journal of Laws 2018, item 1000) and in agreement with Regulation (EU) 2016/679 of the European Parliament and of the Council of 27 April 2016 on the protection of natural persons with regard to the processing of personal data and on the free movement of such data, and repealing Directive 95/46/EC (General Data Protection Regulation).</div>
 <div class="watermark" style="text-transform: none !important;">Designed with <a href="https://cre8ive.cv" target="_blank" rel="noopener noreferrer">cre8ive.cv</a></div>
 </div>
+
+<script>
+(function() {
+  function balanceCompactContacts() {
+    if (!document.body.classList.contains('compact-layout')) return;
+    const grids = document.querySelectorAll('.header-contacts .contact-grid');
+    grids.forEach((grid) => {
+      const display = window.getComputedStyle(grid).display;
+      if (display !== 'grid') return;
+      const items = Array.from(grid.querySelectorAll('.contact-item'));
+      if (items.length < 2) return;
+      const styles = window.getComputedStyle(grid);
+      const maxGap = parseFloat(styles.columnGap) || 0;
+      const minGap = 6;
+      const containerWidth = grid.clientWidth;
+      if (!containerWidth) return;
+      grid.style.gridTemplateColumns = 'repeat(' + items.length + ', max-content)';
+      const itemWidths = items.map((item) => item.getBoundingClientRect().width);
+
+      const fitsColumns = (columns) => {
+        const widths = new Array(columns).fill(0);
+        for (let i = 0; i < items.length; i += 1) {
+          const col = i % columns;
+          widths[col] = Math.max(widths[col], itemWidths[i]);
+        }
+        const total = widths.reduce((sum, width) => sum + width, 0);
+        if (columns === 1) {
+          return { fits: total <= containerWidth, gap: maxGap };
+        }
+        const availableGap = containerWidth - total;
+        if (availableGap < 0) {
+          return { fits: false, gap: minGap };
+        }
+        const idealGap = availableGap / (columns - 1);
+        if (idealGap < minGap) {
+          return { fits: false, gap: minGap };
+        }
+        return { fits: true, gap: Math.min(maxGap, idealGap) };
+      };
+
+      const twoRowColumns = Math.ceil(items.length / 2);
+      let targetColumns = 1;
+      let targetGap = maxGap;
+      const oneRowFit = fitsColumns(items.length);
+      if (oneRowFit.fits) {
+        targetColumns = items.length;
+        targetGap = oneRowFit.gap;
+      } else {
+        const twoRowFit = fitsColumns(twoRowColumns);
+        if (twoRowFit.fits) {
+        targetColumns = twoRowColumns;
+        targetGap = twoRowFit.gap;
+        } else {
+        let maxColumnsFit = 1;
+        for (let columns = items.length; columns >= 1; columns -= 1) {
+          const fit = fitsColumns(columns);
+          if (fit.fits) {
+            maxColumnsFit = columns;
+            targetGap = fit.gap;
+            break;
+          }
+        }
+
+        const rowsNeeded = Math.ceil(items.length / maxColumnsFit);
+        targetColumns = Math.ceil(items.length / rowsNeeded);
+        while (targetColumns > 1) {
+          const fit = fitsColumns(targetColumns);
+          if (fit.fits) {
+            targetGap = fit.gap;
+            break;
+          }
+          targetColumns -= 1;
+        }
+        }
+      }
+
+      grid.style.gridTemplateColumns = 'repeat(' + targetColumns + ', max-content)';
+      if (targetColumns > 1) {
+        grid.style.columnGap = targetGap + 'px';
+      } else {
+        grid.style.columnGap = '';
+      }
+    });
+  }
+
+  function scheduleBalance() {
+    window.requestAnimationFrame(balanceCompactContacts);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', scheduleBalance);
+  } else {
+    scheduleBalance();
+  }
+  window.addEventListener('load', scheduleBalance);
+  window.addEventListener('resize', scheduleBalance);
+})();
+</script>
 </body>
 </html>

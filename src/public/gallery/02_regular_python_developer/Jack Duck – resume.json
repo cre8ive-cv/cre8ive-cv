@@ -41,10 +41,10 @@
     },
     {
       "name": "Languages",
-      "fraction": 1,
+      "fraction": 1.5,
       "items": [
-        "English (C1)",
-        "German (B1)"
+        "🇬🇧 English (C1)",
+        "🇩🇪 German (B1)"
       ]
     }
   ],

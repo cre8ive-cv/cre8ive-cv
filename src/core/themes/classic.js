@@ -592,7 +592,7 @@ function getStyles() {
       flex-direction: column;
       color: #e8e8e8;
       min-height: 100vh;
-      font-variant-emoji: text;
+      font-variant-emoji: normal;
       print-color-adjust: exact;
       -webkit-print-color-adjust: exact;
     }
@@ -740,7 +740,7 @@ function getStyles() {
     body.sidebar-layout .main-content {
       width: 70%;
       padding: 18px 22px 16px 20px;
-      font-variant-emoji: text;
+      font-variant-emoji: normal;
       background: #fff;
     }
 

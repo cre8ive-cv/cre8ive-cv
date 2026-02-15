@@ -533,12 +533,19 @@
       }
 
       body.compact-layout .contact-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 5px 8px;
+        display: grid;
+        grid-auto-flow: row;
+        justify-content: start;
+        align-items: center;
+        column-gap: clamp(8px, 2.4vw, 18px);
+        row-gap: 5px;
       }
 
       body.compact-layout .contact-item {
         font-size: 12px;
+        white-space: nowrap;
+        flex: 0 0 auto;
+        gap: 2px;
       }
 
       body.compact-layout .skills-grid {
@@ -609,7 +616,7 @@
       flex-direction: column;
       color: #ecf0f1;
       min-height: 100vh;
-      font-variant-emoji: text;
+      font-variant-emoji: normal;
       background: #2c3e50;
       print-color-adjust: exact;
       -webkit-print-color-adjust: exact;
@@ -758,7 +765,7 @@
     body.sidebar-layout .main-content {
       width: 70%;
       padding: 18px 22px 16px 20px;
-      font-variant-emoji: text;
+      font-variant-emoji: normal;
       background: #fff;
     }
 
@@ -1098,7 +1105,7 @@
   </style>
   
 </head>
-<body class="sidebar-layout">
+<body class="sidebar-layout" data-theme="modern">
   <div class="sidebar-bg"></div>
   <div class="sidebar-container">
     <aside class="sidebar">
@@ -1157,10 +1164,10 @@
           </div>
         </div>
         
-        <div class="skill-category" style="flex: 1 1 0;">
+        <div class="skill-category" style="flex: 1.5 1 0;">
           <h3>Languages</h3>
           <div class="skill-tags">
-            <span class="skill-tag">English (C1)</span><span class="skill-tag">German (B1)</span>
+            <span class="skill-tag">🇬🇧 English (C1)</span><span class="skill-tag">🇩🇪 German (B1)</span>
           </div>
         </div>
         
@@ -1296,5 +1303,103 @@
   </section>
     </main>
   </div>
+
+<script>
+(function() {
+  function balanceCompactContacts() {
+    if (!document.body.classList.contains('compact-layout')) return;
+    const grids = document.querySelectorAll('.header-contacts .contact-grid');
+    grids.forEach((grid) => {
+      const display = window.getComputedStyle(grid).display;
+      if (display !== 'grid') return;
+      const items = Array.from(grid.querySelectorAll('.contact-item'));
+      if (items.length < 2) return;
+      const styles = window.getComputedStyle(grid);
+      const maxGap = parseFloat(styles.columnGap) || 0;
+      const minGap = 6;
+      const containerWidth = grid.clientWidth;
+      if (!containerWidth) return;
+      grid.style.gridTemplateColumns = 'repeat(' + items.length + ', max-content)';
+      const itemWidths = items.map((item) => item.getBoundingClientRect().width);
+
+      const fitsColumns = (columns) => {
+        const widths = new Array(columns).fill(0);
+        for (let i = 0; i < items.length; i += 1) {
+          const col = i % columns;
+          widths[col] = Math.max(widths[col], itemWidths[i]);
+        }
+        const total = widths.reduce((sum, width) => sum + width, 0);
+        if (columns === 1) {
+          return { fits: total <= containerWidth, gap: maxGap };
+        }
+        const availableGap = containerWidth - total;
+        if (availableGap < 0) {
+          return { fits: false, gap: minGap };
+        }
+        const idealGap = availableGap / (columns - 1);
+        if (idealGap < minGap) {
+          return { fits: false, gap: minGap };
+        }
+        return { fits: true, gap: Math.min(maxGap, idealGap) };
+      };
+
+      const twoRowColumns = Math.ceil(items.length / 2);
+      let targetColumns = 1;
+      let targetGap = maxGap;
+      const oneRowFit = fitsColumns(items.length);
+      if (oneRowFit.fits) {
+        targetColumns = items.length;
+        targetGap = oneRowFit.gap;
+      } else {
+        const twoRowFit = fitsColumns(twoRowColumns);
+        if (twoRowFit.fits) {
+        targetColumns = twoRowColumns;
+        targetGap = twoRowFit.gap;
+        } else {
+        let maxColumnsFit = 1;
+        for (let columns = items.length; columns >= 1; columns -= 1) {
+          const fit = fitsColumns(columns);
+          if (fit.fits) {
+            maxColumnsFit = columns;
+            targetGap = fit.gap;
+            break;
+          }
+        }
+
+        const rowsNeeded = Math.ceil(items.length / maxColumnsFit);
+        targetColumns = Math.ceil(items.length / rowsNeeded);
+        while (targetColumns > 1) {
+          const fit = fitsColumns(targetColumns);
+          if (fit.fits) {
+            targetGap = fit.gap;
+            break;
+          }
+          targetColumns -= 1;
+        }
+        }
+      }
+
+      grid.style.gridTemplateColumns = 'repeat(' + targetColumns + ', max-content)';
+      if (targetColumns > 1) {
+        grid.style.columnGap = targetGap + 'px';
+      } else {
+        grid.style.columnGap = '';
+      }
+    });
+  }
+
+  function scheduleBalance() {
+    window.requestAnimationFrame(balanceCompactContacts);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', scheduleBalance);
+  } else {
+    scheduleBalance();
+  }
+  window.addEventListener('load', scheduleBalance);
+  window.addEventListener('resize', scheduleBalance);
+})();
+</script>
 </body>
 </html>

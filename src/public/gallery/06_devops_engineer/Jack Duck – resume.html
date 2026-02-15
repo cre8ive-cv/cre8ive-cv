@@ -29,17 +29,17 @@
 
     .project-link-line {
       font-size: 13px;
-      color: #7a1e13;
+      color: #263640;
       font-style: italic;
     }
 
     .project-link {
-      color: #7a1e13;
+      color: #263640;
       transition: color 0.2s;
     }
 
     .project-link:hover {
-      color: #e74c3c;
+      color: #78909c;
       text-decoration: underline;
     }
 
@@ -65,7 +65,7 @@
     }
 
     header {
-      border-bottom: 1px solid #7a1e134D;
+      border-bottom: 1px solid #2636404D;
       padding-bottom: 12px;
       margin-bottom: 24px;
       position: relative;
@@ -169,7 +169,7 @@
     .contact-item i {
       width: 16px;
       flex-shrink: 0;
-      color: #e74c3c;
+      color: #78909c;
     }
 
     .contact-item a {
@@ -189,7 +189,7 @@
       aspect-ratio: 1 !important;
       border-radius: 50%;
       object-fit: cover;
-      border: 4px solid #7a1e13;
+      border: 4px solid #263640;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       flex-shrink: 0 !important;
       flex-grow: 0 !important;
@@ -244,7 +244,7 @@
 
     h2 {
       font-size: 20px;
-      color: #7a1e13;
+      color: #263640;
       border-bottom: 2px solid #ecf0f1;
       padding-top: 0;
       padding-bottom: 7px;
@@ -270,12 +270,12 @@
     .position, .degree, .project-name {
       font-size: 16px;
       font-weight: 600;
-      color: #7a1e13;
+      color: #263640;
     }
 
     .company {
       font-size: 13px;
-      color: #e74c3c;
+      color: #78909c;
       opacity: 0.65;
       font-weight: 400;
     }
@@ -288,7 +288,7 @@
 
     .institution {
       font-size: 15px;
-      color: #e74c3c;
+      color: #78909c;
       margin-bottom: 3px;
     }
 
@@ -300,7 +300,7 @@
 
     .date-location {
       font-size: 15px;
-      color: #7a1e13;
+      color: #263640;
       font-style: italic;
       font-weight: 500;
     }
@@ -326,14 +326,14 @@
       background: #f8f9fa;
       padding: 12px;
       border-radius: 5px;
-      border-left: 4px solid #e74c3c;
+      border-left: 4px solid #78909c;
       min-width: 0;
       box-sizing: border-box;
     }
 
     .skill-category h3 {
       font-size: 15px;
-      color: #7a1e13;
+      color: #263640;
       margin-bottom: 7px;
       text-transform: capitalize;
     }
@@ -364,7 +364,7 @@
     }
 
     .projects-intro a {
-      color: #e74c3c;
+      color: #78909c;
       font-weight: 500;
     }
 
@@ -388,7 +388,7 @@
 
     .technologies {
       font-size: 13px;
-      color: #7a1e13;
+      color: #263640;
       font-style: italic;
     }
 
@@ -502,12 +502,19 @@
       }
 
       body.compact-layout .contact-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 5px 8px;
+        display: grid;
+        grid-auto-flow: row;
+        justify-content: start;
+        align-items: center;
+        column-gap: clamp(8px, 2.4vw, 18px);
+        row-gap: 5px;
       }
 
       body.compact-layout .contact-item {
         font-size: 12px;
+        white-space: nowrap;
+        flex: 0 0 auto;
+        gap: 2px;
       }
 
       body.compact-layout .skills-grid {
@@ -559,7 +566,7 @@
       left: 0;
       width: 30%;
       height: 100%;
-      background: #7a1e13;
+      background: #263640;
       z-index: 0;
       print-color-adjust: exact;
       -webkit-print-color-adjust: exact;
@@ -581,7 +588,7 @@
       flex-direction: column;
       color: #ecf0f1;
       min-height: 100vh;
-      font-variant-emoji: text; /* Keep symbols (e.g., checkmarks) monochrome so color matches PDF/HTML */
+      font-variant-emoji: normal;
       print-color-adjust: exact;
       -webkit-print-color-adjust: exact;
     }
@@ -652,7 +659,7 @@
 
     body.sidebar-layout .sidebar-name .title {
       font-size: 14px;
-      color: #fff5f5;
+      color: #f5f7f8;
       margin: 0;
       line-height: 1.2;
     }
@@ -678,7 +685,7 @@
     }
 
     body.sidebar-layout .sidebar-contacts .contact-item i {
-      color: #e74c3c;
+      color: #78909c;
       width: 13px;
       font-size: 11px;
       flex-shrink: 0;
@@ -726,7 +733,7 @@
     body.sidebar-layout .main-content {
       width: 70%;
       padding: 18px 22px 16px 20px;
-      font-variant-emoji: text;
+      font-variant-emoji: normal;
       background: #fff;
     }
 
@@ -1031,7 +1038,7 @@
   </style>
   
 </head>
-<body>
+<body data-theme="default">
   <div class="content-wrapper">
     <header class="has-bio has-photo has-contacts">
       <div class="header-name">
@@ -1077,10 +1084,10 @@
           </div>
         </div>
         
-        <div class="skill-category" style="flex: 1 1 0;">
+        <div class="skill-category" style="flex: 1.5 1 0;">
           <h3>Languages</h3>
           <div class="skill-tags">
-            <span class="skill-tag">English (C1)</span><span class="skill-tag">German (B1)</span>
+            <span class="skill-tag">🇬🇧 English (C1)</span><span class="skill-tag">🇩🇪 German (B1)</span>
           </div>
         </div>
         
@@ -1218,5 +1225,103 @@
 <div class="gdpr-clause">I agree to the processing of personal data provided in this document for realising the recruitment process pursuant to the Personal Data Protection Act of 10 May 2018 (Journal of Laws 2018, item 1000) and in agreement with Regulation (EU) 2016/679 of the European Parliament and of the Council of 27 April 2016 on the protection of natural persons with regard to the processing of personal data and on the free movement of such data, and repealing Directive 95/46/EC (General Data Protection Regulation).</div>
 <div class="watermark" style="text-transform: none !important;">Designed with <a href="https://cre8ive.cv" target="_blank" rel="noopener noreferrer">cre8ive.cv</a></div>
 </div>
+
+<script>
+(function() {
+  function balanceCompactContacts() {
+    if (!document.body.classList.contains('compact-layout')) return;
+    const grids = document.querySelectorAll('.header-contacts .contact-grid');
+    grids.forEach((grid) => {
+      const display = window.getComputedStyle(grid).display;
+      if (display !== 'grid') return;
+      const items = Array.from(grid.querySelectorAll('.contact-item'));
+      if (items.length < 2) return;
+      const styles = window.getComputedStyle(grid);
+      const maxGap = parseFloat(styles.columnGap) || 0;
+      const minGap = 6;
+      const containerWidth = grid.clientWidth;
+      if (!containerWidth) return;
+      grid.style.gridTemplateColumns = 'repeat(' + items.length + ', max-content)';
+      const itemWidths = items.map((item) => item.getBoundingClientRect().width);
+
+      const fitsColumns = (columns) => {
+        const widths = new Array(columns).fill(0);
+        for (let i = 0; i < items.length; i += 1) {
+          const col = i % columns;
+          widths[col] = Math.max(widths[col], itemWidths[i]);
+        }
+        const total = widths.reduce((sum, width) => sum + width, 0);
+        if (columns === 1) {
+          return { fits: total <= containerWidth, gap: maxGap };
+        }
+        const availableGap = containerWidth - total;
+        if (availableGap < 0) {
+          return { fits: false, gap: minGap };
+        }
+        const idealGap = availableGap / (columns - 1);
+        if (idealGap < minGap) {
+          return { fits: false, gap: minGap };
+        }
+        return { fits: true, gap: Math.min(maxGap, idealGap) };
+      };
+
+      const twoRowColumns = Math.ceil(items.length / 2);
+      let targetColumns = 1;
+      let targetGap = maxGap;
+      const oneRowFit = fitsColumns(items.length);
+      if (oneRowFit.fits) {
+        targetColumns = items.length;
+        targetGap = oneRowFit.gap;
+      } else {
+        const twoRowFit = fitsColumns(twoRowColumns);
+        if (twoRowFit.fits) {
+        targetColumns = twoRowColumns;
+        targetGap = twoRowFit.gap;
+        } else {
+        let maxColumnsFit = 1;
+        for (let columns = items.length; columns >= 1; columns -= 1) {
+          const fit = fitsColumns(columns);
+          if (fit.fits) {
+            maxColumnsFit = columns;
+            targetGap = fit.gap;
+            break;
+          }
+        }
+
+        const rowsNeeded = Math.ceil(items.length / maxColumnsFit);
+        targetColumns = Math.ceil(items.length / rowsNeeded);
+        while (targetColumns > 1) {
+          const fit = fitsColumns(targetColumns);
+          if (fit.fits) {
+            targetGap = fit.gap;
+            break;
+          }
+          targetColumns -= 1;
+        }
+        }
+      }
+
+      grid.style.gridTemplateColumns = 'repeat(' + targetColumns + ', max-content)';
+      if (targetColumns > 1) {
+        grid.style.columnGap = targetGap + 'px';
+      } else {
+        grid.style.columnGap = '';
+      }
+    });
+  }
+
+  function scheduleBalance() {
+    window.requestAnimationFrame(balanceCompactContacts);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', scheduleBalance);
+  } else {
+    scheduleBalance();
+  }
+  window.addEventListener('load', scheduleBalance);
+  window.addEventListener('resize', scheduleBalance);
+})();
+</script>
 </body>
 </html>
