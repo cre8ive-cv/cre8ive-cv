@@ -16,7 +16,7 @@ async function loadThemes() {
     state.themes.forEach(theme => {
       const option = document.createElement('option');
       option.value = theme.name;
-      option.textContent = theme.name.charAt(0).toUpperCase() + theme.name.slice(1);
+      option.textContent = formatThemeLabel(theme.name);
       option.dataset.monochromatic = theme.monochromatic;
       elements.themeSelect.appendChild(option);
     });
@@ -46,6 +46,37 @@ async function loadThemes() {
   }
 }
 
+function formatThemeLabel(themeName) {
+  if (themeName === 'cre8ive') return 'cre8ive';
+  return themeName.charAt(0).toUpperCase() + themeName.slice(1);
+}
+
+function applyThemeLabelStyle(element, themeValue) {
+  if (!element) return;
+  if (themeValue === 'cre8ive') {
+    element.style.backgroundImage = 'linear-gradient(135deg, #64B5F6 0%, #42A5F5 50%, #2196F3 100%)';
+    element.style.webkitBackgroundClip = 'text';
+    element.style.backgroundClip = 'text';
+    element.style.webkitTextFillColor = 'transparent';
+    element.style.color = 'transparent';
+    return;
+  }
+  if (themeValue === 'terminal') {
+    element.style.backgroundImage = '';
+    element.style.webkitBackgroundClip = '';
+    element.style.backgroundClip = '';
+    element.style.webkitTextFillColor = '';
+    element.style.color = '#67f088';
+    return;
+  }
+
+  element.style.backgroundImage = '';
+  element.style.webkitBackgroundClip = '';
+  element.style.backgroundClip = '';
+  element.style.webkitTextFillColor = '';
+  element.style.color = '';
+}
+
 function buildThemeDropupOptions() {
   if (!elements.themeDropupMenu) return;
   elements.themeDropupMenu.innerHTML = '';
@@ -59,6 +90,7 @@ function buildThemeDropupOptions() {
     btn.dataset.value = option.value;
     const font = THEME_FONT_MAP[option.value] || THEME_FONT_MAP.default;
     btn.style.fontFamily = font;
+    applyThemeLabelStyle(btn, option.value);
     btn.addEventListener('click', () => {
       closeThemeDropup();
       if (elements.themeSelect.value !== option.value) {
@@ -82,6 +114,7 @@ function syncThemeDropupFromSelect() {
   const font = selectedOption ? (THEME_FONT_MAP[selectedOption.value] || THEME_FONT_MAP.default) : THEME_FONT_MAP.default;
   if (elements.themeDropupLabel) {
     elements.themeDropupLabel.style.fontFamily = font;
+    applyThemeLabelStyle(elements.themeDropupLabel, selectedOption?.value);
   }
   if (elements.themeDropupButton) {
     elements.themeDropupButton.style.fontFamily = font;
