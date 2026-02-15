@@ -367,7 +367,7 @@ app.get('/api/colors', (req, res) => {
 // API endpoint to get example resume data
 app.get('/api/example-data', async (req, res) => {
   try {
-    const examplePath = path.join(__dirname, 'public', 'assets', 'resume-data-template.json');
+    const examplePath = path.join(__dirname, 'public', 'gallery', '00_demo_starter', 'Demo Starter - resume.json');
     const data = await fs.readFile(examplePath, 'utf-8');
     res.json(JSON.parse(data));
   } catch (error) {
