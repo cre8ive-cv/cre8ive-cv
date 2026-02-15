@@ -395,18 +395,38 @@ app.get('/api/gallery/templates', async (req, res) => {
       const files = await fs.readdir(folderPath);
 
       // Find files by extension
-      const pngFile = files.find(f => f.toLowerCase().endsWith('.png'));
+      let pngFile = files.find(f => f.toLowerCase().endsWith('.png'));
       const htmlFile = files.find(f => f.toLowerCase().endsWith('.html'));
       const jsonFile = files.find(f => f.toLowerCase().endsWith('.json'));
       const pdfFile = files.find(f => f.toLowerCase().endsWith('.pdf'));
 
-      // Generate ID and label from folder name
+      // Generate ID and label from folder name; prefer title from JSON if present so we can keep slashes and special characters
       const id = folder.replace(/^\d+_/, '');
-      const label = folder
+      let label = folder
         .replace(/^\d+_/, '')
         .split('_')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
+
+      if (jsonFile) {
+        try {
+          const jsonPath = path.join(folderPath, jsonFile);
+          const rawJson = await fs.readFile(jsonPath, 'utf-8');
+          const parsedJson = JSON.parse(rawJson);
+          label = parsedJson?.personalInfo?.title || label;
+        } catch (jsonError) {
+          console.warn(`Could not read title from ${folder}/${jsonFile}:`, jsonError.message);
+        }
+      }
+
+      // Force branding for the demo starter entry, independent of JSON data
+      if (folder === '00_demo_starter') {
+        label = 'Demo Starter';
+        const rocketAsset = 'logo-rocket-circle.png';
+        if (files.includes(rocketAsset)) {
+          pngFile = rocketAsset;
+        }
+      }
 
       return {
         id,

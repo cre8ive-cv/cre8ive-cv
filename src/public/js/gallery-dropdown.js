@@ -9,6 +9,9 @@
     wrapper.classList.add('is-locked-closed');
     const onLeave = () => wrapper.classList.remove('is-locked-closed');
     wrapper.addEventListener('mouseleave', onLeave, { once: true });
+    // Touch devices don't emit mouseleave reliably; ensure the lock clears
+    wrapper.addEventListener('touchend', onLeave, { once: true });
+    setTimeout(onLeave, 400);
   }
 
   // Touch device with enough width to show the dropdown (tablet)
@@ -20,50 +23,18 @@
     return window.matchMedia('(max-width: 700px)').matches;
   }
 
+  function shouldToggleViaClick() {
+    return isMobile() || isTabletTouch();
+  }
+
   function buildSkeletons(grid, count) {
     grid.innerHTML = Array(count)
       .fill('<div class="gallery-dropdown-skeleton" aria-hidden="true"></div>')
       .join('');
   }
 
-  function buildStarterCard(grid) {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'gallery-dropdown-item gallery-dropdown-item--starter';
-    btn.setAttribute('role', 'menuitem');
-    btn.setAttribute('title', 'Demo Starter');
-
-    btn.innerHTML = `
-      <div class="gallery-dropdown-starter-body" aria-hidden="true">
-        <span class="gallery-dropdown-starter-icon">🚀</span>
-      </div>
-      <div class="gallery-dropdown-item-label">Demo Starter</div>
-    `;
-
-    btn.addEventListener('click', async () => {
-      if (state.templateLoaded) {
-        const confirmed = confirm('Are you sure you want to load a new template? Your current data will be lost. This action cannot be undone.');
-        if (!confirmed) return;
-      }
-      const wrapper = document.getElementById('galleryDropdownWrapper');
-      // Proactively close/lock the dropdown before loading example data
-      if (wrapper) {
-        wrapper.classList.remove('is-open');
-        forceCloseDropdown(wrapper);
-      }
-      btn.blur();
-      const link = wrapper ? wrapper.querySelector('.gallery-link') : null;
-      if (link) link.blur();
-      await loadExampleData();
-    });
-
-    grid.appendChild(btn);
-  }
-
   function buildItems(grid, templates) {
     grid.innerHTML = '';
-
-    buildStarterCard(grid);
 
     if (!templates || templates.length === 0) {
       grid.innerHTML += '<p class="gallery-dropdown-error">No templates found.</p>';
@@ -148,7 +119,7 @@
     const link = wrapper.querySelector('.gallery-link');
     if (link) {
       link.addEventListener('click', e => {
-        if (!isTabletTouch()) return;
+        if (!shouldToggleViaClick()) return;
         e.preventDefault();
         const isOpen = wrapper.classList.contains('is-open');
         if (!isOpen) {
@@ -163,9 +134,9 @@
       });
     }
 
-    // Tablet: close dropdown when tapping outside the wrapper
+    // Tablet/Mobile: close dropdown when tapping outside the wrapper
     document.addEventListener('click', e => {
-      if (!isTabletTouch()) return;
+      if (!shouldToggleViaClick()) return;
       if (!wrapper.contains(e.target)) {
         wrapper.classList.remove('is-open');
       }
