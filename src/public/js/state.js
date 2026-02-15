@@ -176,6 +176,7 @@ const elements = {
   colorDropupMenu: document.getElementById('colorDropupMenu'),
   colorGroup: document.getElementById('colorGroup'),
   showWatermarkCheckbox: document.getElementById('showWatermarkCheckbox'),
+  showWatermarkCheckboxMobile: document.getElementById('showWatermarkCheckboxMobile'),
   layoutDropup: document.getElementById('layoutDropup'),
   layoutDropupButton: document.getElementById('layoutDropupButton'),
   layoutDropupLabel: document.getElementById('layoutDropupLabel'),

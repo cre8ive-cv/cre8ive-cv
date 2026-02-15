@@ -208,14 +208,18 @@ async function generatePreview() {
     elements.previewContainer.innerHTML = '<iframe id="resumePreview"></iframe>';
     const iframe = document.getElementById('resumePreview');
     // Lock iframe to A4 width (794px at 96 DPI) so the HTML preview matches
-    // the PDF output. transform: scale() enlarges it visually to fill ~85% of
-    // the container without affecting scroll mechanics (unlike CSS zoom).
+    // the PDF output. transform: scale() scales it visually to fit the
+    // container without affecting scroll mechanics (unlike CSS zoom).
+    // On mobile (scale < 1) use the full viewport width so the preview is
+    // edge-to-edge; on desktop use 85% of the container for nice margins.
     const A4_PX = 794;
     const containerWidth = elements.previewContainer.clientWidth || 820;
-    const scale = Math.max(containerWidth * 0.85 / A4_PX, 1);
+    const isMobile = window.innerWidth < A4_PX;
+    const fitWidth = isMobile ? window.innerWidth : containerWidth * 0.85;
+    const scale = fitWidth / A4_PX;
     iframe.style.width = A4_PX + 'px';
     iframe.style.maxWidth = 'none';
-    iframe.style.transformOrigin = 'top center';
+    iframe.style.transformOrigin = isMobile ? 'top left' : 'top center';
     iframe.style.transform = `scale(${scale})`;
     iframe.dataset.scale = scale;
     iframe.srcdoc = data.html;
@@ -674,6 +678,9 @@ function applyMetaSettings(meta, options = {}) {
   // Apply watermark setting (default to true if not specified)
   state.showWatermark = meta.showWatermark !== undefined ? meta.showWatermark : true;
   elements.showWatermarkCheckbox.checked = state.showWatermark;
+  if (elements.showWatermarkCheckboxMobile) {
+    elements.showWatermarkCheckboxMobile.checked = state.showWatermark;
+  }
 
   // Apply layout setting (with backward compat for old tightLayout boolean)
   if (meta.selectedLayout) {
@@ -854,10 +861,9 @@ function autoResizePreviewIframe(iframe) {
                         (parseFloat(cs.borderBottomWidth) || 0);
         const totalH = h + borderH;
         iframe.style.height = totalH + 'px';
-        // When transform: scale() is active the visual height exceeds the
-        // layout box.  Add margin-bottom so the scroll container's scrollable
-        // area covers the full visual height.
-        const scale = parseFloat(iframe.dataset.scale) || 1;
+        // When transform: scale() is active the visual height differs from
+        // the layout box.  Adjust margin-bottom so the scroll container's
+        // scrollable area matches the full visual height.
         if (scale !== 1) {
           iframe.style.marginBottom = (totalH * (scale - 1)) + 'px';
         }

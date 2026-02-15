@@ -851,6 +851,11 @@
     margin-bottom: 0;
   }
 
+  body.mobile-preview-mode .sidebar {
+    padding: 4px 12px 0;
+    gap: 0;
+  }
+
   body.mobile-preview-mode .sidebar,
   body.mobile-preview-mode .sidebar-scroll {
     /* Both axes must be visible together — if only one is set to visible
@@ -867,13 +872,11 @@
   }
 
   body.mobile-preview-mode .sidebar-header {
-    margin-bottom: 0;
-    padding-bottom: 0;
+    display: none;
   }
 
   body.mobile-preview-mode .main-content {
-    padding-top: 0;
-    padding-bottom: 12px;
+    padding: 0;
   }
 
   /* Row 1: Theme and Color Selectors - ALWAYS VISIBLE */
@@ -908,9 +911,9 @@
   /* Preview header always visible on mobile to show theme/color selectors */
   body.mobile-preview-mode .preview-header {
     display: flex !important;
-    margin-top: 8px;
-    margin-bottom: 12px;
-    padding: 8px 12px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    padding: 2px 12px;
     min-height: auto;
     border-bottom: none;
   }
@@ -923,7 +926,7 @@
 
   /* Add spacing for preview content on mobile */
   body.mobile-preview-mode .preview-container {
-    margin-top: 20px;
+    margin-top: 2px;
   }
 
   /* Logo Area - Centered column layout */
@@ -1603,33 +1606,39 @@
     display: none !important;
   }
 
-  body.mobile-preview-mode .main-content {
-    display: block !important;
-    min-height: auto;
-    /* Hide scrollbar while keeping scroll functionality */
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE and Edge */
+  body.mobile-preview-mode {
+    overflow: hidden;
+    height: 100vh;
+    height: 100dvh;
   }
 
-  body.mobile-preview-mode .main-content::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+  body.mobile-preview-mode .container {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
   }
 
   body.mobile-preview-mode .main-content {
-    padding-top: 12px;
-    padding-bottom: 16px;
+    display: flex !important;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    padding: 0;
   }
 
   body.mobile-preview-mode .preview-header {
-    margin-bottom: 12px;
-    padding-bottom: 10px;
+    flex-shrink: 0;
+    margin-bottom: 2px;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-bottom: 2px;
+    padding-top: 2px;
     min-height: 0;
   }
 
   body.mobile-preview-mode .preview-container {
-    height: 60vh;
-    min-height: 480px;
-    max-height: 60vh;
+    flex: 1;
+    min-height: 0;
     overflow-y: auto;
     /* Hide scrollbar while keeping scroll functionality */
     scrollbar-width: none; /* Firefox */
@@ -1638,6 +1647,10 @@
 
   body.mobile-preview-mode .preview-container::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
+  }
+
+  body.mobile-preview-mode .mobile-preview-actions {
+    flex-shrink: 0;
   }
 
   /* Row 1: Theme and Color Selectors - ALWAYS VISIBLE */
@@ -1653,12 +1666,20 @@
     margin-bottom: 0 !important;
   }
 
+  body.mobile-preview-mode .mobile-preview-actions .watermark-checkbox-inline {
+    margin: 4px 0 2px;
+  }
+
+  body.mobile-preview-mode .mobile-preview-actions .export-row {
+    margin-top: 6px;
+  }
+
   /* Preview header always visible on mobile to show theme/color selectors */
   body.mobile-preview-mode .preview-header {
     display: flex !important;
-    margin-top: 8px;
-    margin-bottom: 12px;
-    padding: 8px 12px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    padding: 2px 12px;
     min-height: auto;
     border-bottom: none;
   }
@@ -1671,7 +1692,7 @@
 
   /* Add spacing for preview content on mobile */
   body.mobile-preview-mode .preview-container {
-    margin-top: 20px;
+    margin-top: 2px;
   }
 
   /* Keep the toggle visible in both modes */
@@ -1683,6 +1704,15 @@
     display: none !important;
   }
 
+  body.mobile-preview-mode .sidebar {
+    padding: 4px 12px 0;
+    gap: 0;
+  }
+
+  body.mobile-preview-mode .sidebar-header {
+    display: none;
+  }
+
   body.mobile-preview-mode .sidebar,
   body.mobile-preview-mode .sidebar-scroll {
     /* Both axes must be visible together — same reason as the rule above. */
@@ -1691,7 +1721,7 @@
   }
 
   body.mobile-preview-mode .sidebar-scroll > .control-section {
-    margin-bottom: 12px;
+    margin-bottom: 4px;
   }
 
   body.mobile-preview-mode #dataStatus {
@@ -1706,11 +1736,11 @@
   }
 
   body.mobile-preview-mode .sidebar-scroll > .control-section:first-of-type {
-    margin-bottom: 8px;
+    margin-bottom: 4px;
   }
 
   body.mobile-preview-mode .sidebar-scroll > .control-section:has(.mobile-view-toggle-container) {
-    margin-bottom: 8px !important;
+    margin-bottom: 4px !important;
   }
 
 }

@@ -59,6 +59,22 @@ function setupEventListeners() {
     elements.mobilePreviewOption.addEventListener('click', () => handleMobileViewToggle('preview'));
   }
 
+  // Sync watermark checkbox between sidebar and mobile-preview-actions
+  if (elements.showWatermarkCheckboxMobile) {
+    elements.showWatermarkCheckboxMobile.addEventListener('change', (e) => {
+      if (elements.showWatermarkCheckbox) {
+        elements.showWatermarkCheckbox.checked = e.target.checked;
+      }
+      handleWatermarkChange(e);
+    });
+  }
+  if (elements.showWatermarkCheckbox) {
+    elements.showWatermarkCheckbox.addEventListener('change', (e) => {
+      if (elements.showWatermarkCheckboxMobile) {
+        elements.showWatermarkCheckboxMobile.checked = e.target.checked;
+      }
+    });
+  }
   // Sync desktop and mobile checkboxes/buttons
   if (elements.termsAcceptanceCheckboxDesktop) {
     elements.termsAcceptanceCheckboxDesktop.addEventListener('change', (e) => {
