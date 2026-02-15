@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji">
   <style>
+    
     /* Temporary font import to support inline Space Grotesk usage */
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&display=swap');
 
@@ -611,12 +612,12 @@
     body.sidebar-layout .sidebar {
       width: 30%;
       flex-shrink: 0;
-      padding: 22px 16px 16px;
+      padding: 20px 14px 14px;
       display: flex;
       flex-direction: column;
       color: #ecf0f1;
       min-height: 100vh;
-      font-variant-emoji: text;
+      font-variant-emoji: normal;
       background: #0b8a80;
       print-color-adjust: exact;
       -webkit-print-color-adjust: exact;
@@ -653,7 +654,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     body.sidebar-layout .sidebar-photo .profile-photo {
@@ -674,11 +675,11 @@
     }
 
     body.sidebar-layout .sidebar-name {
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       text-align: center;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
 
     body.sidebar-layout .sidebar-name h1 {
@@ -698,8 +699,8 @@
     }
 
     body.sidebar-layout .sidebar-contacts {
-      margin-bottom: 14px;
-      padding-bottom: 14px;
+      margin-bottom: 12px;
+      padding-bottom: 12px;
       border-bottom: 1px solid rgba(255,255,255,0.15);
     }
 
@@ -709,7 +710,7 @@
       gap: 7px;
       font-size: 11.5px;
       color: rgba(255,255,255,0.85);
-      margin-bottom: 6px;
+      margin-bottom: 5px;
       line-height: 1.3;
     }
 
@@ -735,8 +736,8 @@
     }
 
     body.sidebar-layout .sidebar-bio .bio {
-      font-size: 13px;
-      line-height: 1.5;
+      font-size: 12.5px;
+      line-height: 1.42;
       color: rgba(255,255,255,0.75);
       font-style: italic;
       & p,
@@ -764,19 +765,19 @@
     /* Main content area */
     body.sidebar-layout .main-content {
       width: 70%;
-      padding: 18px 22px 16px 20px;
-      font-variant-emoji: text;
+      padding: 17px 21px 15px 19px;
+      font-variant-emoji: normal;
       background: #fff;
     }
 
     body.sidebar-layout .main-content section {
-      margin-bottom: 16.5px;
+      margin-bottom: 15px;
     }
 
     body.sidebar-layout .main-content h2 {
       font-size: 15px;
-      padding: 4.5px 12px;
-      margin-bottom: 7.5px;
+      padding: 4px 10px;
+      margin-bottom: 6.5px;
       letter-spacing: 0.8px;
       background: none;
       color: #0b8a80;
@@ -789,8 +790,8 @@
     body.sidebar-layout .main-content .experience-item,
     body.sidebar-layout .main-content .education-item,
     body.sidebar-layout .main-content .project-item {
-      margin-bottom: 9.5px;
-      padding-left: 10px;
+      margin-bottom: 9px;
+      padding-left: 9.5px;
     }
 
     body.sidebar-layout .main-content .experience-header,
@@ -825,8 +826,8 @@
     }
 
     body.sidebar-layout .main-content ul {
-      margin-left: 14px;
-      margin-top: 3px;
+      margin-left: 13px;
+      margin-top: 2.5px;
     }
 
     body.sidebar-layout .main-content li {
@@ -835,16 +836,16 @@
     }
 
     body.sidebar-layout .main-content .skills-grid {
-      gap: 8px;
+      gap: 7.5px;
     }
 
     body.sidebar-layout .main-content .skill-category {
-      padding: 8px;
+      padding: 7.5px;
     }
 
     body.sidebar-layout .main-content .skill-category h3 {
       font-size: 11.75px;
-      margin-bottom: 5px;
+      margin-bottom: 4.5px;
     }
 
     body.sidebar-layout .main-content .skill-tags {
@@ -852,14 +853,14 @@
     }
 
     body.sidebar-layout .main-content .skill-tag {
-      padding: 2px 7px;
+      padding: 2px 6px;
       font-size: 9.75px;
     }
 
     body.sidebar-layout .main-content .projects-grid {
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      column-gap: 20px;
+      gap: 9.5px;
+      column-gap: 17px;
     }
 
     body.sidebar-layout .main-content .project-description {
@@ -1102,10 +1103,331 @@
         page-break-before: auto;
       }
     }
+  
+
+    body {
+      font-family: 'Manrope', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
+      color: #1f2430;
+      background:
+        radial-gradient(circle at 12% -10%, #e0fbf8 0%, transparent 40%),
+        radial-gradient(circle at 100% 0%, #00d5c422 0%, transparent 34%),
+        #f8f9fc;
+    }
+
+    .content-wrapper {
+      background: #ffffff;
+      border: 1px solid #0b8a801F;
+      border-radius: 14px;
+      box-shadow:
+        0 20px 48px #0b8a8018,
+        0 6px 20px rgba(14, 24, 42, 0.06);
+      padding: 0;
+    }
+
+    header {
+      border-bottom: 0;
+      background:
+        linear-gradient(125deg, #ffffff 0%, #ffffff 63%, #e0fbf8AA 100%);
+      border: 1px solid #0b8a8029;
+      border-radius: 12px;
+      padding: 8px 10px 8px;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      right: -130px;
+      top: -175px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #00d5c425 0%, transparent 68%);
+      pointer-events: none;
+    }
+
+    h1 {
+      font-family: 'Space Grotesk', 'Inter', 'Segoe UI', sans-serif;
+      font-size: 33px;
+      letter-spacing: -0.8px;
+      color: #141821;
+    }
+
+    .title {
+      color: #0b8a80;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 13px;
+    }
+
+    .contact-item i {
+      color: #0b8a80;
+    }
+
+    .profile-photo {
+      border-radius: 18% 38% 24% 32%;
+      border-width: 4px;
+      box-shadow: 0 10px 26px #0b8a8035;
+    }
+
+    h2 {
+      border-radius: 10px 22px 22px 10px;
+      display: inline-flex;
+      align-items: center;
+      background: linear-gradient(90deg, #e0fbf8 0%, #ffffff 100%);
+      color: #0b8a80;
+      border: 1px solid #0b8a8033;
+      padding: 6px 14px 6px 14px;
+      margin-bottom: 12px;
+      margin-left: 8px;
+      letter-spacing: 0.3px;
+      font-size: 16px;
+    }
+
+    h2::before {
+      content: none;
+      display: none;
+    }
+
+    h2::after {
+      content: none;
+      display: none;
+    }
+
+    .experience-item,
+    .education-item,
+    .project-item {
+      border-left: 3px solid #0b8a8036;
+      background: linear-gradient(180deg, #ffffff 0%, #fcfdff 100%);
+      border-radius: 10px;
+      padding: 2px 8px 2px 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 10px rgba(12, 22, 40, 0.04);
+    }
+
+    body:not(.sidebar-layout):not(.compact-layout) .experience-item,
+    body:not(.sidebar-layout):not(.compact-layout) .education-item,
+    body:not(.sidebar-layout):not(.compact-layout) .project-item {
+      margin-left: 8px;
+    }
+
+    body:not(.sidebar-layout):not(.compact-layout) .education-item {
+      padding-bottom: 2px;
+    }
+
+    .date-location {
+      background: #0b8a8012;
+      color: #33435d;
+      border: 1px solid #0b8a8026;
+      border-radius: 999px;
+      font-size: 13px;
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    li::marker {
+      color: #0b8a80;
+    }
+
+    .skill-category {
+      border-left-width: 0;
+      border-top: 3px solid #0b8a80;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #ffffff 0%, #e0fbf888 100%);
+    }
+
+    body:not(.sidebar-layout):not(.compact-layout) .skills-grid {
+      margin-left: 8px;
+    }
+
+    .skill-category h3 {
+      color: #2a3345;
+      letter-spacing: 0.02em;
+    }
+
+    .skill-tag {
+      background: #0b8a800D;
+      border-color: #0b8a8036;
+      color: #2c3447;
+      border-radius: 999px;
+      font-weight: 600;
+      box-shadow: none;
+    }
+
+    .projects-intro {
+      border-bottom-color: #0b8a8030;
+      color: #465269;
+      font-style: normal;
+    }
+
+    .technologies {
+      color: #53617a;
+      font-style: normal;
+    }
+
+    .gdpr-clause {
+      border-top-color: #0b8a8022;
+      color: #6c7484;
+    }
+
+    .watermark {
+      color: #5f697a;
+      font-style: normal;
+    }
+
+    /* ===== Sidebar layout ===== */
+    body.sidebar-layout {
+      background: #eef2f8;
+    }
+
+    body.sidebar-layout .sidebar-bg {
+      background:
+        linear-gradient(175deg, #0b8a80 0%, #00d5c4 100%);
+    }
+
+    body.sidebar-layout .sidebar {
+      background: transparent;
+      color: #f4f7ff;
+    }
+
+    body.sidebar-layout .sidebar-name h1 {
+      font-family: 'Space Grotesk', 'Inter', 'Segoe UI', sans-serif;
+      color: #ffffff;
+      letter-spacing: -0.4px;
+    }
+
+    body.sidebar-layout .sidebar-name .title {
+      color: #eef4ff;
+      letter-spacing: 0.09em;
+      font-size: 11px;
+    }
+
+    body.sidebar-layout .sidebar-contacts {
+      border-bottom-color: rgba(255, 255, 255, 0.28);
+    }
+
+    body.sidebar-layout .sidebar-contacts .contact-item,
+    body.sidebar-layout .sidebar-contacts .contact-item a {
+      color: #f5f8ff;
+    }
+
+    body.sidebar-layout .sidebar-contacts .contact-item i {
+      color: #e0fbf8;
+    }
+
+    body.sidebar-layout .sidebar-bio .bio {
+      color: #e6ecfb;
+    }
+
+    body.sidebar-layout .main-content {
+      background: #ffffff;
+      color: #1f2430;
+      padding: 15px 19px 13px 17px;
+    }
+
+    body.sidebar-layout .main-content section {
+      margin-bottom: 13px;
+    }
+
+    body.sidebar-layout .main-content h2 {
+      background: linear-gradient(90deg, #e0fbf8 0%, #ffffff 100%);
+      color: #0b8a80;
+      border-color: #0b8a803B;
+      margin-left: 0;
+      padding: 4px 10px;
+      margin-bottom: 6.5px;
+    }
+
+    body.sidebar-layout .main-content .experience-item,
+    body.sidebar-layout .main-content .education-item,
+    body.sidebar-layout .main-content .project-item {
+      border-left-color: #0b8a803D;
+      background: linear-gradient(180deg, #ffffff 0%, #fcfdff 100%);
+      margin-bottom: 8px;
+      padding: 0 0 0 9px;
+    }
+
+    body.sidebar-layout .main-content .date-location {
+      font-size: 10.75px;
+      padding: 0 7px;
+      font-weight: 500;
+    }
+
+    body.sidebar-layout .sidebar .gdpr-clause {
+      border-top-color: rgba(255, 255, 255, 0.22);
+      color: rgba(245, 248, 255, 0.78);
+    }
+
+    body.sidebar-layout .sidebar .watermark,
+    body.sidebar-layout .sidebar .watermark a {
+      color: rgba(245, 248, 255, 0.84);
+    }
+
+    @media (min-width: 701px) {
+      body.compact-layout .content-wrapper {
+        border-radius: 12px;
+        padding: 0;
+      }
+
+      body.compact-layout h2 {
+        font-size: 14px;
+        padding: 4px 12px;
+        margin-left: 6px;
+      }
+
+      body.compact-layout .experience-item,
+      body.compact-layout .education-item,
+      body.compact-layout .project-item {
+        padding: 1px 7px 1px 11px;
+        margin-left: 6px;
+      }
+
+      body.compact-layout .skills-grid {
+        margin-left: 6px;
+      }
+
+      body.compact-layout .date-location {
+        font-size: 12px;
+        padding: 0 10px;
+      }
+    }
+
+    @media print {
+      h2 {
+        display: inline-flex;
+        width: auto;
+        max-width: fit-content;
+        break-after: avoid-page;
+        page-break-after: avoid;
+      }
+
+      section > h2 + * {
+        break-before: avoid-page;
+        page-break-before: avoid;
+      }
+
+      body {
+        background: #f8f9fc;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      .content-wrapper,
+      header,
+      .experience-item,
+      .education-item,
+      .project-item,
+      .skill-category,
+      .date-location {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+    }
   </style>
   
 </head>
-<body class="sidebar-layout" data-theme="modern">
+<body class="sidebar-layout" data-theme="cre8ive">
   <div class="sidebar-bg"></div>
   <div class="sidebar-container">
     <aside class="sidebar">

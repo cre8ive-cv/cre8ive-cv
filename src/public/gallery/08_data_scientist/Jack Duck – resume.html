@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji">
   <style>
+    
     /* Temporary font import to support inline Space Grotesk usage */
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&display=swap');
 
@@ -30,18 +31,18 @@
 
     .project-link-line {
       font-size: 13px;
-      color: #0e4726;
+      color: #20242b;
       font-style: italic;
       font-weight: 500;
     }
 
     .project-link {
-      color: #0e4726;
+      color: #20242b;
       transition: color 0.2s;
     }
 
     .project-link:hover {
-      color: #2ecc71;
+      color: #5f6672;
       text-decoration: underline;
     }
 
@@ -67,7 +68,7 @@
     }
 
     header {
-      border-bottom: 3px solid #0e4726;
+      border-bottom: 3px solid #20242b;
       padding-bottom: 12px;
       margin-bottom: 24px;
       position: relative;
@@ -169,7 +170,7 @@
     .contact-item i {
       width: 16px;
       flex-shrink: 0;
-      color: #2ecc71;
+      color: #5f6672;
     }
 
     .contact-item a {
@@ -194,8 +195,8 @@
       object-fit: cover;
       border: 5px solid transparent;
       background: linear-gradient(white, white) padding-box,
-                  linear-gradient(135deg, #2ecc71, color-mix(in srgb, #0e4726 60%, #2ecc71), #2ecc71) border-box;
-      box-shadow: 0 8px 16px #0e472633;
+                  linear-gradient(135deg, #5f6672, color-mix(in srgb, #20242b 60%, #5f6672), #5f6672) border-box;
+      box-shadow: 0 8px 16px #20242b33;
       flex-shrink: 0 !important;
       flex-grow: 0 !important;
     }
@@ -252,7 +253,7 @@
 
     h2 {
       font-size: 20px;
-      color: #0e4726;
+      color: #20242b;
       border-bottom: none;
       padding: 7px 15px;
       margin-top: 0;
@@ -271,7 +272,7 @@
       top: 0;
       bottom: 0;
       width: 4px;
-      background: linear-gradient(to bottom, #0e4726, #2ecc71);
+      background: linear-gradient(to bottom, #20242b, #5f6672);
       border-radius: 2px;
     }
 
@@ -297,7 +298,7 @@
 
     .company {
       font-size: 13px;
-      color: #0e4726;
+      color: #20242b;
       opacity: 0.65;
       font-weight: 400;
     }
@@ -310,7 +311,7 @@
 
     .institution {
       font-size: 15px;
-      color: #0e4726;
+      color: #20242b;
       margin-bottom: 3px;
       font-weight: 500;
     }
@@ -326,7 +327,7 @@
       color: #666;
       font-style: italic;
       font-weight: 500;
-      background: #f0fff4;
+      background: #f2f3f5;
       padding: 0 12px;
       border-radius: 4px;
     }
@@ -349,10 +350,10 @@
     }
 
     .skill-category {
-      background: linear-gradient(135deg, #f0fff4 0%, #ffffff 100%);
+      background: linear-gradient(135deg, #f2f3f5 0%, #ffffff 100%);
       padding: 12px;
       border-radius: 8px;
-      border-left: 4px solid #0e4726;
+      border-left: 4px solid #20242b;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
       min-width: 0;
       box-sizing: border-box;
@@ -360,7 +361,7 @@
 
     .skill-category h3 {
       font-size: 15px;
-      color: #0e4726;
+      color: #20242b;
       margin-bottom: 7px;
       text-transform: capitalize;
       font-weight: 700;
@@ -394,7 +395,7 @@
     }
 
     .projects-intro a {
-      color: #0e4726;
+      color: #20242b;
       font-weight: 600;
     }
 
@@ -533,12 +534,19 @@
       }
 
       body.compact-layout .contact-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 5px 8px;
+        display: grid;
+        grid-auto-flow: row;
+        justify-content: start;
+        align-items: center;
+        column-gap: clamp(8px, 2.4vw, 18px);
+        row-gap: 5px;
       }
 
       body.compact-layout .contact-item {
         font-size: 12px;
+        white-space: nowrap;
+        flex: 0 0 auto;
+        gap: 2px;
       }
 
       body.compact-layout .skills-grid {
@@ -587,7 +595,7 @@
       left: 0;
       width: 30%;
       height: 100%;
-      background: #0e4726;
+      background: #20242b;
       z-index: 0;
       print-color-adjust: exact;
       -webkit-print-color-adjust: exact;
@@ -604,13 +612,13 @@
     body.sidebar-layout .sidebar {
       width: 30%;
       flex-shrink: 0;
-      padding: 22px 16px 16px;
+      padding: 20px 14px 14px;
       display: flex;
       flex-direction: column;
       color: #ecf0f1;
       min-height: 100vh;
-      font-variant-emoji: text;
-      background: #0e4726;
+      font-variant-emoji: normal;
+      background: #20242b;
       print-color-adjust: exact;
       -webkit-print-color-adjust: exact;
     }
@@ -646,7 +654,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     body.sidebar-layout .sidebar-photo .profile-photo {
@@ -659,19 +667,19 @@
       margin: 0 auto;
       display: block;
       border: 3px solid transparent;
-      background: linear-gradient(#0e4726, #0e4726) padding-box,
-                  linear-gradient(135deg, #2ecc71, color-mix(in srgb, #0e4726 60%, #2ecc71), #2ecc71) border-box;
+      background: linear-gradient(#20242b, #20242b) padding-box,
+                  linear-gradient(135deg, #5f6672, color-mix(in srgb, #20242b 60%, #5f6672), #5f6672) border-box;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
       print-color-adjust: exact;
       -webkit-print-color-adjust: exact;
     }
 
     body.sidebar-layout .sidebar-name {
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       text-align: center;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
 
     body.sidebar-layout .sidebar-name h1 {
@@ -684,15 +692,15 @@
 
     body.sidebar-layout .sidebar-name .title {
       font-size: 14px;
-      color: #f0fff4;
+      color: #f2f3f5;
       margin: 0;
       line-height: 1.2;
       font-weight: 400;
     }
 
     body.sidebar-layout .sidebar-contacts {
-      margin-bottom: 14px;
-      padding-bottom: 14px;
+      margin-bottom: 12px;
+      padding-bottom: 12px;
       border-bottom: 1px solid rgba(255,255,255,0.15);
     }
 
@@ -702,7 +710,7 @@
       gap: 7px;
       font-size: 11.5px;
       color: rgba(255,255,255,0.85);
-      margin-bottom: 6px;
+      margin-bottom: 5px;
       line-height: 1.3;
     }
 
@@ -711,7 +719,7 @@
     }
 
     body.sidebar-layout .sidebar-contacts .contact-item i {
-      color: #2ecc71;
+      color: #5f6672;
       width: 13px;
       font-size: 11px;
       flex-shrink: 0;
@@ -728,8 +736,8 @@
     }
 
     body.sidebar-layout .sidebar-bio .bio {
-      font-size: 13px;
-      line-height: 1.5;
+      font-size: 12.5px;
+      line-height: 1.42;
       color: rgba(255,255,255,0.75);
       font-style: italic;
       & p,
@@ -757,22 +765,22 @@
     /* Main content area */
     body.sidebar-layout .main-content {
       width: 70%;
-      padding: 18px 22px 16px 20px;
-      font-variant-emoji: text;
+      padding: 17px 21px 15px 19px;
+      font-variant-emoji: normal;
       background: #fff;
     }
 
     body.sidebar-layout .main-content section {
-      margin-bottom: 16.5px;
+      margin-bottom: 15px;
     }
 
     body.sidebar-layout .main-content h2 {
       font-size: 15px;
-      padding: 4.5px 12px;
-      margin-bottom: 7.5px;
+      padding: 4px 10px;
+      margin-bottom: 6.5px;
       letter-spacing: 0.8px;
       background: none;
-      color: #0e4726;
+      color: #20242b;
     }
 
     body.sidebar-layout .main-content h2::before {
@@ -782,8 +790,8 @@
     body.sidebar-layout .main-content .experience-item,
     body.sidebar-layout .main-content .education-item,
     body.sidebar-layout .main-content .project-item {
-      margin-bottom: 9.5px;
-      padding-left: 10px;
+      margin-bottom: 9px;
+      padding-left: 9.5px;
     }
 
     body.sidebar-layout .main-content .experience-header,
@@ -818,8 +826,8 @@
     }
 
     body.sidebar-layout .main-content ul {
-      margin-left: 14px;
-      margin-top: 3px;
+      margin-left: 13px;
+      margin-top: 2.5px;
     }
 
     body.sidebar-layout .main-content li {
@@ -828,16 +836,16 @@
     }
 
     body.sidebar-layout .main-content .skills-grid {
-      gap: 8px;
+      gap: 7.5px;
     }
 
     body.sidebar-layout .main-content .skill-category {
-      padding: 8px;
+      padding: 7.5px;
     }
 
     body.sidebar-layout .main-content .skill-category h3 {
       font-size: 11.75px;
-      margin-bottom: 5px;
+      margin-bottom: 4.5px;
     }
 
     body.sidebar-layout .main-content .skill-tags {
@@ -845,14 +853,14 @@
     }
 
     body.sidebar-layout .main-content .skill-tag {
-      padding: 2px 7px;
+      padding: 2px 6px;
       font-size: 9.75px;
     }
 
     body.sidebar-layout .main-content .projects-grid {
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      column-gap: 20px;
+      gap: 9.5px;
+      column-gap: 17px;
     }
 
     body.sidebar-layout .main-content .project-description {
@@ -1078,13 +1086,13 @@
 
       .skill-category {
         page-break-inside: avoid;
-        background: #f0fff4;
+        background: #f2f3f5;
         print-color-adjust: exact;
         -webkit-print-color-adjust: exact;
       }
 
       .date-location {
-        background: #f0fff4;
+        background: #f2f3f5;
         print-color-adjust: exact;
         -webkit-print-color-adjust: exact;
       }
@@ -1095,10 +1103,290 @@
         page-break-before: auto;
       }
     }
+  
+
+    body {
+      font-family: 'IBM Plex Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
+      color: #1f2329;
+      background: #ffffff;
+    }
+
+    .content-wrapper {
+      background: #ffffff;
+    }
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid #d4d8de;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    .header-photo {
+      margin-top: 0;
+    }
+
+    .contact-item,
+    .contact-item a {
+      color: #353b45;
+    }
+
+    .contact-item i {
+      color: #5f6672;
+    }
+
+    .profile-photo {
+      border: 1px solid #c8cdd5;
+      background: #ffffff;
+      box-shadow: none;
+    }
+
+    h1 {
+      color: #151922;
+      font-weight: 650;
+      letter-spacing: -0.3px;
+    }
+
+    .title {
+      color: #4c5461;
+      font-weight: 500;
+      letter-spacing: 0;
+    }
+
+    .bio {
+      color: #3d4551;
+      font-style: normal;
+    }
+
+    h2 {
+      color: #1f2329;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      border-bottom: 0;
+      border-radius: 0;
+      background: transparent;
+      padding: 0 0 7px;
+    }
+
+    h2::before,
+    h2::after {
+      content: none;
+      display: none;
+    }
+
+    .experience-item,
+    .education-item,
+    .project-item {
+      border-left: 0;
+      border-bottom: 0;
+      background: transparent;
+      border-radius: 0;
+      box-shadow: none;
+      padding-left: 0;
+      padding-right: 0;
+      padding-top: 0;
+    }
+
+    body:not(.sidebar-layout):not(.compact-layout) .experience-item,
+    body:not(.sidebar-layout):not(.compact-layout) .education-item,
+    body:not(.sidebar-layout):not(.compact-layout) .project-item {
+      margin-bottom: 18px;
+      padding-bottom: 3px;
+    }
+
+    body:not(.sidebar-layout):not(.compact-layout) .education-item {
+      padding-bottom: 0;
+    }
+
+    body:not(.sidebar-layout):not(.compact-layout) section {
+      margin-bottom: 25px;
+    }
+
+    .position,
+    .degree,
+    .project-name {
+      color: #191d26;
+    }
+
+    .company,
+    .institution {
+      color: #4c5461;
+      opacity: 1;
+    }
+
+    .date-location {
+      background: transparent;
+      border: 0;
+      color: #636c79;
+      font-style: normal;
+      font-family: 'IBM Plex Mono', 'Fira Code', 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
+      font-size: 12px;
+      padding: 0;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    li::marker {
+      color: #5f6672;
+    }
+
+    .skill-category {
+      border-left: 0;
+      border-top: 0;
+      border-radius: 0;
+      background: transparent;
+      padding-top: 10px;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .skill-category h3 {
+      color: #1f2329;
+      font-weight: 600;
+    }
+
+    .skill-tag {
+      background: #f6f7f9;
+      border: 1px solid #d9dde3;
+      color: #363d48;
+      border-radius: 4px;
+      box-shadow: none;
+    }
+
+    .projects-intro {
+      border-bottom-color: #d4d8de;
+      color: #4c5461;
+      font-style: normal;
+    }
+
+    .technologies {
+      color: #596272;
+      font-style: normal;
+    }
+
+    .project-link-line,
+    .project-link {
+      color: #2f3641;
+    }
+
+    .project-link:hover {
+      color: #11141b;
+    }
+
+    .gdpr-clause {
+      border-top-color: #d4d8de;
+      color: #666f7d;
+    }
+
+    .watermark,
+    .watermark a {
+      color: #666f7d;
+    }
+
+    body.sidebar-layout {
+      background: #ffffff;
+    }
+
+    body.sidebar-layout .sidebar-bg {
+      background: #f3f5f8 !important;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+
+    body.sidebar-layout .sidebar {
+      background: #f3f5f8 !important;
+      color: #2c333e;
+      border-right: 1px solid #d7dce3;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+
+    body.sidebar-layout .sidebar-name h1 {
+      color: #171b24;
+    }
+
+    body.sidebar-layout .sidebar-name .title {
+      color: #566070;
+    }
+
+    body.sidebar-layout .sidebar-contacts {
+      border-bottom-color: #d5dae2;
+    }
+
+    body.sidebar-layout .sidebar .title,
+    body.sidebar-layout .sidebar .bio,
+    body.sidebar-layout .sidebar .contact-item,
+    body.sidebar-layout .sidebar .contact-item a {
+      color: #3e4755;
+    }
+
+    body.sidebar-layout .sidebar .contact-item i {
+      color: #687182;
+    }
+
+    body.sidebar-layout .sidebar .gdpr-clause {
+      border-top-color: #d5dae2;
+      color: #697283;
+    }
+
+    body.sidebar-layout .sidebar .watermark,
+    body.sidebar-layout .sidebar .watermark a {
+      color: #697283;
+    }
+
+    body.sidebar-layout .main-content {
+      background: #ffffff;
+      color: #1f2329;
+      padding: 16px 20px 14px 18px;
+    }
+
+    body.sidebar-layout .main-content section {
+      margin-bottom: 14px;
+    }
+
+    body.sidebar-layout .main-content h2 {
+      border-bottom: 0;
+      background: transparent;
+      padding: 0 0 6px;
+      margin-bottom: 6px;
+    }
+
+    body.sidebar-layout .main-content .experience-item,
+    body.sidebar-layout .main-content .education-item,
+    body.sidebar-layout .main-content .project-item {
+      border-left: 0;
+      border-bottom: 0;
+      background: transparent;
+      margin-bottom: 9px;
+    }
+
+    body.sidebar-layout .main-content ul {
+      margin-top: 3px;
+      margin-left: 17px;
+    }
+
+    body.sidebar-layout .main-content li {
+      margin-bottom: 1.5px;
+    }
+
+    @media print {
+      h2 {
+        display: block;
+        break-after: avoid-page;
+        page-break-after: avoid;
+      }
+
+      section > h2 + * {
+        break-before: avoid-page;
+        page-break-before: avoid;
+      }
+    }
   </style>
   
 </head>
-<body class="sidebar-layout">
+<body class="sidebar-layout" data-theme="minimalist">
   <div class="sidebar-bg"></div>
   <div class="sidebar-container">
     <aside class="sidebar">
@@ -1288,5 +1576,103 @@
   </section>
     </main>
   </div>
+
+<script>
+(function() {
+  function balanceCompactContacts() {
+    if (!document.body.classList.contains('compact-layout')) return;
+    const grids = document.querySelectorAll('.header-contacts .contact-grid');
+    grids.forEach((grid) => {
+      const display = window.getComputedStyle(grid).display;
+      if (display !== 'grid') return;
+      const items = Array.from(grid.querySelectorAll('.contact-item'));
+      if (items.length < 2) return;
+      const styles = window.getComputedStyle(grid);
+      const maxGap = parseFloat(styles.columnGap) || 0;
+      const minGap = 6;
+      const containerWidth = grid.clientWidth;
+      if (!containerWidth) return;
+      grid.style.gridTemplateColumns = 'repeat(' + items.length + ', max-content)';
+      const itemWidths = items.map((item) => item.getBoundingClientRect().width);
+
+      const fitsColumns = (columns) => {
+        const widths = new Array(columns).fill(0);
+        for (let i = 0; i < items.length; i += 1) {
+          const col = i % columns;
+          widths[col] = Math.max(widths[col], itemWidths[i]);
+        }
+        const total = widths.reduce((sum, width) => sum + width, 0);
+        if (columns === 1) {
+          return { fits: total <= containerWidth, gap: maxGap };
+        }
+        const availableGap = containerWidth - total;
+        if (availableGap < 0) {
+          return { fits: false, gap: minGap };
+        }
+        const idealGap = availableGap / (columns - 1);
+        if (idealGap < minGap) {
+          return { fits: false, gap: minGap };
+        }
+        return { fits: true, gap: Math.min(maxGap, idealGap) };
+      };
+
+      const twoRowColumns = Math.ceil(items.length / 2);
+      let targetColumns = 1;
+      let targetGap = maxGap;
+      const oneRowFit = fitsColumns(items.length);
+      if (oneRowFit.fits) {
+        targetColumns = items.length;
+        targetGap = oneRowFit.gap;
+      } else {
+        const twoRowFit = fitsColumns(twoRowColumns);
+        if (twoRowFit.fits) {
+        targetColumns = twoRowColumns;
+        targetGap = twoRowFit.gap;
+        } else {
+        let maxColumnsFit = 1;
+        for (let columns = items.length; columns >= 1; columns -= 1) {
+          const fit = fitsColumns(columns);
+          if (fit.fits) {
+            maxColumnsFit = columns;
+            targetGap = fit.gap;
+            break;
+          }
+        }
+
+        const rowsNeeded = Math.ceil(items.length / maxColumnsFit);
+        targetColumns = Math.ceil(items.length / rowsNeeded);
+        while (targetColumns > 1) {
+          const fit = fitsColumns(targetColumns);
+          if (fit.fits) {
+            targetGap = fit.gap;
+            break;
+          }
+          targetColumns -= 1;
+        }
+        }
+      }
+
+      grid.style.gridTemplateColumns = 'repeat(' + targetColumns + ', max-content)';
+      if (targetColumns > 1) {
+        grid.style.columnGap = targetGap + 'px';
+      } else {
+        grid.style.columnGap = '';
+      }
+    });
+  }
+
+  function scheduleBalance() {
+    window.requestAnimationFrame(balanceCompactContacts);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', scheduleBalance);
+  } else {
+    scheduleBalance();
+  }
+  window.addEventListener('load', scheduleBalance);
+  window.addEventListener('resize', scheduleBalance);
+})();
+</script>
 </body>
 </html>

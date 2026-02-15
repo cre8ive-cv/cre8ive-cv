@@ -176,8 +176,8 @@
       "education": true,
       "gdprClause": true
     },
-    "selectedTheme": "modern",
-    "selectedColor": "green",
+    "selectedTheme": "minimalist",
+    "selectedColor": null,
     "selectedLayout": "sidebar",
     "showWatermark": true,
     "customSectionNames": {

@@ -56,6 +56,10 @@
       min-height: 100vh;
     }
 
+    body:not(.sidebar-layout) {
+      background: #e8f1fb;
+    }
+
     .content-wrapper {
       flex: 1;
     }
@@ -73,6 +77,17 @@
       grid-template-columns: 1fr;
       --header-photo-size: 180px;
       --header-photo-gap: 20px;
+    }
+
+    body:not(.sidebar-layout) header {
+      border-bottom: 0;
+      padding: 8px 12px 10px;
+      border: 1px solid #c5d9ec;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #ffffff 0%, #f5f9ff 100%);
+      box-shadow: 0 7px 24px rgba(20, 56, 95, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
     }
 
     header.has-photo {
@@ -260,6 +275,37 @@
       page-break-inside: avoid;
     }
 
+    body:not(.sidebar-layout) .experience-item,
+    body:not(.sidebar-layout) .education-item,
+    body:not(.sidebar-layout) .project-item {
+      padding: 9px 11px 10px;
+      border-radius: 11px;
+      border: 1px solid #c5d9ec;
+      background: linear-gradient(180deg, #ffffff 0%, #f5f9ff 100%);
+      box-shadow: 0 7px 24px rgba(20, 56, 95, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+
+    body:not(.sidebar-layout) .education-item {
+      padding-bottom: 9px;
+    }
+
+    body:not(.sidebar-layout):not(.compact-layout) .experience-item,
+    body:not(.sidebar-layout):not(.compact-layout) .education-item,
+    body:not(.sidebar-layout):not(.compact-layout) .project-item {
+      margin-bottom: 12px;
+      padding: 5px 8px 6px;
+    }
+
+    body:not(.sidebar-layout):not(.compact-layout) section {
+      margin-bottom: 17px;
+    }
+
+    body:not(.sidebar-layout):not(.compact-layout) .education-item {
+      padding-bottom: 5px;
+    }
+
     .experience-header, .education-header {
       display: flex;
       justify-content: space-between;
@@ -323,12 +369,38 @@
     }
 
     .skill-category {
-      background: #f8f9fa;
+      position: relative;
+      background: linear-gradient(180deg, #fdfefe 0%, #f4f8fc 100%);
       padding: 12px;
-      border-radius: 5px;
-      border-left: 4px solid #129dfb;
+      border-radius: 9px;
+      border: 1px solid #d8e5f1;
       min-width: 0;
       box-sizing: border-box;
+      overflow: hidden;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+    }
+
+    .skill-category::before {
+      content: '';
+      position: absolute;
+      top: 7px;
+      bottom: 7px;
+      left: 0;
+      width: 2px;
+      border-radius: 0;
+      background: #129dfb;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+
+    .skill-category::after {
+      content: '';
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      top: 0;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.8);
     }
 
     .skill-category h3 {
@@ -336,6 +408,8 @@
       color: #2c3e50;
       margin-bottom: 7px;
       text-transform: capitalize;
+      letter-spacing: 0.15px;
+      padding-left: 2px;
     }
 
     .skill-tags {
@@ -378,6 +452,11 @@
       grid-template-columns: repeat(2, 1fr);
       gap: 17px;
       column-gap: 26px;
+    }
+
+    body:not(.sidebar-layout):not(.compact-layout) .projects-grid {
+      row-gap: 6px;
+      column-gap: 24px;
     }
 
     .project-description {
@@ -441,6 +520,7 @@
 
       body.compact-layout header {
         margin-bottom: 18px;
+        padding: 7px 10px 8px;
       }
 
       body.compact-layout header.has-photo .header-bio::before {
@@ -476,6 +556,16 @@
         margin-bottom: 12px;
       }
 
+      body.compact-layout .experience-item,
+      body.compact-layout .education-item,
+      body.compact-layout .project-item {
+        padding: 7px 9px 8px;
+      }
+
+      body.compact-layout .education-item {
+        padding-bottom: 7px;
+      }
+
       body.compact-layout .position,
       body.compact-layout .degree,
       body.compact-layout .project-name {
@@ -502,12 +592,19 @@
       }
 
       body.compact-layout .contact-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 5px 8px;
+        display: grid;
+        grid-auto-flow: row;
+        justify-content: start;
+        align-items: center;
+        column-gap: clamp(8px, 2.4vw, 18px);
+        row-gap: 5px;
       }
 
       body.compact-layout .contact-item {
         font-size: 12px;
+        white-space: nowrap;
+        flex: 0 0 auto;
+        gap: 2px;
       }
 
       body.compact-layout .skills-grid {
@@ -516,6 +613,12 @@
 
       body.compact-layout .skill-category {
         padding: 10px;
+      }
+
+      body.compact-layout .skill-category::before {
+        width: 2px;
+        top: 7px;
+        bottom: 7px;
       }
 
       body.compact-layout .skill-category h3 {
@@ -581,7 +684,7 @@
       flex-direction: column;
       color: #ecf0f1;
       min-height: 100vh;
-      font-variant-emoji: text; /* Keep symbols (e.g., checkmarks) monochrome so color matches PDF/HTML */
+      font-variant-emoji: normal;
       print-color-adjust: exact;
       -webkit-print-color-adjust: exact;
     }
@@ -658,9 +761,12 @@
     }
 
     body.sidebar-layout .sidebar-contacts {
-      margin-bottom: 14px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid rgba(255,255,255,0.15);
+      margin-bottom: 10px;
+      padding: 8px 9px;
+      border: 0.35px solid rgba(255,255,255,0.09);
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.02) 100%);
+      box-shadow: 0 1px 3px rgba(3, 15, 30, 0.07), inset 0 1px 0 rgba(255,255,255,0.08);
     }
 
     body.sidebar-layout .sidebar-contacts .contact-item {
@@ -692,6 +798,11 @@
 
     body.sidebar-layout .sidebar-bio {
       margin-bottom: 0;
+      padding: 8px 9px;
+      border: 0.35px solid rgba(255,255,255,0.09);
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.018) 100%);
+      box-shadow: 0 1px 3px rgba(3, 15, 30, 0.07), inset 0 1px 0 rgba(255,255,255,0.07);
     }
 
     body.sidebar-layout .sidebar-bio .bio {
@@ -725,31 +836,40 @@
     /* Main content area */
     body.sidebar-layout .main-content {
       width: 70%;
-      padding: 18px 22px 16px 20px;
-      font-variant-emoji: text;
+      padding: 12px 14px 11px 12px;
+      font-variant-emoji: normal;
       background: #fff;
     }
 
     body.sidebar-layout .main-content section {
-      margin-bottom: 17px;
+      margin-bottom: 10px;
     }
 
     body.sidebar-layout .main-content h2 {
       font-size: 14.75px;
-      padding-bottom: 4px;
-      margin-bottom: 8px;
+      padding-bottom: 3px;
+      margin-bottom: 6px;
       letter-spacing: 0.8px;
     }
 
-    body.sidebar-layout .main-content .experience-item,
-    body.sidebar-layout .main-content .education-item,
-    body.sidebar-layout .main-content .project-item {
-      margin-bottom: 10px;
+      body.sidebar-layout .main-content .experience-item,
+      body.sidebar-layout .main-content .education-item,
+      body.sidebar-layout .main-content .project-item {
+        margin-bottom: 6px;
+        padding: 4.5px 6px 5px;
+        border-radius: 9px;
+        border: 1px solid #c5d9ec;
+        background: linear-gradient(180deg, #ffffff 0%, #f5f9ff 100%);
+        box-shadow: 0 5px 16px rgba(20, 56, 95, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+      }
+
+    body.sidebar-layout .main-content .education-item {
+      padding-bottom: 4.5px;
     }
 
     body.sidebar-layout .main-content .experience-header,
     body.sidebar-layout .main-content .education-header {
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
 
     body.sidebar-layout .main-content .position,
@@ -775,42 +895,49 @@
     }
 
     body.sidebar-layout .main-content ul {
-      margin-left: 14px;
-      margin-top: 3px;
+      margin-left: 12px;
+      margin-top: 2px;
     }
 
     body.sidebar-layout .main-content li {
       font-size: 10.75px;
-      margin-bottom: 2px;
+      margin-bottom: 1px;
       color: #555;
     }
 
     body.sidebar-layout .main-content .skills-grid {
-      gap: 8px;
+      gap: 5px;
     }
 
     body.sidebar-layout .main-content .skill-category {
-      padding: 8px;
+      padding: 5px;
+      border-radius: 7px;
+    }
+
+    body.sidebar-layout .main-content .skill-category::before {
+      width: 2px;
+      top: 6px;
+      bottom: 6px;
     }
 
     body.sidebar-layout .main-content .skill-category h3 {
       font-size: 11.75px;
-      margin-bottom: 5px;
+      margin-bottom: 4px;
     }
 
     body.sidebar-layout .main-content .skill-tags {
-      gap: 4px;
+      gap: 3px;
     }
 
     body.sidebar-layout .main-content .skill-tag {
-      padding: 2px 7px;
+      padding: 2px 6px;
       font-size: 9.75px;
     }
 
     body.sidebar-layout .main-content .projects-grid {
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      column-gap: 20px;
+      gap: 7px;
+      column-gap: 12px;
     }
 
     body.sidebar-layout .main-content .project-description {
@@ -940,6 +1067,7 @@
         margin-top: 5px;
         padding: 3px 10px;
       }
+
     }
 
     @media (max-width: 480px) {
@@ -990,8 +1118,46 @@
         min-height: 100vh;
       }
 
+      body:not(.sidebar-layout) {
+        background: #fff;
+      }
+
       .content-wrapper {
         flex: 1;
+      }
+
+      body:not(.sidebar-layout) section {
+        box-shadow: none;
+      }
+
+      body:not(.sidebar-layout) header {
+        box-shadow: none;
+      }
+
+      body:not(.sidebar-layout) section:has(.experience-item),
+      body:not(.sidebar-layout) section:has(.education-item),
+      body:not(.sidebar-layout) section:has(.project-item) {
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+      }
+
+      body:not(.sidebar-layout) .experience-item,
+      body:not(.sidebar-layout) .education-item,
+      body:not(.sidebar-layout) .project-item {
+        margin-bottom: 9px;
+        padding: 6px 9px 8px;
+        border-radius: 10px;
+        border: 1px solid #c5d9ec;
+        background: linear-gradient(180deg, #ffffff 0%, #f5f9ff 100%);
+        box-shadow: none;
+        box-decoration-break: clone;
+        -webkit-box-decoration-break: clone;
+      }
+
+      body:not(.sidebar-layout) .education-item {
+        padding-bottom: 6px;
       }
 
       .profile-photo {
@@ -1031,7 +1197,7 @@
   </style>
   
 </head>
-<body>
+<body data-theme="default">
   <div class="content-wrapper">
     <header class="has-bio has-photo has-contacts">
       <div class="header-name">
@@ -1140,6 +1306,7 @@ You are about to use <strong style="font-family:'Space Grotesk','Segoe UI',sans-
       </div>
     
   </section>
+
   </div>
 
 <div class="gdpr-watermark-wrapper">
@@ -1166,5 +1333,103 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.</div>
 <div class="watermark" style="text-transform: none !important;">Designed with <a href="https://cre8ive.cv" target="_blank" rel="noopener noreferrer">cre8ive.cv</a></div>
 </div>
+
+<script>
+(function() {
+  function balanceCompactContacts() {
+    if (!document.body.classList.contains('compact-layout')) return;
+    const grids = document.querySelectorAll('.header-contacts .contact-grid');
+    grids.forEach((grid) => {
+      const display = window.getComputedStyle(grid).display;
+      if (display !== 'grid') return;
+      const items = Array.from(grid.querySelectorAll('.contact-item'));
+      if (items.length < 2) return;
+      const styles = window.getComputedStyle(grid);
+      const maxGap = parseFloat(styles.columnGap) || 0;
+      const minGap = 6;
+      const containerWidth = grid.clientWidth;
+      if (!containerWidth) return;
+      grid.style.gridTemplateColumns = 'repeat(' + items.length + ', max-content)';
+      const itemWidths = items.map((item) => item.getBoundingClientRect().width);
+
+      const fitsColumns = (columns) => {
+        const widths = new Array(columns).fill(0);
+        for (let i = 0; i < items.length; i += 1) {
+          const col = i % columns;
+          widths[col] = Math.max(widths[col], itemWidths[i]);
+        }
+        const total = widths.reduce((sum, width) => sum + width, 0);
+        if (columns === 1) {
+          return { fits: total <= containerWidth, gap: maxGap };
+        }
+        const availableGap = containerWidth - total;
+        if (availableGap < 0) {
+          return { fits: false, gap: minGap };
+        }
+        const idealGap = availableGap / (columns - 1);
+        if (idealGap < minGap) {
+          return { fits: false, gap: minGap };
+        }
+        return { fits: true, gap: Math.min(maxGap, idealGap) };
+      };
+
+      const twoRowColumns = Math.ceil(items.length / 2);
+      let targetColumns = 1;
+      let targetGap = maxGap;
+      const oneRowFit = fitsColumns(items.length);
+      if (oneRowFit.fits) {
+        targetColumns = items.length;
+        targetGap = oneRowFit.gap;
+      } else {
+        const twoRowFit = fitsColumns(twoRowColumns);
+        if (twoRowFit.fits) {
+        targetColumns = twoRowColumns;
+        targetGap = twoRowFit.gap;
+        } else {
+        let maxColumnsFit = 1;
+        for (let columns = items.length; columns >= 1; columns -= 1) {
+          const fit = fitsColumns(columns);
+          if (fit.fits) {
+            maxColumnsFit = columns;
+            targetGap = fit.gap;
+            break;
+          }
+        }
+
+        const rowsNeeded = Math.ceil(items.length / maxColumnsFit);
+        targetColumns = Math.ceil(items.length / rowsNeeded);
+        while (targetColumns > 1) {
+          const fit = fitsColumns(targetColumns);
+          if (fit.fits) {
+            targetGap = fit.gap;
+            break;
+          }
+          targetColumns -= 1;
+        }
+        }
+      }
+
+      grid.style.gridTemplateColumns = 'repeat(' + targetColumns + ', max-content)';
+      if (targetColumns > 1) {
+        grid.style.columnGap = targetGap + 'px';
+      } else {
+        grid.style.columnGap = '';
+      }
+    });
+  }
+
+  function scheduleBalance() {
+    window.requestAnimationFrame(balanceCompactContacts);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', scheduleBalance);
+  } else {
+    scheduleBalance();
+  }
+  window.addEventListener('load', scheduleBalance);
+  window.addEventListener('resize', scheduleBalance);
+})();
+</script>
 </body>
 </html>

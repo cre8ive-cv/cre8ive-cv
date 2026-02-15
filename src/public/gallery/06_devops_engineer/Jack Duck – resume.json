@@ -153,8 +153,8 @@
       "education": true,
       "gdprClause": true
     },
-    "selectedTheme": "default",
-    "selectedColor": "grey",
+    "selectedTheme": "terminal",
+    "selectedColor": null,
     "selectedLayout": "standard",
     "showWatermark": true,
     "customSectionNames": {
