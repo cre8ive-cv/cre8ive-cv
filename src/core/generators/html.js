@@ -317,6 +317,105 @@ body{min-height:0!important}${layout !== 'sidebar' ? '\nbody:not(.sidebar-layout
   ${previewMarginStyle}
 </head>`;
 
+  const compactContactBalanceScript = `
+<script>
+(function() {
+  function balanceCompactContacts() {
+    if (!document.body.classList.contains('compact-layout')) return;
+    const grids = document.querySelectorAll('.header-contacts .contact-grid');
+    grids.forEach((grid) => {
+      const display = window.getComputedStyle(grid).display;
+      if (display !== 'grid') return;
+      const items = Array.from(grid.querySelectorAll('.contact-item'));
+      if (items.length < 2) return;
+      const styles = window.getComputedStyle(grid);
+      const maxGap = parseFloat(styles.columnGap) || 0;
+      const minGap = 6;
+      const containerWidth = grid.clientWidth;
+      if (!containerWidth) return;
+      grid.style.gridTemplateColumns = 'repeat(' + items.length + ', max-content)';
+      const itemWidths = items.map((item) => item.getBoundingClientRect().width);
+
+      const fitsColumns = (columns) => {
+        const widths = new Array(columns).fill(0);
+        for (let i = 0; i < items.length; i += 1) {
+          const col = i % columns;
+          widths[col] = Math.max(widths[col], itemWidths[i]);
+        }
+        const total = widths.reduce((sum, width) => sum + width, 0);
+        if (columns === 1) {
+          return { fits: total <= containerWidth, gap: maxGap };
+        }
+        const availableGap = containerWidth - total;
+        if (availableGap < 0) {
+          return { fits: false, gap: minGap };
+        }
+        const idealGap = availableGap / (columns - 1);
+        if (idealGap < minGap) {
+          return { fits: false, gap: minGap };
+        }
+        return { fits: true, gap: Math.min(maxGap, idealGap) };
+      };
+
+      const twoRowColumns = Math.ceil(items.length / 2);
+      let targetColumns = 1;
+      let targetGap = maxGap;
+      const oneRowFit = fitsColumns(items.length);
+      if (oneRowFit.fits) {
+        targetColumns = items.length;
+        targetGap = oneRowFit.gap;
+      } else {
+        const twoRowFit = fitsColumns(twoRowColumns);
+        if (twoRowFit.fits) {
+        targetColumns = twoRowColumns;
+        targetGap = twoRowFit.gap;
+        } else {
+        let maxColumnsFit = 1;
+        for (let columns = items.length; columns >= 1; columns -= 1) {
+          const fit = fitsColumns(columns);
+          if (fit.fits) {
+            maxColumnsFit = columns;
+            targetGap = fit.gap;
+            break;
+          }
+        }
+
+        const rowsNeeded = Math.ceil(items.length / maxColumnsFit);
+        targetColumns = Math.ceil(items.length / rowsNeeded);
+        while (targetColumns > 1) {
+          const fit = fitsColumns(targetColumns);
+          if (fit.fits) {
+            targetGap = fit.gap;
+            break;
+          }
+          targetColumns -= 1;
+        }
+        }
+      }
+
+      grid.style.gridTemplateColumns = 'repeat(' + targetColumns + ', max-content)';
+      if (targetColumns > 1) {
+        grid.style.columnGap = targetGap + 'px';
+      } else {
+        grid.style.columnGap = '';
+      }
+    });
+  }
+
+  function scheduleBalance() {
+    window.requestAnimationFrame(balanceCompactContacts);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', scheduleBalance);
+  } else {
+    scheduleBalance();
+  }
+  window.addEventListener('load', scheduleBalance);
+  window.addEventListener('resize', scheduleBalance);
+})();
+</script>`;
+
   // Sidebar layout: completely different HTML structure
   if (layout === 'sidebar') {
     const gdprWatermarkHtml = (resumeData.gdprClause || showWatermark) ? `
@@ -326,7 +425,7 @@ body{min-height:0!important}${layout !== 'sidebar' ? '\nbody:not(.sidebar-layout
         </div>` : '';
 
     return `${htmlHead}
-<body class="sidebar-layout">
+<body class="sidebar-layout" data-theme="${theme.name}">
   <div class="sidebar-bg"></div>
   <div class="sidebar-container">
     <aside class="sidebar">
@@ -352,13 +451,14 @@ body{min-height:0!important}${layout !== 'sidebar' ? '\nbody:not(.sidebar-layout
       ${sections}
     </main>
   </div>
+${compactContactBalanceScript}
 </body>
 </html>`;
   }
 
   // Standard and compact layouts: original HTML structure
   return `${htmlHead}
-<body${layout === 'compact' ? ' class="compact-layout"' : ''}>
+<body${layout === 'compact' ? ' class="compact-layout"' : ''} data-theme="${theme.name}">
   <div class="content-wrapper">
     <header class="${headerClassList}">
       <div class="header-name">
@@ -388,6 +488,7 @@ ${resumeData.gdprClause || showWatermark ? `<div class="gdpr-watermark-wrapper">
 ${resumeData.gdprClause ? `<div class="gdpr-clause">${isolateUserContent(resumeData.gdprClause)}</div>` : ''}
 ${showWatermark ? '<div class="watermark" style="text-transform: none !important;">Designed with <a href="https://cre8ive.cv" target="_blank" rel="noopener noreferrer">cre8ive.cv</a></div>' : ''}
 </div>` : ''}
+${compactContactBalanceScript}
 </body>
 </html>`;
 }
