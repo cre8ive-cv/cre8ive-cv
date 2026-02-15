@@ -92,6 +92,21 @@ function getStyles() {
       padding-top: 0;
     }
 
+    body:not(.sidebar-layout):not(.compact-layout) .experience-item,
+    body:not(.sidebar-layout):not(.compact-layout) .education-item,
+    body:not(.sidebar-layout):not(.compact-layout) .project-item {
+      margin-bottom: 18px;
+      padding-bottom: 3px;
+    }
+
+    body:not(.sidebar-layout):not(.compact-layout) .education-item {
+      padding-bottom: 0;
+    }
+
+    body:not(.sidebar-layout):not(.compact-layout) section {
+      margin-bottom: 25px;
+    }
+
     .position,
     .degree,
     .project-name {
@@ -229,11 +244,18 @@ function getStyles() {
     body.sidebar-layout .main-content {
       background: #ffffff;
       color: #1f2329;
+      padding: 16px 20px 14px 18px;
+    }
+
+    body.sidebar-layout .main-content section {
+      margin-bottom: 14px;
     }
 
     body.sidebar-layout .main-content h2 {
       border-bottom: 0;
       background: transparent;
+      padding: 0 0 6px;
+      margin-bottom: 6px;
     }
 
     body.sidebar-layout .main-content .experience-item,
@@ -242,6 +264,16 @@ function getStyles() {
       border-left: 0;
       border-bottom: 0;
       background: transparent;
+      margin-bottom: 9px;
+    }
+
+    body.sidebar-layout .main-content ul {
+      margin-top: 3px;
+      margin-left: 17px;
+    }
+
+    body.sidebar-layout .main-content li {
+      margin-bottom: 1.5px;
     }
 
     @media print {

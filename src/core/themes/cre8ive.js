@@ -109,6 +109,16 @@ function getStyles(palette) {
       box-shadow: 0 2px 10px rgba(12, 22, 40, 0.04);
     }
 
+    body:not(.sidebar-layout):not(.compact-layout) .experience-item,
+    body:not(.sidebar-layout):not(.compact-layout) .education-item,
+    body:not(.sidebar-layout):not(.compact-layout) .project-item {
+      margin-left: 8px;
+    }
+
+    body:not(.sidebar-layout):not(.compact-layout) .education-item {
+      padding-bottom: 2px;
+    }
+
     .date-location {
       background: ${palette.primary}12;
       color: #33435d;
@@ -128,6 +138,10 @@ function getStyles(palette) {
       border-top: 3px solid ${palette.primary};
       border-radius: 10px;
       background: linear-gradient(180deg, #ffffff 0%, ${palette.light}88 100%);
+    }
+
+    body:not(.sidebar-layout):not(.compact-layout) .skills-grid {
+      margin-left: 8px;
     }
 
     .skill-category h3 {
@@ -212,6 +226,11 @@ function getStyles(palette) {
     body.sidebar-layout .main-content {
       background: #ffffff;
       color: #1f2430;
+      padding: 15px 19px 13px 17px;
+    }
+
+    body.sidebar-layout .main-content section {
+      margin-bottom: 13px;
     }
 
     body.sidebar-layout .main-content h2 {
@@ -219,8 +238,8 @@ function getStyles(palette) {
       color: ${palette.primary};
       border-color: ${palette.primary}3B;
       margin-left: 0;
-      padding: 4.5px 12px;
-      margin-bottom: 7.5px;
+      padding: 4px 10px;
+      margin-bottom: 6.5px;
     }
 
     body.sidebar-layout .main-content .experience-item,
@@ -228,8 +247,8 @@ function getStyles(palette) {
     body.sidebar-layout .main-content .project-item {
       border-left-color: ${palette.primary}3D;
       background: linear-gradient(180deg, #ffffff 0%, #fcfdff 100%);
-      margin-bottom: 9.5px;
-      padding: 0 0 0 10px;
+      margin-bottom: 8px;
+      padding: 0 0 0 9px;
     }
 
     body.sidebar-layout .main-content .date-location {
@@ -264,6 +283,11 @@ function getStyles(palette) {
       body.compact-layout .education-item,
       body.compact-layout .project-item {
         padding: 1px 7px 1px 11px;
+        margin-left: 6px;
+      }
+
+      body.compact-layout .skills-grid {
+        margin-left: 6px;
       }
 
       body.compact-layout .date-location {
@@ -274,7 +298,9 @@ function getStyles(palette) {
 
     @media print {
       h2 {
-        display: block;
+        display: inline-flex;
+        width: auto;
+        max-width: fit-content;
         break-after: avoid-page;
         page-break-after: avoid;
       }

@@ -256,6 +256,22 @@ function getStyles() {
       padding-left: 15px;
     }
 
+    body:not(.sidebar-layout):not(.compact-layout) .experience-item,
+    body:not(.sidebar-layout):not(.compact-layout) .education-item,
+    body:not(.sidebar-layout):not(.compact-layout) .project-item {
+      margin-bottom: 23px;
+      padding-left: 22px;
+    }
+
+    body:not(.sidebar-layout):not(.compact-layout) section {
+      margin-bottom: 36px;
+    }
+
+    body:not(.sidebar-layout):not(.compact-layout) h2 {
+      margin-bottom: 17px;
+      padding-bottom: 9.5px;
+    }
+
     .experience-header, .education-header {
       display: flex;
       justify-content: space-between;
@@ -739,20 +755,20 @@ function getStyles() {
     /* Main content area */
     body.sidebar-layout .main-content {
       width: 70%;
-      padding: 18px 22px 16px 20px;
+      padding: 19px 23px 17px 21px;
       font-variant-emoji: normal;
       background: #fff;
     }
 
     body.sidebar-layout .main-content section {
-      margin-bottom: 17px;
+      margin-bottom: 18px;
     }
 
     body.sidebar-layout .main-content h2 {
       font-size: 14.75px;
       border-bottom: 1px solid #1a1a1a;
-      padding-bottom: 4px;
-      margin-bottom: 8px;
+      padding-bottom: 4.5px;
+      margin-bottom: 8.5px;
       letter-spacing: 1.5px;
       color: #1a1a1a;
     }
@@ -760,8 +776,8 @@ function getStyles() {
     body.sidebar-layout .main-content .experience-item,
     body.sidebar-layout .main-content .education-item,
     body.sidebar-layout .main-content .project-item {
-      margin-bottom: 10px;
-      padding-left: 10px;
+      margin-bottom: 11px;
+      padding-left: 11px;
     }
 
     body.sidebar-layout .main-content .experience-header,
@@ -793,21 +809,21 @@ function getStyles() {
     }
 
     body.sidebar-layout .main-content ul {
-      margin-left: 14px;
-      margin-top: 3px;
+      margin-left: 15px;
+      margin-top: 4px;
     }
 
     body.sidebar-layout .main-content li {
       font-size: 10.75px;
-      margin-bottom: 2px;
+      margin-bottom: 2.5px;
     }
 
     body.sidebar-layout .main-content .skills-grid {
-      gap: 8px;
+      gap: 9px;
     }
 
     body.sidebar-layout .main-content .skill-category {
-      padding: 8px;
+      padding: 9px;
     }
 
     body.sidebar-layout .main-content .skill-category h3 {
@@ -827,8 +843,8 @@ function getStyles() {
 
     body.sidebar-layout .main-content .projects-grid {
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      column-gap: 20px;
+      gap: 11px;
+      column-gap: 21px;
     }
 
     body.sidebar-layout .main-content .project-description {

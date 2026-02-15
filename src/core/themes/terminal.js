@@ -133,6 +133,17 @@ function getStyles() {
       padding-left: 14px;
     }
 
+    body:not(.sidebar-layout):not(.compact-layout) .experience-item,
+    body:not(.sidebar-layout):not(.compact-layout) .education-item,
+    body:not(.sidebar-layout):not(.compact-layout) .project-item {
+      margin-bottom: 24px;
+      padding-left: 19px;
+    }
+
+    body:not(.sidebar-layout):not(.compact-layout) section {
+      margin-bottom: 32px;
+    }
+
     .position,
     .degree,
     .project-name {
@@ -291,11 +302,11 @@ function getStyles() {
     body.sidebar-layout .main-content {
       background: #0f1517;
       color: #9ff7b0;
-      padding: 16px 20px 14px 18px;
+      padding: 17px 21px 15px 19px;
     }
 
     body.sidebar-layout .main-content section {
-      margin-bottom: 14px;
+      margin-bottom: 15px;
     }
 
     body.sidebar-layout .main-content h2 {
@@ -303,7 +314,7 @@ function getStyles() {
       color: #86ffa3;
       font-size: 14px;
       padding: 3.5px 10px;
-      margin-bottom: 6px;
+      margin-bottom: 6.5px;
       letter-spacing: 0.5px;
       text-transform: none;
     }
@@ -317,8 +328,8 @@ function getStyles() {
     body.sidebar-layout .main-content .education-item,
     body.sidebar-layout .main-content .project-item {
       border-left-color: #2e6f4a;
-      margin-bottom: 8px;
-      padding-left: 9px;
+      margin-bottom: 8.5px;
+      padding-left: 9.5px;
     }
 
     body.sidebar-layout .main-content .experience-header,
@@ -358,20 +369,20 @@ function getStyles() {
     }
 
     body.sidebar-layout .main-content ul {
-      margin-left: 13px;
-      margin-top: 2px;
+      margin-left: 14px;
+      margin-top: 2.5px;
     }
 
     body.sidebar-layout .main-content li {
-      margin-bottom: 1.5px;
+      margin-bottom: 2px;
     }
 
     body.sidebar-layout .main-content .skills-grid {
-      gap: 7px;
+      gap: 7.5px;
     }
 
     body.sidebar-layout .main-content .skill-category {
-      padding: 7px;
+      padding: 7.5px;
     }
 
     body.sidebar-layout .main-content .skill-category h3 {
@@ -398,8 +409,8 @@ function getStyles() {
     }
 
     body.sidebar-layout .main-content .projects-grid {
-      gap: 9px;
-      column-gap: 18px;
+      gap: 9.5px;
+      column-gap: 19px;
     }
 
     .gdpr-watermark {
