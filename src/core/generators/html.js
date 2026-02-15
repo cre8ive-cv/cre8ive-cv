@@ -177,6 +177,7 @@ function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, custo
   if (!theme) {
     throw new Error('Theme is required to generate HTML.');
   }
+  const resolvedLayout = layout;
   const { personalInfo } = resumeData;
 
   // Load theme styles
@@ -248,8 +249,9 @@ function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, custo
   const bio = personalBio || '';
 
   // Generate sections dynamically based on JSON order
-  const sections = Object.keys(resumeData)
-    .filter(key => key !== 'personalInfo' && key !== 'projectsIntro' && sectionGenerators[key])
+  const orderedSectionKeys = Object.keys(resumeData)
+    .filter(key => key !== 'personalInfo' && key !== 'projectsIntro' && sectionGenerators[key]);
+  const sections = orderedSectionKeys
     .map(key => {
       const sectionName = getSectionName(key);
       if (key === 'projects') {
@@ -296,7 +298,7 @@ function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, custo
   //     page margins (top:20px, right:20px, bottom:15px, left:20px) which add
   //     to the visual whitespace.  Total effective padding = body-print +
   //     page-margin = 25px top, 40px sides, 35px bottom.
-  const needsPreviewPdfMarginCompensation = layout !== 'sidebar' && theme.name !== 'terminal';
+  const needsPreviewPdfMarginCompensation = resolvedLayout !== 'sidebar' && theme.name !== 'terminal';
   const previewMarginStyle = forPreview ? `<style>
 html{scrollbar-width:none}html::-webkit-scrollbar{width:0;display:none}
 body{min-height:0!important}${needsPreviewPdfMarginCompensation ? '\nbody:not(.sidebar-layout){padding:25px 40px 35px!important}' : ''}
@@ -417,14 +419,14 @@ body{min-height:0!important}${needsPreviewPdfMarginCompensation ? '\nbody:not(.s
 })();
 </script>`;
 
+
   // Sidebar layout: completely different HTML structure
-  if (layout === 'sidebar') {
+  if (resolvedLayout === 'sidebar') {
     const gdprWatermarkHtml = (resumeData.gdprClause || showWatermark) ? `
         <div class="sidebar-bottom">
           ${resumeData.gdprClause ? `<div class="gdpr-clause">${isolateUserContent(resumeData.gdprClause)}</div>` : ''}
           ${showWatermark ? '<div class="watermark" style="text-transform: none !important;">Designed with <a href="https://cre8ive.cv" target="_blank" rel="noopener noreferrer">cre8ive.cv</a></div>' : ''}
         </div>` : '';
-
     return `${htmlHead}
 <body class="sidebar-layout" data-theme="${theme.name}">
   <div class="sidebar-bg"></div>
@@ -459,7 +461,7 @@ ${compactContactBalanceScript}
 
   // Standard and compact layouts: original HTML structure
   return `${htmlHead}
-<body${layout === 'compact' ? ' class="compact-layout"' : ''} data-theme="${theme.name}">
+<body${resolvedLayout === 'compact' ? ' class="compact-layout"' : ''} data-theme="${theme.name}">
   <div class="content-wrapper">
     <header class="${headerClassList}">
       <div class="header-name">

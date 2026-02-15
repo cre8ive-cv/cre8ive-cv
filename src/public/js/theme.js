@@ -37,6 +37,7 @@ async function loadThemes() {
 
     buildThemeDropupOptions();
     syncThemeDropupFromSelect();
+    buildLayoutDropupOptions();
 
     // Update button states after theme is set
     updateButtonStates();
@@ -231,18 +232,33 @@ function closeColorDropup() {
   elements.colorDropupButton?.setAttribute('aria-expanded', 'false');
 }
 
-const LAYOUT_OPTIONS = [
+const BASE_LAYOUT_OPTIONS = [
   { value: 'standard', label: 'Standard' },
   { value: 'compact', label: 'Compact' },
   { value: 'sidebar', label: 'Sidebar' }
 ];
 
+function getAvailableLayoutOptions() {
+  return BASE_LAYOUT_OPTIONS;
+}
+
+function ensureLayoutAllowedForTheme() {
+  const available = getAvailableLayoutOptions();
+  const allowedValues = new Set(available.map(option => option.value));
+  if (!allowedValues.has(state.layout)) {
+    state.layout = 'standard';
+    return true;
+  }
+  return false;
+}
+
 function buildLayoutDropupOptions() {
   if (!elements.layoutDropupMenu) return;
   elements.layoutDropupMenu.innerHTML = '';
   const fragment = document.createDocumentFragment();
+  const layoutOptions = getAvailableLayoutOptions();
 
-  LAYOUT_OPTIONS.forEach(option => {
+  layoutOptions.forEach(option => {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'dropup-option';
@@ -263,7 +279,9 @@ function buildLayoutDropupOptions() {
 
 function syncLayoutDropupFromState() {
   if (!elements.layoutDropupLabel) return;
-  const current = LAYOUT_OPTIONS.find(o => o.value === state.layout) || LAYOUT_OPTIONS[0];
+  const layoutOptions = getAvailableLayoutOptions();
+  ensureLayoutAllowedForTheme();
+  const current = layoutOptions.find(o => o.value === state.layout) || layoutOptions[0];
   elements.layoutDropupLabel.textContent = current.label;
 
   if (elements.layoutDropupMenu) {
@@ -393,6 +411,11 @@ async function handleThemeChange(event) {
   state.selectedTheme = event.target.value;
   syncThemeDropupFromSelect();
   closeThemeDropup();
+  const layoutChangedByTheme = ensureLayoutAllowedForTheme();
+  buildLayoutDropupOptions();
+  if (layoutChangedByTheme) {
+    closeLayoutDropup();
+  }
 
   if (state.selectedTheme) {
     const isMonochromatic = selectedOption.dataset.monochromatic === 'true';

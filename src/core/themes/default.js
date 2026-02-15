@@ -56,7 +56,7 @@ function getStyles(palette) {
       min-height: 100vh;
     }
 
-    body:not(.sidebar-layout):not(.infographic-layout) {
+    body:not(.sidebar-layout) {
       background: #e8f1fb;
     }
 
@@ -79,7 +79,7 @@ function getStyles(palette) {
       --header-photo-gap: 20px;
     }
 
-    body:not(.sidebar-layout):not(.infographic-layout) header {
+    body:not(.sidebar-layout) header {
       border-bottom: 0;
       padding: 8px 12px 10px;
       border: 1px solid #c5d9ec;
@@ -275,9 +275,9 @@ function getStyles(palette) {
       page-break-inside: avoid;
     }
 
-    body:not(.sidebar-layout):not(.infographic-layout) .experience-item,
-    body:not(.sidebar-layout):not(.infographic-layout) .education-item,
-    body:not(.sidebar-layout):not(.infographic-layout) .project-item {
+    body:not(.sidebar-layout) .experience-item,
+    body:not(.sidebar-layout) .education-item,
+    body:not(.sidebar-layout) .project-item {
       padding: 9px 11px 10px;
       border-radius: 11px;
       border: 1px solid #c5d9ec;
@@ -816,11 +816,16 @@ function getStyles(palette) {
       letter-spacing: 0.8px;
     }
 
-    body.sidebar-layout .main-content .experience-item,
-    body.sidebar-layout .main-content .education-item,
-    body.sidebar-layout .main-content .project-item {
-      margin-bottom: 10px;
-    }
+      body.sidebar-layout .main-content .experience-item,
+      body.sidebar-layout .main-content .education-item,
+      body.sidebar-layout .main-content .project-item {
+        margin-bottom: 10px;
+        padding: 8px 10px 9px;
+        border-radius: 10px;
+        border: 1px solid #c5d9ec;
+        background: linear-gradient(180deg, #ffffff 0%, #f5f9ff 100%);
+        box-shadow: 0 5px 16px rgba(20, 56, 95, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+      }
 
     body.sidebar-layout .main-content .experience-header,
     body.sidebar-layout .main-content .education-header {
@@ -866,6 +871,13 @@ function getStyles(palette) {
 
     body.sidebar-layout .main-content .skill-category {
       padding: 8px;
+      border-radius: 8px;
+    }
+
+    body.sidebar-layout .main-content .skill-category::before {
+      width: 2px;
+      top: 7px;
+      bottom: 7px;
     }
 
     body.sidebar-layout .main-content .skill-category h3 {
@@ -1015,6 +1027,7 @@ function getStyles(palette) {
         margin-top: 5px;
         padding: 3px 10px;
       }
+
     }
 
     @media (max-width: 480px) {
@@ -1065,7 +1078,7 @@ function getStyles(palette) {
         min-height: 100vh;
       }
 
-      body:not(.sidebar-layout):not(.infographic-layout) {
+      body:not(.sidebar-layout) {
         background: #fff;
       }
 
@@ -1073,31 +1086,32 @@ function getStyles(palette) {
         flex: 1;
       }
 
-      body:not(.sidebar-layout):not(.infographic-layout) section {
+      body:not(.sidebar-layout) section {
         box-shadow: none;
       }
 
-      body:not(.sidebar-layout):not(.infographic-layout) header {
+      body:not(.sidebar-layout) header {
         box-shadow: none;
       }
 
-      body:not(.sidebar-layout):not(.infographic-layout) section:has(.experience-item),
-      body:not(.sidebar-layout):not(.infographic-layout) section:has(.education-item),
-      body:not(.sidebar-layout):not(.infographic-layout) section:has(.project-item) {
+      body:not(.sidebar-layout) section:has(.experience-item),
+      body:not(.sidebar-layout) section:has(.education-item),
+      body:not(.sidebar-layout) section:has(.project-item) {
         padding: 0;
         border: 0;
         border-radius: 0;
         background: transparent;
       }
 
-      body:not(.sidebar-layout):not(.infographic-layout) .experience-item,
-      body:not(.sidebar-layout):not(.infographic-layout) .education-item,
-      body:not(.sidebar-layout):not(.infographic-layout) .project-item {
+      body:not(.sidebar-layout) .experience-item,
+      body:not(.sidebar-layout) .education-item,
+      body:not(.sidebar-layout) .project-item {
         margin-bottom: 9px;
         padding: 6px 9px 8px;
         border-radius: 10px;
         border: 1px solid #c5d9ec;
         background: linear-gradient(180deg, #ffffff 0%, #f5f9ff 100%);
+        box-shadow: none;
         box-decoration-break: clone;
         -webkit-box-decoration-break: clone;
       }
