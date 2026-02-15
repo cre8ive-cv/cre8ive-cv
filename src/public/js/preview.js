@@ -859,13 +859,22 @@ function autoResizePreviewIframe(iframe) {
         const cs = window.getComputedStyle(iframe);
         const borderH = (parseFloat(cs.borderTopWidth) || 0) +
                         (parseFloat(cs.borderBottomWidth) || 0);
+        const rawScale = Number.parseFloat(iframe.dataset.scale || '1');
+        const scale = Number.isFinite(rawScale) && rawScale > 0 ? rawScale : 1;
         const totalH = h + borderH;
-        iframe.style.height = totalH + 'px';
+        const containerH = elements.previewContainer?.clientHeight || 0;
+        const minLayoutH = scale < 1 && containerH > 0
+          ? Math.ceil(containerH / scale)
+          : 0;
+        const layoutH = minLayoutH > totalH ? minLayoutH : totalH;
+        iframe.style.height = layoutH + 'px';
         // When transform: scale() is active the visual height differs from
         // the layout box.  Adjust margin-bottom so the scroll container's
         // scrollable area matches the full visual height.
         if (scale !== 1) {
-          iframe.style.marginBottom = (totalH * (scale - 1)) + 'px';
+          iframe.style.marginBottom = (layoutH * (scale - 1)) + 'px';
+        } else {
+          iframe.style.marginBottom = '0px';
         }
       }
     };

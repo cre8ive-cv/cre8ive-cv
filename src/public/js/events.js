@@ -431,6 +431,17 @@ function handleMobileViewToggle(mode) {
     body.classList.add('mobile-preview-mode');
     elements.mobileEditorOption.classList.remove('active');
     elements.mobilePreviewOption.classList.add('active');
+    if (typeof autoResizePreviewIframe === 'function') {
+      const scheduleResize = () => {
+        const iframe = document.getElementById('resumePreview');
+        if (iframe) {
+          autoResizePreviewIframe(iframe);
+        }
+      };
+      requestAnimationFrame(() => {
+        requestAnimationFrame(scheduleResize);
+      });
+    }
   } else if (mode === 'editor') {
     // Switch to editor mode
     body.classList.remove('mobile-preview-mode');
