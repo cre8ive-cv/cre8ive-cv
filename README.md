@@ -17,7 +17,7 @@
 **Key Principles:**
 - 🔒 **Privacy-First** — No accounts, no tracking cookies, client-side storage only
 - 📝 **JSON-Driven** — Version control your resume like code
-- 🎨 **Fully Customizable** — Custom HTML in any field, themes and color palettes included
+- 🎨 **Fully Customizable** — Custom HTML in any field, layouts/themes/colors included
 - 🚀 **Dual Mode** — Both Web UI and CLI
 - 🐳 **Self-hostable** —  Simple setup via Docker Compose
 - 🧩 **Highly Extensible** — You can create your own themes and color palettes
@@ -31,7 +31,9 @@
 - ✨ Live WYSIWYG editor with real-time preview
 - 📄 Export to PDF, HTML, JSON
 - 🖼️ Photo support
-- 🎯 Template gallery
+- 🧱 Multiple layouts (Standard, Compact, Sidebar)
+- 🎨 Multiple themes and color palettes
+- 🎯 Template gallery with starter/demo templates
 - 🔄 Section management (toggle, reorder, rename)
 - 💾 Auto-save to localStorage
 - 🌐 Self-hostable
@@ -111,4 +113,3 @@ Contributions welcome! This project is particularly well-suited for:
 - 🎨 New themes and color palettes
 - 📝 Additional resume templates
 - 🔧 Bug fixes and performance improvements
-
