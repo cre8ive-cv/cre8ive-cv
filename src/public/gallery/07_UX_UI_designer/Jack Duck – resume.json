@@ -8,12 +8,12 @@
     "linkedin": "https://linkedin.com/in/jack-duck",
     "github": "https://github.com/jackduckdev",
     "location": null,
-    "bio": "<div style=\"font-size: 0.95em; line-height: 1.6; color: inherit;\">\n  <p style=\"margin: 0 0 10px 0;\"><strong>Product-focused UX/UI designer</strong> shipping clean, conversion-friendly experiences with lean research and fast design-to-dev handoffs.</p>\n  <ul style=\"list-style-type: none; margin: 0 0 10px 0; padding-left: 0;\">\n    <li style=\"margin-bottom: 6px;\">✅ Turns fuzzy requirements into clear user flows, prototypes, and measurable outcomes.</li>\n    <li style=\"margin-bottom: 6px;\">✅ Builds consistent design systems with accessible components and usage guidelines.</li>\n    <li style=\"margin-bottom: 6px;\">✅ Partners with engineers on specs, states, and QA to keep pixels and performance aligned.</li>\n  </ul>\n  <div style=\"display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;\">\n    <span style=\"padding: 4px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 600; background: #fff9c4; color: #9e8500; border: 1px solid rgba(0,0,0,0.05);\">Design Systems</span>\n    <span style=\"padding: 4px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 600; background: #fff3e0; color: #e65100; border: 1px solid rgba(0,0,0,0.05);\">UX Research</span>\n    <span style=\"padding: 4px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 600; background: #e8f5e9; color: #1b5e20; border: 1px solid rgba(0,0,0,0.05);\">Accessibility</span>\n    <span style=\"padding: 4px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 600; background: #e3f2fd; color: #0d47a1; border: 1px solid rgba(0,0,0,0.05);\">Prototyping</span>\n  </div>\n</div>"
+    "bio": "<div style=\"font-size: 0.95em; line-height: 1.6; color: inherit;\">\n  <p style=\"margin: 0 0 10px 0;\"><strong>Product-focused UX/UI designer</strong> shipping clean, conversion-friendly experiences with lean research and fast design-to-dev handoffs.</p>\n  <ul style=\"list-style-type: none; margin: 0 0 10px 0; padding-left: 0;\">\n    <li style=\"margin-bottom: 6px;\">✅ Turns fuzzy requirements into clear user flows, prototypes, and measurable outcomes.</li>\n    <li style=\"margin-bottom: 6px;\">✅ Builds consistent design systems with accessible components and usage guidelines.</li>\n    <li style=\"margin-bottom: 6px;\">✅ Partners with engineers on specs, states, and QA to keep pixels and performance aligned.</li>\n  </ul>\n</div>"
   },
   "skills": [
     {
       "name": "Product design",
-      "fraction": 3,
+      "fraction": 3.5,
       "items": [
         "User flows & journey mapping",
         "Wireframing & rapid prototyping",
@@ -28,8 +28,8 @@
       "fraction": 3,
       "items": [
         "User interviews & synthesis",
-        "Usability testing (remote & in-person)",
-        "Heuristic reviews & accessibility checks",
+        "Usability testing",
+        "Heuristic reviews",
         "Stakeholder workshops",
         "Roadmapping & prioritization",
         "Agile rituals & design critiques"
@@ -39,11 +39,11 @@
       "name": "Tools",
       "fraction": 3,
       "items": [
-        "Figma (Auto Layout, Variants)",
+        "Figma",
         "FigJam / Miro",
         "Adobe CC",
         "Notion & Confluence",
-        "Storybook & component libraries",
+        "Storybook",
         "HTML/CSS familiarity"
       ]
     }
@@ -147,8 +147,8 @@
       "gdprClause": true
     },
     "selectedTheme": "modern",
-    "selectedColor": "yellow",
-    "selectedLayout": "compact",
+    "selectedColor": "cyan",
+    "selectedLayout": "sidebar",
     "showWatermark": true,
     "customSectionNames": {
       "experience": "💼 Experience",
