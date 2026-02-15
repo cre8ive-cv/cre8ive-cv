@@ -68,6 +68,43 @@ async function generatePDF(htmlContent, page) {
       console.warn('Failed to emulate print media type, GDPR positioning may be slightly off:', err.message);
     }
 
+    if (isSidebarLayout) {
+      try {
+        await page.addStyleTag({
+          content: `
+            @page {
+              size: A4;
+              margin: 0;
+            }
+            @media print {
+              html,
+              body {
+                margin: 0;
+              }
+              body {
+                position: relative;
+              }
+              body::before {
+                content: "";
+                position: fixed;
+                top: -1px;
+                right: 0;
+                bottom: -1px;
+                left: -1px;
+                border: 1px solid #000;
+                border-right: 0;
+                box-sizing: border-box;
+                pointer-events: none;
+                z-index: 2147483647;
+              }
+            }
+          `
+        });
+      } catch (err) {
+        console.warn('Failed to inject PDF border styles:', err.message);
+      }
+    }
+
     // SECURITY: Dynamic layout positioning with timeout to prevent infinite loops
     try {
       await Promise.race([
@@ -288,7 +325,7 @@ async function generatePDF(htmlContent, page) {
       // Continue with default layout
     }
 
-    // PDF margins: 0 for sidebar (edge-to-edge), standard margins for other layouts
+    // PDF margins are handled via @page so the border can sit on the page edge.
     const pdfMargin = isSidebarLayout
       ? { top: '0px', right: '0px', bottom: '0px', left: '0px' }
       : { top: '20px', right: '20px', bottom: '15px', left: '20px' };
