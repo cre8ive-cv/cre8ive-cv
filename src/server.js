@@ -59,12 +59,13 @@ function buildAnalyticsContext(req, providedMeta = {}, {
   themeName = null,
   colorName = null,
   showWatermark = false,
-  enabledSections = {},
-  customSectionNames = {}
-} = {}) {
+    enabledSections = {},
+    customSectionNames = {}
+  } = {}) {
   const normalizedMeta = {
     selectedTheme: providedMeta?.selectedTheme || themeName || null,
     selectedColor: providedMeta?.selectedColor || colorName || null,
+    selectedLayout: providedMeta?.selectedLayout || providedMeta?.layout || null,
     showWatermark: typeof providedMeta?.showWatermark === 'boolean'
       ? providedMeta.showWatermark
       : Boolean(
@@ -93,6 +94,7 @@ function recordExportAnalytics({ exportType, meta = {}, mode = null, sourceUrl =
     const sanitizedMeta = {
       selectedTheme: meta.selectedTheme || null,
       selectedColor: meta.selectedColor || null,
+      selectedLayout: meta.selectedLayout || meta.layout || null,
       showWatermark: typeof meta.showWatermark === 'boolean'
         ? meta.showWatermark
         : Boolean(meta.showWatermark),
@@ -365,7 +367,7 @@ app.get('/api/colors', (req, res) => {
 // API endpoint to get example resume data
 app.get('/api/example-data', async (req, res) => {
   try {
-    const examplePath = path.join(__dirname, 'public', 'assets', 'resume-data-template.json');
+    const examplePath = path.join(__dirname, 'public', 'gallery', '00_demo_starter', 'Demo Starter - resume.json');
     const data = await fs.readFile(examplePath, 'utf-8');
     res.json(JSON.parse(data));
   } catch (error) {
@@ -393,18 +395,38 @@ app.get('/api/gallery/templates', async (req, res) => {
       const files = await fs.readdir(folderPath);
 
       // Find files by extension
-      const pngFile = files.find(f => f.toLowerCase().endsWith('.png'));
+      let pngFile = files.find(f => f.toLowerCase().endsWith('.png'));
       const htmlFile = files.find(f => f.toLowerCase().endsWith('.html'));
       const jsonFile = files.find(f => f.toLowerCase().endsWith('.json'));
       const pdfFile = files.find(f => f.toLowerCase().endsWith('.pdf'));
 
-      // Generate ID and label from folder name
+      // Generate ID and label from folder name; prefer title from JSON if present so we can keep slashes and special characters
       const id = folder.replace(/^\d+_/, '');
-      const label = folder
+      let label = folder
         .replace(/^\d+_/, '')
         .split('_')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
+
+      if (jsonFile) {
+        try {
+          const jsonPath = path.join(folderPath, jsonFile);
+          const rawJson = await fs.readFile(jsonPath, 'utf-8');
+          const parsedJson = JSON.parse(rawJson);
+          label = parsedJson?.personalInfo?.title || label;
+        } catch (jsonError) {
+          console.warn(`Could not read title from ${folder}/${jsonFile}:`, jsonError.message);
+        }
+      }
+
+      // Force branding for the demo starter entry, independent of JSON data
+      if (folder === '00_demo_starter') {
+        label = 'Demo Starter';
+        const rocketAsset = 'logo-rocket-circle.png';
+        if (files.includes(rocketAsset)) {
+          pngFile = rocketAsset;
+        }
+      }
 
       return {
         id,
@@ -470,7 +492,7 @@ app.get('/api/terms/last-modified', (req, res) => {
 
 async function handleGenerateHtmlPreview(req, res) {
   try {
-    const { resumeData, themeName, colorName, photoBase64, customSectionNames, showWatermark } = req.body;
+    const { resumeData, themeName, colorName, photoBase64, customSectionNames, showWatermark, layout } = req.body;
 
     if (!resumeData) {
       return res.status(400).json({ error: 'Resume data is required' });
@@ -515,6 +537,8 @@ async function handleGenerateHtmlPreview(req, res) {
           ? metaFromPayload.showWatermark
           : true);
 
+    const resolvedLayout = typeof layout === 'string' ? layout : 'standard';
+
     const htmlContent = generateHTML(
       previewResumeData,
       validatedPhoto,
@@ -522,7 +546,9 @@ async function handleGenerateHtmlPreview(req, res) {
       palette,
       resolvedCustomSectionNames,
       resolvedShowWatermark,
-      config.labels
+      config.labels,
+      resolvedLayout,
+      true // forPreview: inline @media print rules and compensate for PDF page margins
     );
     res.json({ html: htmlContent });
   } catch (error) {
@@ -544,6 +570,7 @@ app.post('/api/export-html', validateTurnstile, async (req, res) => {
       photoBase64,
       customSectionNames,
       showWatermark,
+      layout,
       analyticsMeta
     } = req.body;
 
@@ -590,6 +617,8 @@ app.post('/api/export-html', validateTurnstile, async (req, res) => {
           ? metaFromPayload.showWatermark
           : true);
 
+    const resolvedLayout = typeof layout === 'string' ? layout : 'standard';
+
     const htmlContent = generateHTML(
       sanitizedResumeData,
       validatedPhoto,
@@ -597,7 +626,8 @@ app.post('/api/export-html', validateTurnstile, async (req, res) => {
       palette,
       resolvedCustomSectionNames,
       resolvedShowWatermark,
-      config.labels
+      config.labels,
+      resolvedLayout
     );
 
     const sanitizedMetaFromPayload = { ...metaFromPayload };
@@ -696,6 +726,7 @@ app.post('/api/export-pdf', validateTurnstile, async (req, res) => {
       photoBase64,
       customSectionNames,
       showWatermark,
+      layout,
       analyticsMeta
     } = req.body;
 
@@ -776,6 +807,7 @@ app.post('/api/export-pdf', validateTurnstile, async (req, res) => {
       photoBase64: validatedPhoto,
       customSectionNames: resolvedCustomSectionNames,
       showWatermark: resolvedShowWatermark,
+      layout: typeof layout === 'string' ? layout : 'standard',
       analyticsMeta: analyticsMetaPayload,
       theme,
       palette

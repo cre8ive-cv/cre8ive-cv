@@ -2,9 +2,152 @@
 // Handle load/clear button toggle
 function handleLoadExampleBtn() {
   if (state.templateLoaded) {
-    clearResumeData();
+    newResume();
   } else {
     loadExampleData();
+  }
+}
+
+// New Resume: confirm then load blank template
+async function newResume() {
+  const confirmed = confirm('Are you sure you want to clear all data and start over? This action cannot be undone.');
+  if (confirmed) {
+    await loadBlankTemplate();
+  }
+}
+
+// Load the blank starter template, resetting all state first
+async function loadBlankTemplate() {
+  try {
+    // Reset state before loading
+    state.resumeData = null;
+    state.photoBase64 = null;
+    state.templateLoaded = false;
+    state.enabledSections = {};
+    state.customSectionNames = {};
+    state.sectionOrder = [];
+    state.currentHtml = null;
+    state.pdfPreviewUrl = null;
+    elements.jsonEditor.value = '';
+    updatePhotoButtonState(false);
+    updateSectionManagementUI();
+    elements.previewPdfBtn.disabled = true;
+    elements.exportHtmlBtn.disabled = true;
+    elements.exportJsonBtn.disabled = true;
+    clearAllLocalStorage();
+
+    const url = '/gallery/01_blank_template/' + encodeURIComponent('Jack Duck \u2013 resume.json');
+    const response = await fetch(url);
+    const parsed = await response.json();
+    const meta = parsed._meta || null;
+
+    const photoBase64 = parsed.photoBase64 || meta?.photoBase64 || null;
+    const data = { ...parsed };
+    delete data._meta;
+    delete data.photoBase64;
+
+    migrateSummaryToBio(data, meta?.enabledSections, meta?.customSectionNames);
+    ensurePersonalInfoBio(data);
+
+    elements.jsonEditor.value = JSON.stringify(data, null, 2);
+    state.resumeData = data;
+    deriveSectionOrderFromData(state.resumeData);
+
+    initializeEnabledSections(data);
+    if (meta?.enabledSections) {
+      state.enabledSections = { ...meta.enabledSections };
+      migrateSummaryToBio(null, state.enabledSections);
+    }
+
+    state.photoBase64 = photoBase64;
+    updatePhotoButtonState(!!state.photoBase64);
+    applyMetaSettings(meta);
+
+    updateSectionManagementUI();
+    await autoGeneratePreview('json');
+
+    state.templateLoaded = true;
+    const btn = elements.loadExampleBtn;
+    btn.className = 'btn btn-success';
+    btn.innerHTML = '<i class="fas fa-plus"></i> New Resume';
+
+    saveStateToLocalStorage();
+    flashPreviewStatus('New blank resume loaded', 'status-success');
+  } catch (error) {
+    console.error('Error loading blank template:', error);
+    flashPreviewStatus('Error loading blank template', 'status-error');
+    renderPreviewPlaceholder();
+  }
+}
+
+// Load a specific gallery template directly (called from the gallery dropdown)
+async function loadTemplateFromGallery(template) {
+  if (state.templateLoaded) {
+    const confirmed = confirm('Are you sure you want to load a new template? Your current data will be lost. This action cannot be undone.');
+    if (!confirmed) return false;
+  }
+
+  // Reset state
+  state.resumeData = null;
+  state.photoBase64 = null;
+  state.templateLoaded = false;
+  state.enabledSections = {};
+  state.customSectionNames = {};
+  state.sectionOrder = [];
+  state.currentHtml = null;
+  state.pdfPreviewUrl = null;
+  elements.jsonEditor.value = '';
+  updatePhotoButtonState(false);
+  updateSectionManagementUI();
+  elements.previewPdfBtn.disabled = true;
+  elements.exportHtmlBtn.disabled = true;
+  elements.exportJsonBtn.disabled = true;
+  clearAllLocalStorage();
+
+  try {
+    const jsonUrl = '/gallery/' + template.folder + '/' + encodeURIComponent(template.json);
+    const response = await fetch(jsonUrl);
+    const parsed = await response.json();
+    const meta = parsed._meta || null;
+
+    const photoBase64 = parsed.photoBase64 || meta?.photoBase64 || null;
+    const data = { ...parsed };
+    delete data._meta;
+    delete data.photoBase64;
+
+    migrateSummaryToBio(data, meta?.enabledSections, meta?.customSectionNames);
+    ensurePersonalInfoBio(data);
+
+    elements.jsonEditor.value = JSON.stringify(data, null, 2);
+    state.resumeData = data;
+    deriveSectionOrderFromData(state.resumeData);
+
+    initializeEnabledSections(data);
+    if (meta?.enabledSections) {
+      state.enabledSections = { ...meta.enabledSections };
+      migrateSummaryToBio(null, state.enabledSections);
+    }
+
+    state.photoBase64 = photoBase64;
+    updatePhotoButtonState(!!state.photoBase64);
+    applyMetaSettings(meta);
+
+    updateSectionManagementUI();
+    await autoGeneratePreview('json');
+
+    state.templateLoaded = true;
+    const btn = elements.loadExampleBtn;
+    btn.className = 'btn btn-success';
+    btn.innerHTML = '<i class="fas fa-plus"></i> New Resume';
+
+    saveStateToLocalStorage();
+    flashPreviewStatus(`Template "${template.label}" loaded`, 'status-success');
+    return true;
+  } catch (error) {
+    console.error('Error loading template:', error);
+    flashPreviewStatus('Error loading template', 'status-error');
+    renderPreviewPlaceholder();
+    return false;
   }
 }
 
@@ -104,11 +247,11 @@ async function loadExampleData() {
     // Auto-generate preview
     await autoGeneratePreview('json');
 
-    // Transform button to "Clear Data" mode
+    // Transform button to "New Resume" mode
     state.templateLoaded = true;
     const btn = elements.loadExampleBtn;
-    btn.className = 'btn btn-danger';
-    btn.innerHTML = '<i class="fas fa-trash-alt"></i> Clear All Data';
+    btn.className = 'btn btn-success';
+    btn.innerHTML = '<i class="fas fa-plus"></i> New Resume';
 
     // Save to localStorage
     saveStateToLocalStorage();
@@ -166,11 +309,11 @@ async function handleFileUpload(event) {
       // Auto-generate preview
       await autoGeneratePreview('json');
 
-      // Transform button to "Clear Data" mode
+      // Keep primary action as "New Resume" after import
       state.templateLoaded = true;
       const btn = elements.loadExampleBtn;
-      btn.className = 'btn btn-danger';
-      btn.innerHTML = '<i class="fas fa-trash-alt"></i> Clear All Data';
+      btn.className = 'btn btn-success';
+      btn.innerHTML = '<i class="fas fa-plus"></i> New Resume';
 
       // Save to localStorage
       saveStateToLocalStorage();
@@ -361,6 +504,17 @@ async function handleWatermarkChange(event) {
 
   // Auto-generate preview
   await autoGeneratePreview('watermark');
+
+  // Save to localStorage
+  saveStateToLocalStorage();
+}
+
+async function handleLayoutChange(value) {
+  state.layout = value;
+  syncLayoutDropupFromState();
+
+  // Auto-generate preview
+  await autoGeneratePreview('layout');
 
   // Save to localStorage
   saveStateToLocalStorage();

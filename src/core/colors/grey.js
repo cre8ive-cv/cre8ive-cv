@@ -1,7 +1,7 @@
 module.exports = {
   name: 'grey',
   palette: {
-    primary: '#455a64',
+    primary: '#263640',
     accent: '#78909c',
     light: '#f5f7f8'
   }

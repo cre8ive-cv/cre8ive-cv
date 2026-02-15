@@ -30,7 +30,7 @@ body {
 
 /* Sidebar Styles */
 .sidebar {
-  width: 630px;
+  width: 640px;
   background: var(--bg-secondary);
   border-right: 1px solid var(--border-color);
   overflow: visible;
@@ -241,6 +241,319 @@ body {
   border-color: rgba(123, 228, 149, 0.5);
   box-shadow: 0 8px 22px rgba(82, 201, 122, 0.35);
 }
+
+/* ─── Gallery Dropdown ─────────────────────────────────────────────────────── */
+
+.gallery-dropdown-wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+/*
+ * Extends the wrapper's hover zone downward to cover the visual gap between
+ * button and dropdown panel. Without this the cursor briefly exits the wrapper
+ * as it travels across the gap, collapsing the dropdown.
+ */
+.gallery-dropdown-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 24px; /* generously covers the 8px gap + travel buffer */
+  /* pointer-events MUST be auto — this is what keeps :hover alive on the
+     wrapper as the cursor crosses the gap between button and panel */
+}
+
+/* Rotate chevron when dropdown is open */
+.gallery-link-chevron {
+  font-size: 9px;
+  opacity: 0.6;
+  margin-left: 2px;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s;
+  flex-shrink: 0;
+}
+
+.gallery-dropdown-wrapper:hover .gallery-link-chevron,
+.gallery-dropdown-wrapper:focus-within .gallery-link-chevron {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+/* Dropdown panel */
+.gallery-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 380px;
+  background: var(--bg-secondary);
+  border: 1px solid rgba(100, 181, 246, 0.22);
+  border-radius: 14px;
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.45),
+    0 4px 16px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-8px) scale(0.97);
+  transform-origin: top left;
+  /* Delay only on close so the panel lingers briefly if cursor slips out */
+  transition:
+    opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.2s,
+    visibility 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.2s,
+    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
+  z-index: 9000;
+  overflow: hidden;
+}
+
+.gallery-dropdown-wrapper:hover .gallery-dropdown,
+.gallery-dropdown-wrapper:focus-within .gallery-dropdown {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+  /* No delay on open — appears immediately */
+  transition:
+    opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gallery-dropdown-wrapper.is-locked-closed .gallery-dropdown {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: translateY(-8px) scale(0.97) !important;
+}
+
+/* Dropdown header row */
+.gallery-dropdown-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 12px 14px 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.gallery-dropdown-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+/* Scrollable template grid */
+.gallery-dropdown-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 12px 12px 6px;
+  max-height: 420px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+.gallery-dropdown-grid::-webkit-scrollbar {
+  width: 4px;
+}
+.gallery-dropdown-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+.gallery-dropdown-grid::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+/* Individual template card */
+.gallery-dropdown-item {
+  position: relative;
+  background: var(--bg-tertiary);
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  aspect-ratio: 1; /* Square thumbnails to avoid overlap */
+  padding: 0;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  display: block;
+  width: 100%;
+}
+
+.gallery-dropdown-item:hover,
+.gallery-dropdown-item:focus-visible {
+  border-color: rgba(100, 181, 246, 0.6);
+  box-shadow: 0 6px 20px rgba(100, 181, 246, 0.2);
+  transform: translateY(-2px) scale(1.02);
+  outline: none;
+}
+
+.gallery-dropdown-item:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.gallery-dropdown-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.gallery-dropdown-item:hover img {
+  transform: scale(1.04);
+}
+
+/* Template name overlay */
+.gallery-dropdown-item-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.82) 0%, rgba(0, 0, 0, 0.5) 60%, transparent 100%);
+  color: #fff;
+  font-size: 9.5px;
+  font-weight: 600;
+  padding: 18px 5px 5px;
+  text-align: center;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+}
+
+/* Skeleton loading shimmer */
+.gallery-dropdown-skeleton {
+  border-radius: 8px;
+  aspect-ratio: 1;
+  background: linear-gradient(
+    90deg,
+    var(--bg-tertiary) 0%,
+    var(--border-color) 40%,
+    var(--bg-tertiary) 80%
+  );
+  background-size: 200% 100%;
+  animation: gallery-skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes gallery-skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Error state */
+.gallery-dropdown-error {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 12px;
+  padding: 20px 12px;
+}
+
+/* Footer CTA */
+.gallery-dropdown-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 10px 10px;
+  padding: 9px 13px;
+  background: rgba(100, 181, 246, 0.07);
+  border: 1px solid rgba(100, 181, 246, 0.18);
+  border-radius: 8px;
+  color: #90caf9;
+  font-size: 12.5px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  cursor: pointer;
+}
+
+.gallery-dropdown-footer:hover,
+.gallery-dropdown-footer:focus-visible {
+  background: rgba(100, 181, 246, 0.14);
+  border-color: rgba(100, 181, 246, 0.38);
+  color: #e3f2fd;
+  outline: none;
+}
+
+.gallery-dropdown-footer-arrow {
+  margin-left: auto;
+  font-size: 10px;
+  opacity: 0.65;
+  transition: transform 0.15s;
+}
+
+.gallery-dropdown-footer:hover .gallery-dropdown-footer-arrow {
+  transform: translateX(3px);
+  opacity: 1;
+}
+
+/* Light mode overrides */
+:root[data-mode="light"] .gallery-dropdown {
+  background: #fff;
+  border-color: rgba(91, 157, 217, 0.2);
+  box-shadow:
+    0 20px 50px rgba(45, 45, 50, 0.12),
+    0 4px 12px rgba(45, 45, 50, 0.07);
+}
+
+:root[data-mode="light"] .gallery-dropdown-item:hover,
+:root[data-mode="light"] .gallery-dropdown-item:focus-visible {
+  border-color: rgba(91, 157, 217, 0.65);
+  box-shadow: 0 6px 20px rgba(91, 157, 217, 0.2);
+}
+
+:root[data-mode="light"] .gallery-dropdown-footer {
+  background: rgba(91, 157, 217, 0.06);
+  border-color: rgba(91, 157, 217, 0.18);
+  color: #3a7cc8;
+}
+
+:root[data-mode="light"] .gallery-dropdown-footer:hover {
+  background: rgba(91, 157, 217, 0.12);
+  border-color: rgba(91, 157, 217, 0.38);
+  color: #1a5da0;
+}
+
+/* Hacker mode overrides */
+:root[data-mode="hacker"] .gallery-dropdown {
+  background: rgba(10, 18, 13, 0.97);
+  border-color: rgba(123, 228, 149, 0.22);
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(123, 228, 149, 0.08);
+}
+
+:root[data-mode="hacker"] .gallery-dropdown-item:hover,
+:root[data-mode="hacker"] .gallery-dropdown-item:focus-visible {
+  border-color: rgba(123, 228, 149, 0.55);
+  box-shadow: 0 6px 20px rgba(123, 228, 149, 0.18);
+}
+
+:root[data-mode="hacker"] .gallery-dropdown-footer {
+  background: rgba(123, 228, 149, 0.06);
+  border-color: rgba(123, 228, 149, 0.18);
+  color: #7be495;
+}
+
+:root[data-mode="hacker"] .gallery-dropdown-footer:hover {
+  background: rgba(123, 228, 149, 0.12);
+  border-color: rgba(123, 228, 149, 0.38);
+  color: #d9ffe8;
+}
+
+:root[data-mode="hacker"] .gallery-link-chevron {
+  color: inherit;
+}
+
+/* ─── End Gallery Dropdown ─────────────────────────────────────────────────── */
 
 .logo-links-row .source-link {
   margin-top: 0;
@@ -994,8 +1307,10 @@ body {
 /* Main Content */
 .main-content {
   flex: 1;
-  overflow-y: auto;
-  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 24px 24px 0 24px;
   background: var(--bg-primary);
 }
 
@@ -1008,6 +1323,7 @@ body {
 
 .preview-header {
   position: relative;
+  flex-shrink: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1016,6 +1332,14 @@ body {
   padding-bottom: 16px;
   border-bottom: 2px solid var(--border-color);
   min-height: 64px;
+}
+
+@media (min-width: 1024px) {
+  .preview-header {
+    width: 85%;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 .mode-switcher {
@@ -1465,14 +1789,10 @@ body {
 .preview-container {
   background: transparent;
   border-radius: 8px;
-  min-height: calc(100vh - 120px);
-  overflow: auto;
-}
-
-.preview-container:has(iframe) {
-  background: white;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  border: 1px solid var(--border-dark);
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .preview-placeholder {
@@ -1503,10 +1823,22 @@ body {
 }
 
 /* Resume Preview Iframe */
+#resumePreviewFrame {
+  display: block;
+  margin: 0 auto;
+  background: white;
+  border: 1px solid #000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
 #resumePreview {
   width: 100%;
+  min-height: 680px;
+  display: block;
+  margin: 0;
+  background: white;
   border: none;
-  min-height: calc(100vh - 120px);
 }
 
 /* Scrollbar Styling */
@@ -1561,6 +1893,39 @@ body {
   }
 }
 
+/* Tablet / touch devices (≥701px): tap to open dropdown — suppress hover, use .is-open class */
+@media (pointer: coarse) and (min-width: 701px) {
+  /* Disable hover/focus-within triggers */
+  .gallery-dropdown-wrapper:hover .gallery-dropdown,
+  .gallery-dropdown-wrapper:focus-within .gallery-dropdown {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-6px) scaleY(0.97);
+  }
+
+  /* Show dropdown when JS adds .is-open */
+  .gallery-dropdown-wrapper.is-open .gallery-dropdown {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+  }
+
+  /* Reset chevron rotation on hover/focus-within */
+  .gallery-dropdown-wrapper:hover .gallery-link-chevron,
+  .gallery-dropdown-wrapper:focus-within .gallery-link-chevron {
+    transform: none;
+    opacity: 0.6;
+  }
+
+  /* Rotate chevron when open */
+  .gallery-dropdown-wrapper.is-open .gallery-link-chevron {
+    transform: rotate(180deg);
+    opacity: 1;
+  }
+}
+
 /* Mobile responsive styles */
 @media (max-width: 700px) {
   .logo-main {
@@ -1574,7 +1939,8 @@ body {
     transform: translateY(0);
   }
 
-  .header-actions .gallery-link {
+  .header-actions .gallery-link,
+  .header-actions .gallery-dropdown-wrapper {
     align-self: flex-start;
   }
 
@@ -1590,6 +1956,12 @@ body {
 
   .gallery-link-accent {
     font-size: 14px;
+  }
+
+  .logo-links-row .gallery-dropdown-wrapper {
+    flex: 0 0 auto;
+    width: auto;
+    max-width: max-content;
   }
 
   .logo-links-row .gallery-link {
@@ -1613,6 +1985,35 @@ body {
     white-space: nowrap;
   }
 
+  .gallery-link-chevron {
+    display: inline-block;
+    font-size: 11px;
+    margin-left: 4px;
+  }
+
+  .gallery-dropdown {
+    display: none;
+    width: min(92vw, 320px);
+    left: 0;
+    right: auto;
+    top: calc(100% + 10px);
+  }
+
+  .gallery-dropdown-wrapper.is-open .gallery-dropdown {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+  }
+
+  .gallery-dropdown-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 10px 10px 4px;
+    max-height: 55vh;
+  }
+
   .logo-links-row .source-link {
     padding: 4px 6px;
     gap: 3px;
@@ -1628,6 +2029,7 @@ body {
   .logo-links-row .source-link i {
     font-size: 16px;
   }
+
 }
 
 @media (min-width: 701px) {

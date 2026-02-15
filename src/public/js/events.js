@@ -41,6 +41,9 @@ function setupEventListeners() {
     });
   }
   elements.showWatermarkCheckbox.addEventListener('change', handleWatermarkChange);
+  if (elements.layoutDropupButton) {
+    elements.layoutDropupButton.addEventListener('click', toggleLayoutDropup);
+  }
   if (elements.termsAcceptanceCheckbox) {
     elements.termsAcceptanceCheckbox.addEventListener('change', handleTermsAcceptanceChange);
   }
@@ -56,6 +59,22 @@ function setupEventListeners() {
     elements.mobilePreviewOption.addEventListener('click', () => handleMobileViewToggle('preview'));
   }
 
+  // Sync watermark checkbox between sidebar and mobile-preview-actions
+  if (elements.showWatermarkCheckboxMobile) {
+    elements.showWatermarkCheckboxMobile.addEventListener('change', (e) => {
+      if (elements.showWatermarkCheckbox) {
+        elements.showWatermarkCheckbox.checked = e.target.checked;
+      }
+      handleWatermarkChange(e);
+    });
+  }
+  if (elements.showWatermarkCheckbox) {
+    elements.showWatermarkCheckbox.addEventListener('change', (e) => {
+      if (elements.showWatermarkCheckboxMobile) {
+        elements.showWatermarkCheckboxMobile.checked = e.target.checked;
+      }
+    });
+  }
   // Sync desktop and mobile checkboxes/buttons
   if (elements.termsAcceptanceCheckboxDesktop) {
     elements.termsAcceptanceCheckboxDesktop.addEventListener('change', (e) => {
@@ -412,6 +431,17 @@ function handleMobileViewToggle(mode) {
     body.classList.add('mobile-preview-mode');
     elements.mobileEditorOption.classList.remove('active');
     elements.mobilePreviewOption.classList.add('active');
+    if (typeof autoResizePreviewIframe === 'function') {
+      const scheduleResize = () => {
+        const iframe = document.getElementById('resumePreview');
+        if (iframe) {
+          autoResizePreviewIframe(iframe);
+        }
+      };
+      requestAnimationFrame(() => {
+        requestAnimationFrame(scheduleResize);
+      });
+    }
   } else if (mode === 'editor') {
     // Switch to editor mode
     body.classList.remove('mobile-preview-mode');

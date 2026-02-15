@@ -250,6 +250,7 @@ async function showPdfPreview() {
         photoBase64: state.photoBase64,
         customSectionNames: state.customSectionNames,
         showWatermark: state.showWatermark,
+        layout: state.layout,
         analyticsMeta
       })
     });

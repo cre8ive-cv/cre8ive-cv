@@ -69,10 +69,10 @@ async function init() {
     saveDisplayMode(initialMode);
   }
   if (loaded && state.resumeData) {
-    // Transform button to "Clear Data" mode
+    // Transform button to "New Resume" mode
     const btn = elements.loadExampleBtn;
-    btn.className = 'btn btn-danger';
-    btn.innerHTML = '<i class="fas fa-trash-alt"></i> Clear All Data';
+    btn.className = 'btn btn-success';
+    btn.innerHTML = '<i class="fas fa-plus"></i> New Resume';
 
     // Generate preview first, then show success message
     setPreviewStatus('Restoring previous session...', 'status-info');

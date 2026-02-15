@@ -26,7 +26,22 @@ const DEFAULT_ALLOWED_TAGS = [
   'code',
   'pre',
   'sup',
-  'sub'
+  'sub',
+  // Safe SVG elements
+  'svg',
+  'path',
+  'polyline',
+  'polygon',
+  'line',
+  'circle',
+  'ellipse',
+  'rect',
+  'g'
+];
+
+const SVG_PRESENTATION_ATTRS = [
+  'fill', 'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin',
+  'stroke-dasharray', 'stroke-dashoffset', 'opacity', 'fill-opacity', 'stroke-opacity'
 ];
 
 const DEFAULT_ALLOWED_ATTRIBUTES = {
@@ -34,7 +49,17 @@ const DEFAULT_ALLOWED_ATTRIBUTES = {
   a: ['href', 'target', 'rel', 'title'],
   code: ['class'],
   span: ['data-label', 'data-icon'],
-  div: ['data-label', 'data-icon']
+  div: ['data-label', 'data-icon'],
+  // SVG element attributes
+  svg: ['xmlns', 'viewbox', 'width', 'height', ...SVG_PRESENTATION_ATTRS],
+  path: ['d', ...SVG_PRESENTATION_ATTRS],
+  polyline: ['points', ...SVG_PRESENTATION_ATTRS],
+  polygon: ['points', ...SVG_PRESENTATION_ATTRS],
+  line: ['x1', 'y1', 'x2', 'y2', ...SVG_PRESENTATION_ATTRS],
+  circle: ['cx', 'cy', 'r', ...SVG_PRESENTATION_ATTRS],
+  ellipse: ['cx', 'cy', 'rx', 'ry', ...SVG_PRESENTATION_ATTRS],
+  rect: ['x', 'y', 'width', 'height', 'rx', 'ry', ...SVG_PRESENTATION_ATTRS],
+  g: [...SVG_PRESENTATION_ATTRS]
 };
 
 const BLOCKED_TAGS = ['script', 'style', 'iframe', 'object', 'embed'];
@@ -50,7 +75,12 @@ function sanitizeWithLibrary(input) {
     allowedSchemes: ['http', 'https', 'mailto', 'tel'],
     allowProtocolRelative: false,
     enforceHtmlBoundary: true,
-    textFilter: text => text
+    textFilter: text => text,
+    allowedSvgTags: ['svg', 'path', 'polyline', 'polygon', 'line', 'circle', 'ellipse', 'rect', 'g'],
+    allowedSvgAttributes: ['viewBox', 'width', 'height', 'xmlns', 'fill', 'stroke', 'stroke-width',
+      'stroke-linecap', 'stroke-linejoin', 'stroke-dasharray', 'stroke-dashoffset',
+      'opacity', 'fill-opacity', 'stroke-opacity',
+      'd', 'points', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'rx', 'ry', 'x', 'y']
   };
 
   return sanitizeHtmlLib(input, options);

@@ -1,6 +1,28 @@
 const { sanitizeUserHtml } = require('../utils/sanitizer');
 
 /**
+ * Extracts the content of the @media print { ... } block and returns it as
+ * unconditional CSS.  This lets the HTML preview match the PDF render without
+ * needing Puppeteer's print-media emulation.
+ */
+function inlinePrintStyles(css) {
+  const idx = css.indexOf('@media print');
+  if (idx === -1) return css;
+  const openBrace = css.indexOf('{', idx);
+  if (openBrace === -1) return css;
+  // Walk forward balancing braces to find the matching closing brace.
+  let depth = 1;
+  let pos = openBrace + 1;
+  while (pos < css.length && depth > 0) {
+    if (css[pos] === '{') depth++;
+    else if (css[pos] === '}') depth--;
+    pos++;
+  }
+  // Replace the whole @media print { ... } with just its inner content.
+  return css.slice(0, idx) + css.slice(openBrace + 1, pos - 1) + css.slice(pos);
+}
+
+/**
  * Sanitizes user-provided content for safe HTML insertion.
  * Returns empty string for null/undefined values.
  */
@@ -45,8 +67,7 @@ function generateExperienceSection(experience, sectionName = 'Professional Exper
       <div class="experience-item">
         <div class="experience-header">
           <div>
-            <div class="position">${isolateUserContent(exp.position)}</div>
-            <div class="company">${isolateUserContent(exp.company)}</div>
+            <div class="position">${isolateUserContent(exp.position)} <span class="company">(${isolateUserContent(exp.company)})</span></div>
           </div>
           <div class="date-location">
             ${formatDate(exp.startDate, labels)} - ${formatDate(exp.endDate, labels)}
@@ -130,7 +151,7 @@ function generateProjectsSection(projects, projectsIntro, sectionName = 'Side Pr
             <div class="technologies">${labels.technologies || 'Technologies'}: ${isolateUserContent(project.technologies.join(', '))}</div>
           ` : ''}
           ${project.link ? `
-            <div class="project-link-line">${labels.link || 'Link'}: <a href="${normalizeUrl(project.link)}" target="_blank" rel="noopener noreferrer" class="project-link" title="View project">${isolateUserContent(stripProtocol(project.link || ''))} <i class="fas fa-external-link-alt"></i></a></div>
+            <div class="project-link-line">${labels.link || 'Link'}: <a href="${normalizeUrl(project.link)}" target="_blank" rel="noopener noreferrer" class="project-link" title="View project">${isolateUserContent(stripProtocol(project.link || ''))}</a></div>
           ` : ''}
         </div>
       `).join('')}
@@ -152,23 +173,31 @@ function stripProtocol(url) {
   return url.replace(/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//, '');
 }
 
-function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, customSectionNames = {}, showWatermark = true, labels = {}) {
+function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, customSectionNames = {}, showWatermark = true, labels = {}, layout = 'standard', forPreview = false) {
   if (!theme) {
     throw new Error('Theme is required to generate HTML.');
   }
+  const resolvedLayout = layout;
   const { personalInfo } = resumeData;
 
   // Load theme styles
   const paletteToUse = theme.monochromatic ? undefined : colorPalette;
-  const themeStyles = theme.getStyles(paletteToUse);
+  let themeStyles = theme.getStyles(paletteToUse);
+
+  // For the HTML preview, inline @media print rules so the preview matches
+  // the PDF render (which uses Puppeteer's print-media emulation).
+  if (forPreview) {
+    themeStyles = inlinePrintStyles(themeStyles);
+  }
 
   // Normalize external links to avoid double protocols
+  // Trim all values so empty strings and whitespace-only strings count as empty
   const contactLinks = {
-    email: personalInfo.email,
-    phone: personalInfo.phone,
-    linkedin: personalInfo.linkedin ? normalizeUrl(personalInfo.linkedin) : '',
-    github: personalInfo.github ? normalizeUrl(personalInfo.github) : '',
-    website: personalInfo.website ? normalizeUrl(personalInfo.website) : ''
+    email: (personalInfo.email || '').trim(),
+    phone: (personalInfo.phone || '').trim(),
+    linkedin: (personalInfo.linkedin || '').trim() ? normalizeUrl(personalInfo.linkedin.trim()) : '',
+    github: (personalInfo.github || '').trim() ? normalizeUrl(personalInfo.github.trim()) : '',
+    website: (personalInfo.website || '').trim() ? normalizeUrl(personalInfo.website.trim()) : ''
   };
 
   // Helper to extract slug from social media URLs
@@ -220,8 +249,9 @@ function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, custo
   const bio = personalBio || '';
 
   // Generate sections dynamically based on JSON order
-  const sections = Object.keys(resumeData)
-    .filter(key => key !== 'personalInfo' && key !== 'projectsIntro' && sectionGenerators[key])
+  const orderedSectionKeys = Object.keys(resumeData)
+    .filter(key => key !== 'personalInfo' && key !== 'projectsIntro' && sectionGenerators[key]);
+  const sections = orderedSectionKeys
     .map(key => {
       const sectionName = getSectionName(key);
       if (key === 'projects') {
@@ -244,7 +274,38 @@ function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, custo
   // Extract clean name for document title and metadata
   const cleanName = stripHtmlTags(personalInfo.name) || 'Resume';
 
-  return `<!DOCTYPE html>
+  // Preview-mode CSS overrides so the iframe matches the PDF render:
+  //
+  //  1. Hide the scrollbar on <html> without using overflow:hidden.
+  //     overflow:hidden on <html> inside an iframe caps scrollHeight in
+  //     Chromium to the current rendered height (one A4 page), which breaks
+  //     autoResizePreviewIframe.  Instead we set scrollbar-width:none /
+  //     ::-webkit-scrollbar{width:0} to make the scrollbar zero-width so it
+  //     does not steal content width, without suppressing scrollHeight.
+  //
+  //  2. Remove the min-height:100vh constraint from body.  The theme CSS sets
+  //     body{min-height:100vh} so the watermark is pushed to the bottom of the
+  //     first page in the PDF.  Inside an iframe whose viewport = one A4 page,
+  //     Chromium interprets this as an effective height cap, causing
+  //     document.documentElement.scrollHeight to return only one page worth of
+  //     height.  autoResizePreviewIframe then sets the iframe to one page tall
+  //     and all content beyond the first page is invisible.  Setting
+  //     body{min-height:0} lets the body grow to its true content height so
+  //     scrollHeight is accurate.
+  //
+  //  3. Padding compensation for non-sidebar layouts — the inlined @media print
+  //     already sets body padding: 5px 20px 20px.  Puppeteer also applies PDF
+  //     page margins (top:20px, right:20px, bottom:15px, left:20px) which add
+  //     to the visual whitespace.  Total effective padding = body-print +
+  //     page-margin = 25px top, 40px sides, 35px bottom.
+  const needsPreviewPdfMarginCompensation = resolvedLayout !== 'sidebar' && theme.name !== 'terminal';
+  const previewMarginStyle = forPreview ? `<style>
+html{scrollbar-width:none}html::-webkit-scrollbar{width:0;display:none}
+body{min-height:0!important}${needsPreviewPdfMarginCompensation ? '\nbody:not(.sidebar-layout){padding:25px 40px 35px!important}' : ''}
+</style>` : '';
+
+
+  const htmlHead = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -256,8 +317,151 @@ function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, custo
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji">
   <style>${themeStyles}</style>
-</head>
-<body>
+  ${previewMarginStyle}
+</head>`;
+
+  const compactContactBalanceScript = `
+<script>
+(function() {
+  function balanceCompactContacts() {
+    if (!document.body.classList.contains('compact-layout')) return;
+    const grids = document.querySelectorAll('.header-contacts .contact-grid');
+    grids.forEach((grid) => {
+      const display = window.getComputedStyle(grid).display;
+      if (display !== 'grid') return;
+      const items = Array.from(grid.querySelectorAll('.contact-item'));
+      if (items.length < 2) return;
+      const styles = window.getComputedStyle(grid);
+      const maxGap = parseFloat(styles.columnGap) || 0;
+      const minGap = 6;
+      const containerWidth = grid.clientWidth;
+      if (!containerWidth) return;
+      grid.style.gridTemplateColumns = 'repeat(' + items.length + ', max-content)';
+      const itemWidths = items.map((item) => item.getBoundingClientRect().width);
+
+      const fitsColumns = (columns) => {
+        const widths = new Array(columns).fill(0);
+        for (let i = 0; i < items.length; i += 1) {
+          const col = i % columns;
+          widths[col] = Math.max(widths[col], itemWidths[i]);
+        }
+        const total = widths.reduce((sum, width) => sum + width, 0);
+        if (columns === 1) {
+          return { fits: total <= containerWidth, gap: maxGap };
+        }
+        const availableGap = containerWidth - total;
+        if (availableGap < 0) {
+          return { fits: false, gap: minGap };
+        }
+        const idealGap = availableGap / (columns - 1);
+        if (idealGap < minGap) {
+          return { fits: false, gap: minGap };
+        }
+        return { fits: true, gap: Math.min(maxGap, idealGap) };
+      };
+
+      const twoRowColumns = Math.ceil(items.length / 2);
+      let targetColumns = 1;
+      let targetGap = maxGap;
+      const oneRowFit = fitsColumns(items.length);
+      if (oneRowFit.fits) {
+        targetColumns = items.length;
+        targetGap = oneRowFit.gap;
+      } else {
+        const twoRowFit = fitsColumns(twoRowColumns);
+        if (twoRowFit.fits) {
+        targetColumns = twoRowColumns;
+        targetGap = twoRowFit.gap;
+        } else {
+        let maxColumnsFit = 1;
+        for (let columns = items.length; columns >= 1; columns -= 1) {
+          const fit = fitsColumns(columns);
+          if (fit.fits) {
+            maxColumnsFit = columns;
+            targetGap = fit.gap;
+            break;
+          }
+        }
+
+        const rowsNeeded = Math.ceil(items.length / maxColumnsFit);
+        targetColumns = Math.ceil(items.length / rowsNeeded);
+        while (targetColumns > 1) {
+          const fit = fitsColumns(targetColumns);
+          if (fit.fits) {
+            targetGap = fit.gap;
+            break;
+          }
+          targetColumns -= 1;
+        }
+        }
+      }
+
+      grid.style.gridTemplateColumns = 'repeat(' + targetColumns + ', max-content)';
+      if (targetColumns > 1) {
+        grid.style.columnGap = targetGap + 'px';
+      } else {
+        grid.style.columnGap = '';
+      }
+    });
+  }
+
+  function scheduleBalance() {
+    window.requestAnimationFrame(balanceCompactContacts);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', scheduleBalance);
+  } else {
+    scheduleBalance();
+  }
+  window.addEventListener('load', scheduleBalance);
+  window.addEventListener('resize', scheduleBalance);
+})();
+</script>`;
+
+
+  // Sidebar layout: completely different HTML structure
+  if (resolvedLayout === 'sidebar') {
+    const gdprWatermarkHtml = (resumeData.gdprClause || showWatermark) ? `
+        <div class="sidebar-bottom">
+          ${resumeData.gdprClause ? `<div class="gdpr-clause">${isolateUserContent(resumeData.gdprClause)}</div>` : ''}
+          ${showWatermark ? '<div class="watermark" style="text-transform: none !important;">Designed with <a href="https://cre8ive.cv" target="_blank" rel="noopener noreferrer">cre8ive.cv</a></div>' : ''}
+        </div>` : '';
+    return `${htmlHead}
+<body class="sidebar-layout" data-theme="${theme.name}">
+  <div class="sidebar-bg"></div>
+  <div class="sidebar-container">
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        ${hasPhoto ? `<div class="sidebar-photo"><img src="${photoBase64}" alt="photo-image" class="profile-photo"></div>` : ''}
+        <div class="sidebar-name">
+          <h1>${isolateUserContent(personalInfo.name)}</h1>
+          ${personalInfo.title ? `<div class="title">${isolateUserContent(personalInfo.title)}</div>` : ''}
+        </div>
+        ${hasContacts ? `<div class="sidebar-contacts">
+          ${contactLinks.email ? `<div class="contact-item"><i class="fas fa-envelope"></i><a href="mailto:${contactLinks.email}">${isolateUserContent(contactLinks.email)}</a></div>` : ''}
+          ${contactLinks.phone ? `<div class="contact-item"><i class="fas fa-phone"></i><a href="tel:${contactLinks.phone}">${isolateUserContent(contactLinks.phone)}</a></div>` : ''}
+          ${contactLinks.linkedin ? `<div class="contact-item"><i class="fab fa-linkedin"></i><a href="${contactLinks.linkedin}" target="_blank">${isolateUserContent(contactDisplay.linkedin)}</a></div>` : ''}
+          ${contactLinks.github ? `<div class="contact-item"><i class="fab fa-github"></i><a href="${contactLinks.github}" target="_blank">${isolateUserContent(contactDisplay.github)}</a></div>` : ''}
+          ${contactLinks.website ? `<div class="contact-item"><i class="fas fa-globe"></i><a href="${contactLinks.website}" target="_blank">${isolateUserContent(contactDisplay.website)}</a></div>` : ''}
+          ${(personalInfo.location || '').trim() ? `<div class="contact-item"><i class="fas fa-map-marker-alt"></i>${isolateUserContent(personalInfo.location)}</div>` : ''}
+        </div>` : ''}
+        ${bio ? `<div class="sidebar-bio"><div class="bio">${isolateUserContent(bio)}</div></div>` : ''}
+      </div>
+      ${gdprWatermarkHtml}
+    </aside>
+    <main class="main-content">
+      ${sections}
+    </main>
+  </div>
+${compactContactBalanceScript}
+</body>
+</html>`;
+  }
+
+  // Standard and compact layouts: original HTML structure
+  return `${htmlHead}
+<body${resolvedLayout === 'compact' ? ' class="compact-layout"' : ''} data-theme="${theme.name}">
   <div class="content-wrapper">
     <header class="${headerClassList}">
       <div class="header-name">
@@ -272,11 +476,11 @@ function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, custo
           ${contactLinks.linkedin ? `<span class="contact-item"><i class="fab fa-linkedin"></i><a href="${contactLinks.linkedin}" target="_blank">${isolateUserContent(contactDisplay.linkedin)}</a></span>` : ''}
           ${contactLinks.github ? `<span class="contact-item"><i class="fab fa-github"></i><a href="${contactLinks.github}" target="_blank">${isolateUserContent(contactDisplay.github)}</a></span>` : ''}
           ${contactLinks.website ? `<span class="contact-item"><i class="fas fa-globe"></i><a href="${contactLinks.website}" target="_blank">${isolateUserContent(contactDisplay.website)}</a></span>` : ''}
-          ${personalInfo.location ? `<span class="contact-item"><i class="fas fa-map-marker-alt"></i>${isolateUserContent(personalInfo.location)}</span>` : ''}
+          ${(personalInfo.location || '').trim() ? `<span class="contact-item"><i class="fas fa-map-marker-alt"></i>${isolateUserContent(personalInfo.location)}</span>` : ''}
         </div>
       </div>` : ''}
       ${bio ? `<div class="header-bio">
-        <p class="bio">${isolateUserContent(bio)}</p>
+        <div class="bio">${isolateUserContent(bio)}</div>
       </div>` : ''}
     </header>
 
@@ -287,6 +491,7 @@ ${resumeData.gdprClause || showWatermark ? `<div class="gdpr-watermark-wrapper">
 ${resumeData.gdprClause ? `<div class="gdpr-clause">${isolateUserContent(resumeData.gdprClause)}</div>` : ''}
 ${showWatermark ? '<div class="watermark" style="text-transform: none !important;">Designed with <a href="https://cre8ive.cv" target="_blank" rel="noopener noreferrer">cre8ive.cv</a></div>' : ''}
 </div>` : ''}
+${compactContactBalanceScript}
 </body>
 </html>`;
 }
