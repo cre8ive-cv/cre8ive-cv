@@ -1823,14 +1823,22 @@ body {
 }
 
 /* Resume Preview Iframe */
+#resumePreviewFrame {
+  display: block;
+  margin: 0 auto;
+  background: white;
+  border: 1px solid #000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
 #resumePreview {
   width: 100%;
   min-height: 680px;
   display: block;
-  margin: 0 auto;
+  margin: 0;
   background: white;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  border: 1px solid #000;
+  border: none;
 }
 
 /* Scrollbar Styling */

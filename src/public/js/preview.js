@@ -204,8 +204,10 @@ async function generatePreview() {
     // Mark JSON as no longer modified since we just generated
     state.jsonModified = false;
 
-    // Display preview in iframe
-    elements.previewContainer.innerHTML = '<iframe id="resumePreview"></iframe>';
+    // Display preview in iframe wrapped by an unscaled frame so the paper border
+    // keeps a consistent 1px thickness on every side.
+    elements.previewContainer.innerHTML = '<div id="resumePreviewFrame"><iframe id="resumePreview"></iframe></div>';
+    const frame = document.getElementById('resumePreviewFrame');
     const iframe = document.getElementById('resumePreview');
     // Lock iframe to A4 width (794px at 96 DPI) so the HTML preview matches
     // the PDF output. transform: scale() scales it visually to fit the
@@ -217,9 +219,10 @@ async function generatePreview() {
     const isMobile = window.innerWidth < A4_PX;
     const fitWidth = isMobile ? window.innerWidth : containerWidth * 0.85;
     const scale = fitWidth / A4_PX;
+    frame.style.width = fitWidth + 'px';
     iframe.style.width = A4_PX + 'px';
     iframe.style.maxWidth = 'none';
-    iframe.style.transformOrigin = isMobile ? 'top left' : 'top center';
+    iframe.style.transformOrigin = 'top left';
     iframe.style.transform = `scale(${scale})`;
     iframe.dataset.scale = scale;
     iframe.srcdoc = data.html;
@@ -850,31 +853,18 @@ function autoResizePreviewIframe(iframe) {
     const measure = () => {
       const h = doc.documentElement.scrollHeight;
       if (h > 0) {
-        // The iframe element uses box-sizing:border-box (inherited from the
-        // global * rule) and has a 1px top+bottom border.  Setting height to
-        // scrollHeight would make the content viewport 2px shorter than the
-        // content, leaving the iframe internally scrollable by 2px.  Chromium
-        // latches onto that tiny overflow and the outer container scroll feels
-        // stuck.  Add the border widths so the viewport equals scrollHeight.
-        const cs = window.getComputedStyle(iframe);
-        const borderH = (parseFloat(cs.borderTopWidth) || 0) +
-                        (parseFloat(cs.borderBottomWidth) || 0);
         const rawScale = Number.parseFloat(iframe.dataset.scale || '1');
         const scale = Number.isFinite(rawScale) && rawScale > 0 ? rawScale : 1;
-        const totalH = h + borderH;
         const containerH = elements.previewContainer?.clientHeight || 0;
         const minLayoutH = scale < 1 && containerH > 0
           ? Math.ceil(containerH / scale)
           : 0;
-        const layoutH = minLayoutH > totalH ? minLayoutH : totalH;
+        const layoutH = minLayoutH > h ? minLayoutH : h;
         iframe.style.height = layoutH + 'px';
-        // When transform: scale() is active the visual height differs from
-        // the layout box.  Adjust margin-bottom so the scroll container's
-        // scrollable area matches the full visual height.
-        if (scale !== 1) {
-          iframe.style.marginBottom = (layoutH * (scale - 1)) + 'px';
-        } else {
-          iframe.style.marginBottom = '0px';
+        iframe.style.marginBottom = '0px';
+        const frame = iframe.parentElement;
+        if (frame) {
+          frame.style.height = (layoutH * scale) + 'px';
         }
       }
     };
