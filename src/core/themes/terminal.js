@@ -193,7 +193,10 @@ function getStyles() {
     }
 
     body.sidebar-layout .sidebar-bg {
-      background: linear-gradient(180deg, #102117 0%, #0b0f10 100%);
+      background:
+        linear-gradient(165deg, rgba(235, 255, 240, 0.14) 0%, rgba(235, 255, 240, 0.05) 22%, rgba(235, 255, 240, 0) 40%),
+        linear-gradient(180deg, rgba(130, 217, 152, 0.08) 0%, rgba(130, 217, 152, 0) 36%),
+        linear-gradient(180deg, #102117 0%, #0b0f10 100%);
     }
 
     body.sidebar-layout .sidebar {
