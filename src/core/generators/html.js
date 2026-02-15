@@ -296,9 +296,10 @@ function generateHTML(resumeData, photoBase64 = null, theme, colorPalette, custo
   //     page margins (top:20px, right:20px, bottom:15px, left:20px) which add
   //     to the visual whitespace.  Total effective padding = body-print +
   //     page-margin = 25px top, 40px sides, 35px bottom.
+  const needsPreviewPdfMarginCompensation = layout !== 'sidebar' && theme.name !== 'terminal';
   const previewMarginStyle = forPreview ? `<style>
 html{scrollbar-width:none}html::-webkit-scrollbar{width:0;display:none}
-body{min-height:0!important}${layout !== 'sidebar' ? '\nbody:not(.sidebar-layout){padding:25px 40px 35px!important}' : ''}
+body{min-height:0!important}${needsPreviewPdfMarginCompensation ? '\nbody:not(.sidebar-layout){padding:25px 40px 35px!important}' : ''}
 </style>` : '';
 
 

@@ -53,8 +53,10 @@ async function generatePDF(htmlContent, page) {
     // keep the same color as the HTML preview (Twemoji recolors glyphs). Native
     // font emoji rendering is more faithful to the on-screen preview.
 
-    // Detect sidebar layout from HTML content
+    // Detect layout/theme from HTML content
     const isSidebarLayout = htmlContent.includes('class="sidebar-layout"');
+    const isTerminalTheme = /data-theme=["']terminal["']/.test(htmlContent);
+    const isEdgeToEdge = isSidebarLayout || isTerminalTheme;
 
     // Switch to print media BEFORE measuring so that @media print CSS rules are
     // active during both the measurement evaluate() and the final page.pdf() call.
@@ -68,7 +70,7 @@ async function generatePDF(htmlContent, page) {
       console.warn('Failed to emulate print media type, GDPR positioning may be slightly off:', err.message);
     }
 
-    if (isSidebarLayout) {
+    if (isEdgeToEdge) {
       try {
         await page.addStyleTag({
           content: `
@@ -108,7 +110,7 @@ async function generatePDF(htmlContent, page) {
     // SECURITY: Dynamic layout positioning with timeout to prevent infinite loops
     try {
       await Promise.race([
-        page.evaluate((sidebarMode) => {
+        page.evaluate(({ sidebarMode, edgeToEdge }) => {
       if (sidebarMode) {
         // --- SIDEBAR LAYOUT POSITIONING ---
         // A4 at 96 DPI with 0 margins: full page = 1122.52px, use 1122 (rounded down).
@@ -230,11 +232,10 @@ async function generatePDF(htmlContent, page) {
       }
 
       // --- STANDARD/COMPACT LAYOUT GDPR POSITIONING ---
-      // Page height in CSS pixels for A4 with margins top=20px, bottom=15px at 96 DPI.
-      // A4 = 297mm × (96px / 25.4mm) = 1122.52px; printable = 1122.52 − 20 − 15 = 1087.52px.
-      // Use 1087 (rounded down) — 0.52px buffer ensures body never overflows its page count.
-      // All arithmetic stays in integer pixels, avoiding mm→px conversion rounding errors.
-      const PAGE_HEIGHT_PX = 1087;
+      // Page height in CSS pixels for A4 at 96 DPI.
+      // With default margins we use 1087px printable height.
+      // For edge-to-edge themes (e.g. terminal) margins are 0 so full page is 1122px.
+      const PAGE_HEIGHT_PX = edgeToEdge ? 1122 : 1087;
 
       const body = document.body;
       const gdprWrapper = document.querySelector('.gdpr-watermark-wrapper');
@@ -315,7 +316,7 @@ async function generatePDF(htmlContent, page) {
         watermark.style.breakBefore = 'avoid';
         watermark.style.pageBreakBefore = 'avoid';
       }
-    }, isSidebarLayout),
+    }, { sidebarMode: isSidebarLayout, edgeToEdge: isEdgeToEdge }),
         new Promise((_, reject) =>
           setTimeout(() => reject(new Error('Layout positioning timeout')), TIMEOUTS.SCRIPT_EXECUTION)
         )
@@ -326,7 +327,7 @@ async function generatePDF(htmlContent, page) {
     }
 
     // PDF margins are handled via @page so the border can sit on the page edge.
-    const pdfMargin = isSidebarLayout
+    const pdfMargin = isEdgeToEdge
       ? { top: '0px', right: '0px', bottom: '0px', left: '0px' }
       : { top: '20px', right: '20px', bottom: '15px', left: '20px' };
 

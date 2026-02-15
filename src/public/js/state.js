@@ -330,5 +330,6 @@ const THEME_FONT_MAP = {
   default: `'Segoe UI', Tahoma, Geneva, Verdana, sans-serif`,
   modern: `'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`,
   classic: `'Georgia', 'Times New Roman', serif`,
-  corpo: `'Arial', 'Helvetica Neue', Helvetica, sans-serif`
+  corpo: `'Arial', 'Helvetica Neue', Helvetica, sans-serif`,
+  terminal: `'IBM Plex Mono', 'Fira Code', 'JetBrains Mono', 'Consolas', 'Courier New', monospace`
 };
