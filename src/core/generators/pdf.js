@@ -57,6 +57,7 @@ async function generatePDF(htmlContent, page) {
     const isSidebarLayout = htmlContent.includes('class="sidebar-layout"');
     const isTerminalTheme = /data-theme=["']terminal["']/.test(htmlContent);
     const isEdgeToEdge = isSidebarLayout || isTerminalTheme;
+    const printablePageHeightPx = isEdgeToEdge ? 1122 : 1087;
 
     // Switch to print media BEFORE measuring so that @media print CSS rules are
     // active during both the measurement evaluate() and the final page.pdf() call.
@@ -110,7 +111,7 @@ async function generatePDF(htmlContent, page) {
     // SECURITY: Dynamic layout positioning with timeout to prevent infinite loops
     try {
       await Promise.race([
-        page.evaluate(({ sidebarMode, edgeToEdge }) => {
+        page.evaluate(({ sidebarMode, printableHeight }) => {
       if (sidebarMode) {
         // --- SIDEBAR LAYOUT POSITIONING ---
         // A4 at 96 DPI with 0 margins: full page = 1122.52px, use 1122 (rounded down).
@@ -232,10 +233,8 @@ async function generatePDF(htmlContent, page) {
       }
 
       // --- STANDARD/COMPACT LAYOUT GDPR POSITIONING ---
-      // Page height in CSS pixels for A4 at 96 DPI.
-      // With default margins we use 1087px printable height.
-      // For edge-to-edge themes (e.g. terminal) margins are 0 so full page is 1122px.
-      const PAGE_HEIGHT_PX = edgeToEdge ? 1122 : 1087;
+      // Page height in CSS pixels for A4 at 96 DPI adjusted to active PDF margins.
+      const PAGE_HEIGHT_PX = printableHeight;
 
       const body = document.body;
       const gdprWrapper = document.querySelector('.gdpr-watermark-wrapper');
@@ -316,7 +315,7 @@ async function generatePDF(htmlContent, page) {
         watermark.style.breakBefore = 'avoid';
         watermark.style.pageBreakBefore = 'avoid';
       }
-    }, { sidebarMode: isSidebarLayout, edgeToEdge: isEdgeToEdge }),
+    }, { sidebarMode: isSidebarLayout, printableHeight: printablePageHeightPx }),
         new Promise((_, reject) =>
           setTimeout(() => reject(new Error('Layout positioning timeout')), TIMEOUTS.SCRIPT_EXECUTION)
         )

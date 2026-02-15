@@ -243,6 +243,19 @@ function getStyles() {
       border-bottom: 0;
       background: transparent;
     }
+
+    @media print {
+      h2 {
+        display: block;
+        break-after: avoid-page;
+        page-break-after: avoid;
+      }
+
+      section > h2 + * {
+        break-before: avoid-page;
+        page-break-before: avoid;
+      }
+    }
   `;
 }
 

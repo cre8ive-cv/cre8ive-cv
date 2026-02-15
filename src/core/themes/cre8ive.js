@@ -218,6 +218,9 @@ function getStyles(palette) {
       background: linear-gradient(90deg, ${palette.light} 0%, #ffffff 100%);
       color: ${palette.primary};
       border-color: ${palette.primary}3B;
+      margin-left: 0;
+      padding: 4.5px 12px;
+      margin-bottom: 7.5px;
     }
 
     body.sidebar-layout .main-content .experience-item,
@@ -225,6 +228,14 @@ function getStyles(palette) {
     body.sidebar-layout .main-content .project-item {
       border-left-color: ${palette.primary}3D;
       background: linear-gradient(180deg, #ffffff 0%, #fcfdff 100%);
+      margin-bottom: 9.5px;
+      padding: 0 0 0 10px;
+    }
+
+    body.sidebar-layout .main-content .date-location {
+      font-size: 10.75px;
+      padding: 0 7px;
+      font-weight: 500;
     }
 
     body.sidebar-layout .sidebar .gdpr-clause {
@@ -262,6 +273,17 @@ function getStyles(palette) {
     }
 
     @media print {
+      h2 {
+        display: block;
+        break-after: avoid-page;
+        page-break-after: avoid;
+      }
+
+      section > h2 + * {
+        break-before: avoid-page;
+        page-break-before: avoid;
+      }
+
       body {
         background: #f8f9fc;
         print-color-adjust: exact;
