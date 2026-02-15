@@ -37,10 +37,10 @@ function getStyles() {
 
     body {
       font-family: 'Georgia', 'Times New Roman', serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
-      line-height: 1.6;
+      line-height: 1.47;
       color: #1a1a1a;
       background: #fff;
-      padding: 40px;
+      padding: 16px 34px 34px;
       max-width: 900px;
       margin: 0 auto;
       display: flex;
@@ -57,9 +57,7 @@ function getStyles() {
     }
 
     header {
-      border-bottom: 2px solid #1a1a1a;
-      padding-bottom: 20px;
-      margin-bottom: 24px;
+      margin-bottom: 34px;
       position: relative;
       padding-left: 15px;
       padding-right: 15px;
@@ -77,7 +75,7 @@ function getStyles() {
 
     .header-name {
       margin-right: 0;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
       grid-column: 1;
       grid-row: 1;
     }
@@ -90,6 +88,7 @@ function getStyles() {
       align-items: flex-start;
       justify-content: flex-end;
       padding-left: var(--header-photo-gap);
+      margin-top: -5px;
     }
 
     .header-bio {
@@ -104,8 +103,8 @@ function getStyles() {
     header.has-photo .header-bio::before {
       content: '';
       float: right;
-      width: calc(var(--header-photo-size) + var(--header-photo-gap) - 30px);
-      height: calc(var(--header-photo-size) - 10px);
+      width: calc(var(--header-photo-size) + var(--header-photo-gap) + 8px);
+      height: calc(var(--header-photo-size) + 22px);
       shape-outside: margin-box;
       /* Pull up to align with photo at header top - base case (name only + no contacts) */
       margin-top: -70px;
@@ -141,14 +140,14 @@ function getStyles() {
       display: grid;
       grid-template-columns: minmax(0, 1.0fr) minmax(0, 1.0fr);
       width: 100%;
-      gap: 8px 12px;
+      gap: 6px 10px;
     }
 
     .contact-item {
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 15px;
+      font-size: 13px;
       color: #333;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-width: 0;
@@ -189,40 +188,62 @@ function getStyles() {
     }
 
     h1 {
-      font-size: 36px;
+      font-size: 31px;
       color: #1a1a1a;
       margin-bottom: 0;
       font-weight: 700;
       letter-spacing: -0.5px;
+      line-height: 1;
     }
 
     .title {
-      font-size: 20px;
+      font-size: 16px;
       color: #4a4a4a;
-      margin-bottom: 0;
+      margin-bottom: 5px;
+      line-height: 1.1;
+      margin-top: 4px;
       font-weight: 400;
       font-style: italic;
     }
 
     .bio {
-      font-size: 15px;
-      line-height: 1.8;
+      font-size: 12px;
+      line-height: 1.65;
       color: #333;
       margin-top: 0;
       margin-bottom: 0;
       font-style: italic;
     }
 
+    .bio p,
+    .bio ul,
+    .bio ol,
+    .bio li {
+      font: inherit;
+      color: inherit;
+      line-height: inherit;
+      margin: 0 0 6px 0;
+    }
+
+    .bio ul,
+    .bio ol {
+      padding-left: 16px;
+    }
+
+    .bio li {
+      margin: 0 0 4px 0;
+    }
+
     section {
-      margin-bottom: 30px;
+      margin-bottom: 24px;
     }
 
     h2 {
-      font-size: 22px;
+      font-size: 20px;
       color: #1a1a1a;
       border-bottom: 1px solid #1a1a1a;
-      padding-bottom: 8px;
-      margin-bottom: 15px;
+      padding-bottom: 7px;
+      margin-bottom: 12px;
       letter-spacing: 2px;
       font-weight: 700;
       page-break-after: avoid;
@@ -230,9 +251,25 @@ function getStyles() {
     }
 
     .experience-item, .education-item, .project-item {
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       page-break-inside: avoid;
       padding-left: 15px;
+    }
+
+    body:not(.sidebar-layout):not(.compact-layout) .experience-item,
+    body:not(.sidebar-layout):not(.compact-layout) .education-item,
+    body:not(.sidebar-layout):not(.compact-layout) .project-item {
+      margin-bottom: 23px;
+      padding-left: 22px;
+    }
+
+    body:not(.sidebar-layout):not(.compact-layout) section {
+      margin-bottom: 36px;
+    }
+
+    body:not(.sidebar-layout):not(.compact-layout) h2 {
+      margin-bottom: 17px;
+      padding-bottom: 9.5px;
     }
 
     .experience-header, .education-header {
@@ -243,13 +280,26 @@ function getStyles() {
     }
 
     .position, .degree, .project-name {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
       color: #1a1a1a;
     }
 
-    .company, .institution {
-      font-size: 16px;
+    .company {
+      font-size: 13px;
+      color: #333;
+      opacity: 0.65;
+      font-weight: 400;
+    }
+
+    .company * {
+      display: inline !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .institution {
+      font-size: 15px;
       color: #333;
       margin-bottom: 3px;
       font-weight: 600;
@@ -263,35 +313,33 @@ function getStyles() {
     }
 
     .date-location {
-      font-size: 16px;
+      font-size: 15px;
       color: #1a1a1a;
       font-style: normal;
       font-weight: 600;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      padding: 4px 12px;
     }
 
     ul {
-      margin-left: 20px;
-      margin-top: 8px;
+      margin-left: 18px;
+      margin-top: 6px;
     }
 
     li {
-      margin-bottom: 5px;
+      margin-bottom: 4px;
       font-size: 14px;
       color: #333;
-      line-height: 1.6;
     }
 
     .skills-grid {
       display: flex;
       flex-wrap: nowrap;
-      gap: 15px;
+      gap: 12px;
     }
 
     .skill-category {
       background: #fafafa;
-      padding: 15px;
+      padding: 12px;
       border-radius: 0;
       border-left: 3px solid #1a1a1a;
       border-top: 1px solid #e0e0e0;
@@ -302,9 +350,9 @@ function getStyles() {
     }
 
     .skill-category h3 {
-      font-size: 16px;
+      font-size: 15px;
       color: #1a1a1a;
-      margin-bottom: 8px;
+      margin-bottom: 7px;
       text-transform: capitalize;
       font-weight: 700;
     }
@@ -312,12 +360,12 @@ function getStyles() {
     .skill-tags {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px;
     }
 
     .skill-tag {
       background: #fff;
-      padding: 5px 12px;
+      padding: 4px 10px;
       border-radius: 0;
       font-size: 13px;
       color: #333;
@@ -349,15 +397,14 @@ function getStyles() {
     .projects-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-      column-gap: 30px;
+      gap: 17px;
+      column-gap: 26px;
     }
 
     .project-description {
       font-size: 14px;
       color: #333;
       margin-bottom: 5px;
-      line-height: 1.6;
     }
 
     .technologies {
@@ -367,7 +414,7 @@ function getStyles() {
     }
 
     .gdpr-watermark-wrapper {
-      margin-top: auto;
+      margin-top: 0;
       margin-bottom: 0;
       padding-bottom: 0;
       page-break-inside: avoid;
@@ -376,7 +423,7 @@ function getStyles() {
 
     .gdpr-clause {
       padding-top: 4px;
-      border-top: 1px solid #1a1a1a;
+      border-top: 1px solid #ccc;
       font-size: 10px;
       color: #4a4a4a;
       line-height: 1.4;
@@ -406,6 +453,414 @@ function getStyles() {
 
     .watermark a:hover {
       text-decoration: underline;
+    }
+
+    @media (min-width: 701px) {
+      /* Tight layout overrides */
+      body.compact-layout {
+        line-height: 1.4;
+        padding: 12px 28px 28px;
+      }
+
+      body.compact-layout header {
+        margin-bottom: 18px;
+      }
+
+      body.compact-layout header.has-photo .header-bio::before {
+        height: calc(var(--header-photo-size) + 44px);
+      }
+
+      body.compact-layout h1 {
+        font-size: 28px;
+      }
+
+      body.compact-layout h2 {
+        font-size: 18px;
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+      }
+
+      body.compact-layout .title {
+        font-size: 15px;
+      }
+
+      body.compact-layout .bio {
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      body.compact-layout section {
+        margin-bottom: 18px;
+      }
+
+      body.compact-layout .experience-item,
+      body.compact-layout .education-item,
+      body.compact-layout .project-item {
+        margin-bottom: 12px;
+      }
+
+      body.compact-layout .position,
+      body.compact-layout .degree,
+      body.compact-layout .project-name {
+        font-size: 15px;
+      }
+
+      body.compact-layout .company,
+      body.compact-layout .institution {
+        font-size: 14px;
+      }
+
+      body.compact-layout .date-location {
+        font-size: 13px;
+      }
+
+      body.compact-layout ul {
+        margin-top: 4px;
+        margin-left: 16px;
+      }
+
+      body.compact-layout li {
+        font-size: 13px;
+        margin-bottom: 3px;
+      }
+
+      body.compact-layout .contact-grid {
+        display: grid;
+        grid-auto-flow: row;
+        justify-content: start;
+        align-items: center;
+        column-gap: clamp(8px, 2.4vw, 18px);
+        row-gap: 5px;
+      }
+
+      body.compact-layout .contact-item {
+        font-size: 12px;
+        white-space: nowrap;
+        flex: 0 0 auto;
+        gap: 2px;
+      }
+
+      body.compact-layout .skills-grid {
+        gap: 10px;
+      }
+
+      body.compact-layout .skill-category {
+        padding: 10px;
+      }
+
+      body.compact-layout .skill-category h3 {
+        font-size: 14px;
+        margin-bottom: 6px;
+      }
+
+      body.compact-layout .skill-tags {
+        gap: 5px;
+      }
+
+      body.compact-layout .skill-tag {
+        padding: 3px 9px;
+        font-size: 12px;
+      }
+
+      body.compact-layout .projects-grid {
+        gap: 14px;
+        column-gap: 22px;
+      }
+
+    }
+
+    /* ===== Sidebar layout ===== */
+    body.sidebar-layout {
+      display: block;
+      padding: 0;
+      margin: 0;
+      width: 100%;
+      max-width: 794px;
+      min-height: 100vh;
+      line-height: 1.35;
+    }
+
+    body.sidebar-layout .sidebar-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 30%;
+      height: 100%;
+      background: #555555;
+      z-index: 0;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+
+    body.sidebar-layout .sidebar-container {
+      display: flex;
+      width: 100%;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    body.sidebar-layout .sidebar {
+      width: 30%;
+      flex-shrink: 0;
+      padding: 22px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      color: #e8e8e8;
+      min-height: 100vh;
+      font-variant-emoji: normal;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+
+    body.sidebar-layout .sidebar-top {
+      flex: 1 1 auto;
+    }
+
+    body.sidebar-layout .sidebar-bottom {
+      margin-top: auto;
+      padding-top: 10px;
+    }
+
+    body.sidebar-layout .sidebar-bottom .gdpr-clause {
+      border-top-color: rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.45);
+      font-size: 7px;
+      line-height: 1.3;
+      text-align: left;
+    }
+
+    body.sidebar-layout .sidebar-bottom .watermark {
+      color: rgba(255,255,255,0.4);
+      font-size: 9px;
+      text-align: center;
+    }
+
+    body.sidebar-layout .sidebar-bottom .watermark a {
+      color: rgba(255,255,255,0.55);
+    }
+
+    body.sidebar-layout .sidebar-photo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    body.sidebar-layout .sidebar-photo .profile-photo {
+      width: 160px !important;
+      height: 160px !important;
+      max-width: 160px !important;
+      max-height: 160px !important;
+      min-width: 160px !important;
+      min-height: 160px !important;
+      margin: 0 auto;
+      display: block;
+      border-color: rgba(255,255,255,0.6);
+      border-width: 3px;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+
+    body.sidebar-layout .sidebar-name {
+      margin-bottom: 14px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    body.sidebar-layout .sidebar-name h1 {
+      font-size: 26px;
+      color: #fff;
+      line-height: 1.15;
+      margin: 0;
+      letter-spacing: -0.5px;
+    }
+
+    body.sidebar-layout .sidebar-name .title {
+      font-size: 14px;
+      color: rgba(255,255,255,0.65);
+      margin: 0;
+      line-height: 1.2;
+      font-weight: 400;
+      font-style: italic;
+    }
+
+    body.sidebar-layout .sidebar-contacts {
+      margin-bottom: 14px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+
+    body.sidebar-layout .sidebar-contacts .contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 6px;
+      line-height: 1.3;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body.sidebar-layout .sidebar-contacts .contact-item:last-child {
+      margin-bottom: 0;
+    }
+
+    body.sidebar-layout .sidebar-contacts .contact-item i {
+      color: rgba(255,255,255,0.7);
+      width: 13px;
+      font-size: 11px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    body.sidebar-layout .sidebar-contacts .contact-item a {
+      color: rgba(255,255,255,0.8);
+      word-break: break-all;
+    }
+
+    body.sidebar-layout .sidebar-bio {
+      margin-bottom: 0;
+    }
+
+    body.sidebar-layout .sidebar-bio .bio {
+      font-size: 13px;
+      line-height: 1.5;
+      color: rgba(255,255,255,0.65);
+      font-style: italic;
+      & p,
+      & ul,
+      & ol {
+        font: inherit;
+        color: inherit;
+        line-height: inherit;
+        margin: 0 0 6px 0;
+      }
+
+      & ul,
+      & ol {
+        padding-left: 16px;
+      }
+
+      & li {
+        font: inherit;
+        color: inherit;
+        line-height: inherit;
+        margin: 0 0 4px 0;
+      }
+    }
+
+    /* Main content area */
+    body.sidebar-layout .main-content {
+      width: 70%;
+      padding: 19px 23px 17px 21px;
+      font-variant-emoji: normal;
+      background: #fff;
+    }
+
+    body.sidebar-layout .main-content section {
+      margin-bottom: 18px;
+    }
+
+    body.sidebar-layout .main-content h2 {
+      font-size: 14.75px;
+      border-bottom: 1px solid #1a1a1a;
+      padding-bottom: 4.5px;
+      margin-bottom: 8.5px;
+      letter-spacing: 1.5px;
+      color: #1a1a1a;
+    }
+
+    body.sidebar-layout .main-content .experience-item,
+    body.sidebar-layout .main-content .education-item,
+    body.sidebar-layout .main-content .project-item {
+      margin-bottom: 11px;
+      padding-left: 11px;
+    }
+
+    body.sidebar-layout .main-content .experience-header,
+    body.sidebar-layout .main-content .education-header {
+      margin-bottom: 3px;
+    }
+
+    body.sidebar-layout .main-content .position,
+    body.sidebar-layout .main-content .degree,
+    body.sidebar-layout .main-content .project-name {
+      font-size: 11.75px;
+    }
+
+    body.sidebar-layout .main-content .company {
+      font-size: 10.75px;
+    }
+
+    body.sidebar-layout .main-content .institution {
+      font-size: 11.75px;
+    }
+
+    body.sidebar-layout .main-content .education-level {
+      font-size: 10.75px;
+    }
+
+    body.sidebar-layout .main-content .date-location {
+      font-size: 10.75px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body.sidebar-layout .main-content ul {
+      margin-left: 15px;
+      margin-top: 4px;
+    }
+
+    body.sidebar-layout .main-content li {
+      font-size: 10.75px;
+      margin-bottom: 2.5px;
+    }
+
+    body.sidebar-layout .main-content .skills-grid {
+      gap: 9px;
+    }
+
+    body.sidebar-layout .main-content .skill-category {
+      padding: 9px;
+    }
+
+    body.sidebar-layout .main-content .skill-category h3 {
+      font-size: 11.75px;
+      margin-bottom: 5px;
+    }
+
+    body.sidebar-layout .main-content .skill-tags {
+      gap: 4px;
+    }
+
+    body.sidebar-layout .main-content .skill-tag {
+      padding: 2px 7px;
+      font-size: 9.75px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body.sidebar-layout .main-content .projects-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 11px;
+      column-gap: 21px;
+    }
+
+    body.sidebar-layout .main-content .project-description {
+      font-size: 10.75px;
+    }
+
+    body.sidebar-layout .main-content .technologies {
+      font-size: 9.75px;
+    }
+
+    body.sidebar-layout .main-content .project-link-line {
+      font-size: 9.75px;
+    }
+
+    body.sidebar-layout .main-content .projects-intro {
+      font-size: 10.75px;
     }
 
     /* Mobile responsive styles */
@@ -467,11 +922,11 @@ function getStyles() {
       }
 
       h1 {
-        font-size: 28px;
+        font-size: 26px;
       }
 
       .title {
-        font-size: 16px;
+        font-size: 14px;
       }
 
       h2 {
@@ -485,7 +940,7 @@ function getStyles() {
 
       .contact-item {
         width: 100%;
-        font-size: 14px;
+        font-size: 12px;
       }
 
       .projects-grid {
@@ -548,11 +1003,11 @@ function getStyles() {
       }
 
       h1 {
-        font-size: 24px;
+        font-size: 22px;
       }
 
       .title {
-        font-size: 14px;
+        font-size: 12px;
       }
 
       h2 {
@@ -571,7 +1026,7 @@ function getStyles() {
 
     @media print {
       body {
-        padding: 20px;
+        padding: 5px 20px 20px;
         display: flex;
         flex-direction: column;
         min-height: 100vh;
@@ -590,6 +1045,10 @@ function getStyles() {
         min-height: 180px !important;
         print-color-adjust: exact;
         -webkit-print-color-adjust: exact;
+      }
+
+      .header-photo {
+        margin-top: 0;
       }
 
       h2 {

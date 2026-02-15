@@ -80,8 +80,18 @@
     overflow-x: hidden;
     border-right: none;
     border-bottom: 1px solid var(--border-color);
-    padding: 16px 16px 8px;
+    padding: calc(24px + env(safe-area-inset-top, 0px)) 16px 10px;
     gap: 6px;
+    /* Create a stacking context above the main content so the gallery
+       dropdown (which overflows below the sidebar) paints on top.
+       Must be > .dropup-menu (z-index: 5) which lives in the root context. */
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Slightly reduce top padding in Editor tab to match Preview positioning */
+  body:not(.mobile-preview-mode) .sidebar {
+    padding: calc(18px + env(safe-area-inset-top, 0px)) 16px 10px;
   }
 
   .control-section.editor-section {
@@ -212,7 +222,7 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
-    margin-top: 12px;
+    margin-top: 0;
     justify-items: stretch;
     align-items: end;
   }
@@ -259,6 +269,11 @@
     gap: 8px;
   }
 
+  /* Keep mobile headers aligned consistently between Editor/Preview */
+  .logo-heading {
+    transform: none;
+  }
+
   .header-actions {
     transform: none;
     gap: 24px;
@@ -282,6 +297,13 @@
     margin-top: 2px;
   }
 
+  .header-actions .gallery-dropdown-wrapper {
+    flex: 1 1 0;
+    width: auto; /* flex-basis:0 governs flex context; auto fills grid cells correctly */
+    min-width: 0;
+    max-width: none;
+  }
+
   .header-actions .gallery-link,
   .mobile-import-json-btn {
     display: flex;
@@ -293,7 +315,7 @@
     justify-content: center;
     gap: 6px;
     flex: 1 1 0;
-    width: 0;
+    width: 100%;
     max-width: none;
     min-width: 0;
     white-space: nowrap;
@@ -355,6 +377,10 @@
   /* Appearance grid wrapping */
   .appearance-grid {
     flex-wrap: wrap;
+  }
+
+  .appearance-toolbar .stacked-label {
+    padding-top: 2px;
   }
 
   /* Skills list responsiveness */
@@ -747,6 +773,13 @@
     gap: 6px;
   }
 
+  .header-actions .gallery-dropdown-wrapper {
+    flex: 1 1 0;
+    width: auto; /* flex-basis:0 governs flex context; auto fills grid cells correctly */
+    min-width: 0;
+    max-width: none;
+  }
+
   .header-actions .gallery-link,
   .mobile-import-json-btn {
     display: flex;
@@ -758,7 +791,7 @@
     justify-content: center;
     gap: 6px;
     flex: 1 1 0;
-    width: 0;
+    width: 100%;
     max-width: none;
     min-width: 0;
     white-space: nowrap;
@@ -832,8 +865,17 @@
     margin-bottom: 0;
   }
 
+  body.mobile-preview-mode .sidebar {
+    padding: calc(18px + env(safe-area-inset-top, 0px)) 16px 10px;
+    gap: 6px;
+  }
+
   body.mobile-preview-mode .sidebar,
   body.mobile-preview-mode .sidebar-scroll {
+    /* Both axes must be visible together — if only one is set to visible
+       while the other is non-visible, CSS coerces visible → auto, which
+       keeps the sidebar as a scroll container and clips the dropdown. */
+    overflow-x: visible;
     overflow-y: visible;
   }
 
@@ -844,13 +886,11 @@
   }
 
   body.mobile-preview-mode .sidebar-header {
-    margin-bottom: 0;
-    padding-bottom: 0;
+    display: none;
   }
 
   body.mobile-preview-mode .main-content {
-    padding-top: 0;
-    padding-bottom: 12px;
+    padding: 0;
   }
 
   /* Row 1: Theme and Color Selectors - ALWAYS VISIBLE */
@@ -885,9 +925,9 @@
   /* Preview header always visible on mobile to show theme/color selectors */
   body.mobile-preview-mode .preview-header {
     display: flex !important;
-    margin-top: 8px;
-    margin-bottom: 12px;
-    padding: 8px 12px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    padding: 2px 12px;
     min-height: auto;
     border-bottom: none;
   }
@@ -900,7 +940,8 @@
 
   /* Add spacing for preview content on mobile */
   body.mobile-preview-mode .preview-container {
-    margin-top: 20px;
+    margin-top: 2px;
+    min-height: 75vh;
   }
 
   /* Logo Area - Centered column layout */
@@ -927,6 +968,13 @@
   }
 
   /* Mobile-optimized Gallery Link - Larger and more prominent */
+  .header-actions .gallery-dropdown-wrapper {
+    flex: 1 1 0;
+    width: auto; /* flex-basis:0 governs flex context; auto fills grid cells correctly */
+    min-width: 0;
+    max-width: none;
+  }
+
   .header-actions .gallery-link {
     display: flex;
     padding: 6px 10px;
@@ -944,7 +992,7 @@
     justify-content: center;
     gap: 6px;
     flex: 1 1 0;
-    width: 0;
+    width: 100%;
     max-width: none;
     min-width: 0;
   }
@@ -1245,7 +1293,8 @@
   display: none;
   width: 100%;
   max-width: 480px;
-  margin: 12px auto 0;
+  margin: 0 auto;
+  padding: 0;
   gap: 10px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: stretch;
@@ -1420,6 +1469,18 @@
     padding-bottom: 80px;
   }
 
+  /* Keep appearance toolbar in normal flow to avoid overlapping preview */
+  .appearance-toolbar {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto 12px;
+    justify-content: center;
+  }
+
   /* Gallery and Import JSON buttons in grid layout above Editor/Preview */
   .header-actions {
     display: grid;
@@ -1490,8 +1551,16 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
     max-width: 480px;
-    margin: 12px auto 0;
-    align-items: end;
+    margin: 0 auto;
+    padding: 0;
+    align-items: stretch;
+  }
+
+  #mobileEditorActions.mobile-editor-actions {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
   }
 
   .mobile-editor-actions > * {
@@ -1502,27 +1571,34 @@
   .mobile-editor-actions .photo-upload-wrapper {
     width: 100%;
     justify-content: flex-end;
-    gap: 8px;
+    gap: 0;
   }
 
   /* Mobile/Tablet Status Messages in Sidebar */
   .mobile-status {
     display: block;
-    margin: 2px auto 0;
+    margin: 0 auto;
     max-width: 480px;
     text-align: center;
-    min-height: 10px;
-    max-height: 10px;
+    min-height: 20px;
     /* Reserve space even when empty */
     visibility: visible;
-    /* Override preview-status padding to maintain fixed height */
+    /* Override preview-status padding to maintain consistent spacing */
     padding: 0 12px;
-    overflow: hidden;
-    /* Vertically center text within fixed height */
+    /* Vertically center text within reserved height */
     display: flex;
     align-items: center;
     justify-content: center;
     line-height: 1.2;
+  }
+
+  .mobile-editor-actions .button-with-label,
+  .mobile-editor-actions .photo-upload-wrapper {
+    min-height: 0;
+  }
+
+  .mobile-editor-actions #photoUploadLabel {
+    display: none;
   }
 
   /* Reduce status-message spacing on mobile/tablet */
@@ -1569,37 +1645,40 @@
     display: none !important;
   }
 
-  body.mobile-preview-mode .button-group.button-row {
-    display: none !important;
+  body.mobile-preview-mode {
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 100vh;
+    height: auto;
+  }
+
+  body.mobile-preview-mode .container {
+    min-height: 100vh;
+    height: auto;
+    overflow: visible;
   }
 
   body.mobile-preview-mode .main-content {
-    display: block !important;
-    min-height: auto;
-    /* Hide scrollbar while keeping scroll functionality */
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE and Edge */
-  }
-
-  body.mobile-preview-mode .main-content::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
-  }
-
-  body.mobile-preview-mode .main-content {
-    padding-top: 12px;
-    padding-bottom: 16px;
+    display: flex !important;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    padding: 0;
   }
 
   body.mobile-preview-mode .preview-header {
-    margin-bottom: 12px;
-    padding-bottom: 10px;
+    flex-shrink: 0;
+    margin-bottom: 2px;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-bottom: 2px;
+    padding-top: 2px;
     min-height: 0;
   }
 
   body.mobile-preview-mode .preview-container {
-    height: 60vh;
-    min-height: 480px;
-    max-height: 60vh;
+    flex: 1;
+    min-height: 0;
     overflow-y: auto;
     /* Hide scrollbar while keeping scroll functionality */
     scrollbar-width: none; /* Firefox */
@@ -1608,6 +1687,10 @@
 
   body.mobile-preview-mode .preview-container::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
+  }
+
+  body.mobile-preview-mode .mobile-preview-actions {
+    flex-shrink: 0;
   }
 
   /* Row 1: Theme and Color Selectors - ALWAYS VISIBLE */
@@ -1623,12 +1706,24 @@
     margin-bottom: 0 !important;
   }
 
+  body.mobile-preview-mode .mobile-preview-actions .watermark-checkbox-inline:not(.terms-checkbox-inline) {
+    display: none;
+  }
+
+  body.mobile-preview-mode .mobile-preview-actions .watermark-checkbox-inline.terms-checkbox-inline {
+    margin: 4px 0 2px;
+  }
+
+  body.mobile-preview-mode .mobile-preview-actions .export-row {
+    margin-top: 6px;
+  }
+
   /* Preview header always visible on mobile to show theme/color selectors */
   body.mobile-preview-mode .preview-header {
     display: flex !important;
-    margin-top: 8px;
-    margin-bottom: 12px;
-    padding: 8px 12px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    padding: 2px 12px;
     min-height: auto;
     border-bottom: none;
   }
@@ -1641,7 +1736,8 @@
 
   /* Add spacing for preview content on mobile */
   body.mobile-preview-mode .preview-container {
-    margin-top: 20px;
+    margin-top: 2px;
+    min-height: 75vh;
   }
 
   /* Keep the toggle visible in both modes */
@@ -1653,13 +1749,35 @@
     display: none !important;
   }
 
+  body.mobile-preview-mode .sidebar {
+    padding: calc(18px + env(safe-area-inset-top, 0px)) 16px 10px;
+    gap: 6px;
+  }
+
+  body.mobile-preview-mode .sidebar-header {
+    display: block !important;
+  }
+
+  body.mobile-preview-mode .button-group.button-row {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* Prevent the logo from being shifted upward in Preview mode */
+  body.mobile-preview-mode .logo-heading {
+    transform: none;
+  }
+
   body.mobile-preview-mode .sidebar,
   body.mobile-preview-mode .sidebar-scroll {
+    /* Both axes must be visible together — same reason as the rule above. */
+    overflow-x: visible;
     overflow-y: visible;
   }
 
   body.mobile-preview-mode .sidebar-scroll > .control-section {
-    margin-bottom: 12px;
+    margin-bottom: 4px;
   }
 
   body.mobile-preview-mode #dataStatus {
@@ -1674,11 +1792,11 @@
   }
 
   body.mobile-preview-mode .sidebar-scroll > .control-section:first-of-type {
-    margin-bottom: 8px;
+    margin-bottom: 4px;
   }
 
   body.mobile-preview-mode .sidebar-scroll > .control-section:has(.mobile-view-toggle-container) {
-    margin-bottom: 8px !important;
+    margin-bottom: 4px !important;
   }
 
 }

@@ -287,6 +287,17 @@ function highlightJsonError(jsonText, error) {
   state.codeMirrorEditor.focus();
 }
 
+// Escape HTML to avoid user-provided content altering the app shell
+function escapeHtml(value) {
+  if (value === null || value === undefined) return '';
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 // Section Management Functions
 function updateSectionManagementUI() {
   if (!state.resumeData) {
@@ -341,8 +352,9 @@ function updateSectionManagementUI() {
     const customName = state.customSectionNames && state.customSectionNames[sectionKey];
     const defaultCVName = getDefaultCVHeaderName(sectionKey);
     const isActuallyCustom = customName && customName !== defaultCVName;
+    const safeCustomName = customName ? escapeHtml(customName) : '';
     const customNameMarkup = (canRename && isActuallyCustom)
-      ? `<span class="section-item-custom-name" title="${customName}">${customName}</span>`
+      ? `<span class="section-item-custom-name" title="${safeCustomName}">${safeCustomName}</span>`
       : '';
 
     item.innerHTML = `
@@ -1144,9 +1156,10 @@ function populateSkillsList() {
   elements.skillsList.innerHTML = skills.map((skill, index) => {
     const fraction = Number(skill.fraction) || 1;
     const share = Math.round((fraction / totalFraction) * 100);
+    const displayName = escapeHtml(skill.name || 'Untitled group');
     const totalItems = Array.isArray(skill.items) ? skill.items.length : 0;
     const itemsMarkup = totalItems
-      ? skill.items.map(item => `<span class="skill-tag">${item}</span>`).join('')
+      ? skill.items.map(item => `<span class="skill-tag">${escapeHtml(item)}</span>`).join('')
       : '<span class="skill-tag skill-tag-empty">Add at least one skill</span>';
 
     const metaLabel = `${totalItems} skill${totalItems === 1 ? '' : 's'}`;
@@ -1156,7 +1169,7 @@ function populateSkillsList() {
       <div class="skill-list-item">
         <div class="skill-list-header">
           <div class="skill-list-title">
-            <div class="skill-list-name">${skill.name || 'Untitled group'}</div>
+            <div class="skill-list-name">${displayName}</div>
           </div>
           <div class="skill-list-meta">${metaLabel}</div>
         </div>
@@ -1579,9 +1592,10 @@ function renderSkillWeightsPanel(skills, totalFraction) {
   const rows = skills.map((skill, index) => {
     const fraction = Number(skill.fraction) || 1;
     const share = Math.round((fraction / totalFraction) * 100);
+    const displayName = escapeHtml(skill.name || 'Untitled group');
     return `
       <div class="skill-weight-row">
-        <div class="skill-weight-name" title="${skill.name || 'Untitled group'}">${skill.name || 'Untitled group'}</div>
+        <div class="skill-weight-name" title="${displayName}">${displayName}</div>
         <input class="skill-weight-slider" type="range"
                min="${MIN_SKILL_FRACTION}" max="${MAX_SKILL_FRACTION}" step="${SKILL_FRACTION_STEP}"
                value="${fraction}" data-skill-index="${index}">
@@ -1894,8 +1908,8 @@ function populateProjectsList() {
         <i class="fas fa-grip-vertical"></i>
       </div>
       <div class="project-list-item-info">
-        <div class="project-list-item-name">${project.name || 'Untitled Project'}</div>
-        <div class="project-list-item-desc">${project.description || 'No description'}</div>
+        <div class="project-list-item-name">${escapeHtml(project.name || 'Untitled Project')}</div>
+        <div class="project-list-item-desc">${escapeHtml(project.description || 'No description')}</div>
       </div>
       <div class="project-list-item-controls">
         <button class="btn btn-secondary btn-small" onclick="openProjectEditor(${index})">
@@ -2169,10 +2183,10 @@ function populateEducationList() {
           <i class="fas fa-grip-vertical"></i>
         </div>
         <div class="experience-list-item-info">
-          <div class="experience-list-item-position">${edu.degree || 'Untitled Degree'}</div>
-          <div class="experience-list-item-company">${edu.institution || 'No institution'}</div>
+          <div class="experience-list-item-position">${escapeHtml(edu.degree || 'Untitled Degree')}</div>
+          <div class="experience-list-item-company">${escapeHtml(edu.institution || 'No institution')}</div>
           <div class="experience-list-item-date">${dateRange}</div>
-          <div class="experience-list-item-company">${edu.level || ''}</div>
+          <div class="experience-list-item-company">${escapeHtml(edu.level || '')}</div>
         </div>
         <div class="experience-list-item-controls">
           <button class="btn btn-secondary btn-small" onclick="openEducationEditor(${index})">
@@ -2227,8 +2241,8 @@ function populateExperienceList() {
           <i class="fas fa-grip-vertical"></i>
         </div>
         <div class="experience-list-item-info">
-          <div class="experience-list-item-position">${exp.position || 'Untitled Position'}</div>
-          <div class="experience-list-item-company">${exp.company || 'No company'}</div>
+          <div class="experience-list-item-position">${escapeHtml(exp.position || 'Untitled Position')}</div>
+          <div class="experience-list-item-company">${escapeHtml(exp.company || 'No company')}</div>
           <div class="experience-list-item-date">${dateRange}</div>
         </div>
         <div class="experience-list-item-controls">
@@ -2910,7 +2924,7 @@ function addResponsibilityField(text = '') {
     <button type="button" class="responsibility-drag-handle" title="Drag to reorder">
       <i class="fas fa-grip-vertical"></i>
     </button>
-    <input type="text" value="${text || ''}" />
+    <input type="text" value="${escapeHtml(text || '')}" />
     <button type="button" class="btn-icon" onclick="removeResponsibility(this)" title="Remove">
       <i class="fas fa-trash-alt"></i>
     </button>

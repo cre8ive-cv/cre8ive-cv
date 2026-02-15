@@ -48,6 +48,7 @@ class AnalyticsDatabase {
         mode TEXT,
         selected_theme TEXT,
         selected_color TEXT,
+        selected_layout TEXT,
         show_watermark INTEGER,
         enabled_sections_json TEXT,
         custom_section_names_json TEXT
@@ -62,6 +63,12 @@ class AnalyticsDatabase {
     `;
 
     this.db.exec(schema);
+
+    // Migrate existing databases: add selected_layout if missing
+    const columns = this.db.pragma('table_info(export_analytics)').map(c => c.name);
+    if (!columns.includes('selected_layout')) {
+      this.db.exec(`ALTER TABLE export_analytics ADD COLUMN selected_layout TEXT`);
+    }
   }
 
   /**
@@ -79,10 +86,11 @@ class AnalyticsDatabase {
         mode,
         selected_theme,
         selected_color,
+        selected_layout,
         show_watermark,
         enabled_sections_json,
         custom_section_names_json
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     const meta = data.meta || {};
@@ -94,6 +102,7 @@ class AnalyticsDatabase {
       data.mode || null,
       meta.selectedTheme || null,
       meta.selectedColor || null,
+      meta.selectedLayout || null,
       meta.showWatermark ? 1 : 0,
       JSON.stringify(meta.enabledSections || {}),
       JSON.stringify(meta.customSectionNames || {})

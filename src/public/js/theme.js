@@ -16,7 +16,7 @@ async function loadThemes() {
     state.themes.forEach(theme => {
       const option = document.createElement('option');
       option.value = theme.name;
-      option.textContent = theme.name.charAt(0).toUpperCase() + theme.name.slice(1);
+      option.textContent = formatThemeLabel(theme.name);
       option.dataset.monochromatic = theme.monochromatic;
       elements.themeSelect.appendChild(option);
     });
@@ -37,6 +37,7 @@ async function loadThemes() {
 
     buildThemeDropupOptions();
     syncThemeDropupFromSelect();
+    buildLayoutDropupOptions();
 
     // Update button states after theme is set
     updateButtonStates();
@@ -44,6 +45,37 @@ async function loadThemes() {
     console.error('Error loading themes:', error);
     flashPreviewStatus('Error loading themes', 'status-error');
   }
+}
+
+function formatThemeLabel(themeName) {
+  if (themeName === 'cre8ive') return 'cre8ive';
+  return themeName.charAt(0).toUpperCase() + themeName.slice(1);
+}
+
+function applyThemeLabelStyle(element, themeValue) {
+  if (!element) return;
+  if (themeValue === 'cre8ive') {
+    element.style.backgroundImage = 'linear-gradient(135deg, #64B5F6 0%, #42A5F5 50%, #2196F3 100%)';
+    element.style.webkitBackgroundClip = 'text';
+    element.style.backgroundClip = 'text';
+    element.style.webkitTextFillColor = 'transparent';
+    element.style.color = 'transparent';
+    return;
+  }
+  if (themeValue === 'terminal') {
+    element.style.backgroundImage = '';
+    element.style.webkitBackgroundClip = '';
+    element.style.backgroundClip = '';
+    element.style.webkitTextFillColor = '';
+    element.style.color = '#67f088';
+    return;
+  }
+
+  element.style.backgroundImage = '';
+  element.style.webkitBackgroundClip = '';
+  element.style.backgroundClip = '';
+  element.style.webkitTextFillColor = '';
+  element.style.color = '';
 }
 
 function buildThemeDropupOptions() {
@@ -59,6 +91,7 @@ function buildThemeDropupOptions() {
     btn.dataset.value = option.value;
     const font = THEME_FONT_MAP[option.value] || THEME_FONT_MAP.default;
     btn.style.fontFamily = font;
+    applyThemeLabelStyle(btn, option.value);
     btn.addEventListener('click', () => {
       closeThemeDropup();
       if (elements.themeSelect.value !== option.value) {
@@ -82,6 +115,7 @@ function syncThemeDropupFromSelect() {
   const font = selectedOption ? (THEME_FONT_MAP[selectedOption.value] || THEME_FONT_MAP.default) : THEME_FONT_MAP.default;
   if (elements.themeDropupLabel) {
     elements.themeDropupLabel.style.fontFamily = font;
+    applyThemeLabelStyle(elements.themeDropupLabel, selectedOption?.value);
   }
   if (elements.themeDropupButton) {
     elements.themeDropupButton.style.fontFamily = font;
@@ -198,6 +232,81 @@ function closeColorDropup() {
   elements.colorDropupButton?.setAttribute('aria-expanded', 'false');
 }
 
+const BASE_LAYOUT_OPTIONS = [
+  { value: 'standard', label: 'Standard' },
+  { value: 'compact', label: 'Compact' },
+  { value: 'sidebar', label: 'Sidebar' }
+];
+
+function getAvailableLayoutOptions() {
+  return BASE_LAYOUT_OPTIONS;
+}
+
+function ensureLayoutAllowedForTheme() {
+  const available = getAvailableLayoutOptions();
+  const allowedValues = new Set(available.map(option => option.value));
+  if (!allowedValues.has(state.layout)) {
+    state.layout = 'standard';
+    return true;
+  }
+  return false;
+}
+
+function buildLayoutDropupOptions() {
+  if (!elements.layoutDropupMenu) return;
+  elements.layoutDropupMenu.innerHTML = '';
+  const fragment = document.createDocumentFragment();
+  const layoutOptions = getAvailableLayoutOptions();
+
+  layoutOptions.forEach(option => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'dropup-option';
+    btn.textContent = option.label;
+    btn.dataset.value = option.value;
+    btn.addEventListener('click', () => {
+      closeLayoutDropup();
+      if (state.layout !== option.value) {
+        handleLayoutChange(option.value);
+      }
+    });
+    fragment.appendChild(btn);
+  });
+
+  elements.layoutDropupMenu.appendChild(fragment);
+  syncLayoutDropupFromState();
+}
+
+function syncLayoutDropupFromState() {
+  if (!elements.layoutDropupLabel) return;
+  const layoutOptions = getAvailableLayoutOptions();
+  ensureLayoutAllowedForTheme();
+  const current = layoutOptions.find(o => o.value === state.layout) || layoutOptions[0];
+  elements.layoutDropupLabel.textContent = current.label;
+
+  if (elements.layoutDropupMenu) {
+    elements.layoutDropupMenu.querySelectorAll('.dropup-option').forEach(btn => {
+      btn.classList.toggle('selected', btn.dataset.value === state.layout);
+    });
+  }
+}
+
+function toggleLayoutDropup(event) {
+  if (!elements.layoutDropup) return;
+  event.stopPropagation();
+  if (elements.layoutDropupMenu?.children.length === 0) {
+    buildLayoutDropupOptions();
+  }
+  const isOpen = elements.layoutDropup.classList.toggle('open');
+  elements.layoutDropupButton?.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+}
+
+function closeLayoutDropup() {
+  if (!elements.layoutDropup) return;
+  elements.layoutDropup.classList.remove('open');
+  elements.layoutDropupButton?.setAttribute('aria-expanded', 'false');
+}
+
 function handleDropupOutsideInteraction(event) {
   const target = event.target;
 
@@ -208,33 +317,33 @@ function handleDropupOutsideInteraction(event) {
   if (elements.colorDropup?.classList.contains('open') && !elements.colorDropup.contains(target)) {
     closeColorDropup();
   }
+
+  if (elements.layoutDropup?.classList.contains('open') && !elements.layoutDropup.contains(target)) {
+    closeLayoutDropup();
+  }
 }
 
 function attachPreviewInteractionHandlers(iframe) {
   if (!iframe) return;
 
-  const register = () => {
-    try {
-      const doc = iframe.contentDocument || iframe.contentWindow?.document;
-      if (!doc) return;
-      doc.addEventListener(
-        'pointerdown',
-        () => {
-          closeThemeDropup();
-          closeColorDropup();
-        },
-        { passive: true }
-      );
-    } catch (error) {
-      console.warn('Unable to attach preview interaction handlers:', error);
-    }
-  };
+  // The iframe has pointer-events: none so events never reach the iframe
+  // document. Listen on the parent container instead — any click/tap in the
+  // preview area (which passes through to the parent) will close open dropups.
+  const container = iframe.closest
+    ? (iframe.closest('.preview-container') || elements.previewContainer)
+    : elements.previewContainer;
 
-  if (iframe.contentDocument?.readyState === 'complete') {
-    register();
-  } else {
-    iframe.addEventListener('load', register, { once: true });
-  }
+  if (!container) return;
+
+  container.addEventListener(
+    'pointerdown',
+    () => {
+      closeThemeDropup();
+      closeColorDropup();
+      closeLayoutDropup();
+    },
+    { passive: true }
+  );
 }
 
 // Load available colors
@@ -302,6 +411,11 @@ async function handleThemeChange(event) {
   state.selectedTheme = event.target.value;
   syncThemeDropupFromSelect();
   closeThemeDropup();
+  const layoutChangedByTheme = ensureLayoutAllowedForTheme();
+  buildLayoutDropupOptions();
+  if (layoutChangedByTheme) {
+    closeLayoutDropup();
+  }
 
   if (state.selectedTheme) {
     const isMonochromatic = selectedOption.dataset.monochromatic === 'true';

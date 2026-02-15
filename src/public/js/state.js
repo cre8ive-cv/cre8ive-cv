@@ -16,6 +16,7 @@ const state = {
   selectedColor: null,
   lastSelectedColor: null,
   showWatermark: true, // Whether to show the watermark
+  layout: 'standard', // Resume layout: 'standard', 'compact', or 'sidebar'
   termsAccepted: false, // Whether the user accepted the terms
   currentHtml: null,
   pdfPreviewUrl: null,
@@ -175,6 +176,11 @@ const elements = {
   colorDropupMenu: document.getElementById('colorDropupMenu'),
   colorGroup: document.getElementById('colorGroup'),
   showWatermarkCheckbox: document.getElementById('showWatermarkCheckbox'),
+  showWatermarkCheckboxMobile: document.getElementById('showWatermarkCheckboxMobile'),
+  layoutDropup: document.getElementById('layoutDropup'),
+  layoutDropupButton: document.getElementById('layoutDropupButton'),
+  layoutDropupLabel: document.getElementById('layoutDropupLabel'),
+  layoutDropupMenu: document.getElementById('layoutDropupMenu'),
   termsAcceptanceCheckbox: document.getElementById('termsAcceptanceCheckbox'),
   previewPdfBtn: document.getElementById('previewPdfBtn'),
   exportHtmlBtn: document.getElementById('exportHtmlBtn'),
@@ -323,6 +329,9 @@ const elements = {
 const THEME_FONT_MAP = {
   default: `'Segoe UI', Tahoma, Geneva, Verdana, sans-serif`,
   modern: `'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`,
+  cre8ive: `'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`,
+  minimalist: `'IBM Plex Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`,
   classic: `'Georgia', 'Times New Roman', serif`,
-  corpo: `'Arial', 'Helvetica Neue', Helvetica, sans-serif`
+  corpo: `'Arial', 'Helvetica Neue', Helvetica, sans-serif`,
+  terminal: `'IBM Plex Mono', 'Fira Code', 'JetBrains Mono', 'Consolas', 'Courier New', monospace`
 };

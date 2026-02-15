@@ -187,7 +187,8 @@ async function generatePreview() {
         colorName: state.selectedColor,
         photoBase64: state.photoBase64,
         customSectionNames: state.customSectionNames,
-        showWatermark: state.showWatermark
+        showWatermark: state.showWatermark,
+        layout: state.layout
       })
     });
 
@@ -203,12 +204,35 @@ async function generatePreview() {
     // Mark JSON as no longer modified since we just generated
     state.jsonModified = false;
 
-    // Display preview in iframe
-    elements.previewContainer.innerHTML = '<iframe id="resumePreview"></iframe>';
+    // Display preview in iframe wrapped by an unscaled frame so the paper border
+    // keeps a consistent 1px thickness on every side.
+    elements.previewContainer.innerHTML = '<div id="resumePreviewFrame"><iframe id="resumePreview"></iframe></div>';
+    const frame = document.getElementById('resumePreviewFrame');
     const iframe = document.getElementById('resumePreview');
+    // Lock iframe to A4 width (794px at 96 DPI) so the HTML preview matches
+    // the PDF output. transform: scale() scales it visually to fit the
+    // container without affecting scroll mechanics (unlike CSS zoom).
+    // On mobile (scale < 1) use the full viewport width so the preview is
+    // edge-to-edge; on desktop use 85% of the container for nice margins.
+    const A4_PX = 794;
+    const containerWidth = elements.previewContainer.clientWidth || 820;
+    const isMobile = window.innerWidth < A4_PX;
+    const fitWidth = isMobile ? window.innerWidth : containerWidth * 0.85;
+    const scale = fitWidth / A4_PX;
+    frame.style.width = fitWidth + 'px';
+    iframe.style.width = A4_PX + 'px';
+    iframe.style.maxWidth = 'none';
+    iframe.style.transformOrigin = 'top left';
+    iframe.style.transform = `scale(${scale})`;
+    iframe.dataset.scale = scale;
     iframe.srcdoc = data.html;
-    if (previousScroll && elements.previewContainer) {
-      elements.previewContainer.scrollTop = previousScroll.containerScroll || 0;
+    // Expand iframe to full content height so .preview-container scrolls it
+    autoResizePreviewIframe(iframe);
+    // Forward wheel/touch from iframe to .preview-container
+    forwardPreviewScroll(iframe);
+    if (previousScroll) {
+      const sc = getPreviewScrollContainer();
+      if (sc) sc.scrollTop = previousScroll.containerScroll || 0;
     }
     restorePreviewScrollPosition(iframe);
     trackPreviewScroll(iframe);
@@ -264,6 +288,7 @@ async function exportToHtml() {
         photoBase64: state.photoBase64,
         customSectionNames: state.customSectionNames,
         showWatermark: state.showWatermark,
+        layout: state.layout,
         analyticsMeta
       })
     });
@@ -441,6 +466,7 @@ function buildResumeMetaSnapshot({
     enabledSections: resolvedEnabledSections,
     selectedTheme: state.selectedTheme,
     selectedColor: state.selectedColor,
+    selectedLayout: state.layout,
     showWatermark: state.showWatermark,
     customSectionNames: { ...state.customSectionNames }
   };
@@ -655,6 +681,19 @@ function applyMetaSettings(meta, options = {}) {
   // Apply watermark setting (default to true if not specified)
   state.showWatermark = meta.showWatermark !== undefined ? meta.showWatermark : true;
   elements.showWatermarkCheckbox.checked = state.showWatermark;
+  if (elements.showWatermarkCheckboxMobile) {
+    elements.showWatermarkCheckboxMobile.checked = state.showWatermark;
+  }
+
+  // Apply layout setting (with backward compat for old tightLayout boolean)
+  if (meta.selectedLayout) {
+    state.layout = meta.selectedLayout;
+  } else if (meta.layout) {
+    state.layout = meta.layout;
+  } else {
+    state.layout = meta.tightLayout === true ? 'compact' : 'standard';
+  }
+  syncLayoutDropupFromState();
 
   updateButtonStates();
 }
@@ -750,13 +789,39 @@ function showLoading(isLoading) {
 
 let previewContainerScrollListenerAttached = false;
 
+/**
+ * Returns the nearest ancestor of the preview area that actually has scrollable
+ * overflow.  In the desktop layout that is `.main-content` (flex: 1; overflow-y:
+ * auto inside the 100vh container), NOT `.preview-container` which has only
+ * min-height and just grows to fit its content.  Falling back to the container
+ * itself keeps things safe if the layout ever changes.
+ */
+function getPreviewScrollContainer() {
+  // Walk up from previewContainer looking for the first element that actually scrolls.
+  // Include document.body in the walk — on narrow viewports (≤1024px) the layout
+  // switches to a page-level scroll (body gets overflow-y:auto) and .preview-container
+  // gets scrollbar-width:none, making its scroll invisible.  Stopping before body
+  // caused forwardPreviewScroll to target the invisible .preview-container scroll
+  // instead of body, consuming all wheel events without visible effect.
+  let el = elements.previewContainer?.parentElement;
+  while (el && el !== document.documentElement) {
+    const style = window.getComputedStyle(el);
+    const oy = style.overflowY;
+    if ((oy === 'auto' || oy === 'scroll') && el.scrollHeight > el.clientHeight) {
+      return el;
+    }
+    el = el.parentElement;
+  }
+  return elements.previewContainer || document.documentElement;
+}
+
 function getIframeScrollElement(doc) {
   if (!doc) return null;
   return doc.scrollingElement || doc.documentElement || doc.body || null;
 }
 
 function capturePreviewScrollPosition() {
-  const containerScroll = elements.previewContainer?.scrollTop || 0;
+  const containerScroll = getPreviewScrollContainer()?.scrollTop || 0;
   const iframe = document.getElementById('resumePreview');
   const doc = iframe?.contentDocument;
   const scrollEl = getIframeScrollElement(doc);
@@ -773,6 +838,46 @@ function capturePreviewScrollPosition() {
   };
 }
 
+/**
+ * Resizes the preview iframe to its full content height after the page and
+ * all fonts have loaded.  This eliminates any internal iframe scrollbar (which
+ * would steal ~15 px of content width and cause text to wrap at different
+ * positions than in the PDF).  With the iframe exactly as tall as its content
+ * there is nothing to scroll inside it, so Chromium chains wheel events up to
+ * the outer .main-content scroll container naturally.
+ */
+function autoResizePreviewIframe(iframe) {
+  const resize = () => {
+    const doc = iframe.contentDocument;
+    if (!doc) return;
+    const measure = () => {
+      const h = doc.documentElement.scrollHeight;
+      if (h > 0) {
+        const rawScale = Number.parseFloat(iframe.dataset.scale || '1');
+        const scale = Number.isFinite(rawScale) && rawScale > 0 ? rawScale : 1;
+        const containerH = elements.previewContainer?.clientHeight || 0;
+        const minLayoutH = scale < 1 && containerH > 0
+          ? Math.ceil(containerH / scale)
+          : 0;
+        const layoutH = minLayoutH > h ? minLayoutH : h;
+        iframe.style.height = layoutH + 'px';
+        iframe.style.marginBottom = '0px';
+        const frame = iframe.parentElement;
+        if (frame) {
+          frame.style.height = (layoutH * scale) + 'px';
+        }
+      }
+    };
+    // Wait for fonts so text is laid out with accurate metrics before measuring.
+    (doc.fonts?.ready ?? Promise.resolve()).then(measure).catch(measure);
+  };
+  if (iframe.contentDocument?.readyState === 'complete') {
+    resize();
+  } else {
+    iframe.addEventListener('load', resize, { once: true });
+  }
+}
+
 function restorePreviewScrollPosition(iframe) {
   if (!iframe || !state.previewScroll) return;
 
@@ -781,8 +886,9 @@ function restorePreviewScrollPosition(iframe) {
     const scrollEl = getIframeScrollElement(doc);
     const saved = state.previewScroll;
 
-    if (elements.previewContainer && saved.containerScroll !== undefined) {
-      elements.previewContainer.scrollTop = saved.containerScroll || 0;
+    const scrollContainer = getPreviewScrollContainer();
+    if (scrollContainer && saved.containerScroll !== undefined) {
+      scrollContainer.scrollTop = saved.containerScroll || 0;
     }
 
     if (!doc || !scrollEl) return;
@@ -819,14 +925,16 @@ function trackPreviewScroll(iframe) {
   if (!iframe) return;
 
   const ensureContainerListener = () => {
-    if (previewContainerScrollListenerAttached || !elements.previewContainer) return;
+    if (previewContainerScrollListenerAttached) return;
+    const scrollContainer = getPreviewScrollContainer();
+    if (!scrollContainer) return;
 
-    elements.previewContainer.addEventListener(
+    scrollContainer.addEventListener(
       'scroll',
       () => {
         state.previewScroll = {
           ...(state.previewScroll || {}),
-          containerScroll: elements.previewContainer.scrollTop || 0
+          containerScroll: getPreviewScrollContainer()?.scrollTop || 0
         };
       },
       { passive: true }
@@ -849,7 +957,7 @@ function trackPreviewScroll(iframe) {
         ...(state.previewScroll || {}),
         iframeScrollTop: scrollTop,
         iframeRatio: scrollHeight ? scrollTop / scrollHeight : 0,
-        containerScroll: elements.previewContainer?.scrollTop || 0
+        containerScroll: getPreviewScrollContainer()?.scrollTop || 0
       };
     };
 
@@ -861,6 +969,60 @@ function trackPreviewScroll(iframe) {
     attachListener();
   } else {
     iframe.addEventListener('load', attachListener, { once: true });
+  }
+}
+
+// Forward wheel/touch scrolls that happen over the iframe to the outer
+// scrollable container so long previews remain reachable.
+function forwardPreviewScroll(iframe) {
+  if (!iframe) return;
+
+  const register = () => {
+    const doc = iframe.contentDocument;
+    const scrollEl = getIframeScrollElement(doc);
+    if (!doc || !scrollEl) return;
+
+    const sc = getPreviewScrollContainer();
+    let lastTouchY = null;
+
+    const onWheel = (event) => {
+      event.preventDefault();
+      sc?.scrollBy({ top: event.deltaY, behavior: 'auto' });
+    };
+
+    const onTouchStart = (event) => {
+      if (event.touches.length !== 1) return;
+      lastTouchY = event.touches[0].clientY;
+    };
+
+    const onTouchMove = (event) => {
+      if (event.touches.length !== 1 || lastTouchY === null) return;
+      const currentY = event.touches[0].clientY;
+      event.preventDefault();
+      sc?.scrollBy({ top: lastTouchY - currentY, behavior: 'auto' });
+      lastTouchY = currentY;
+    };
+
+    const onTouchEnd = () => {
+      lastTouchY = null;
+    };
+
+    scrollEl.addEventListener('wheel', onWheel, { passive: false });
+    scrollEl.addEventListener('touchstart', onTouchStart, { passive: true });
+    scrollEl.addEventListener('touchmove', onTouchMove, { passive: false });
+    scrollEl.addEventListener('touchend', onTouchEnd, { passive: true });
+    scrollEl.addEventListener('touchcancel', onTouchEnd, { passive: true });
+    iframe.addEventListener('wheel', onWheel, { passive: false });
+    iframe.addEventListener('touchstart', onTouchStart, { passive: true });
+    iframe.addEventListener('touchmove', onTouchMove, { passive: false });
+    iframe.addEventListener('touchend', onTouchEnd, { passive: true });
+    iframe.addEventListener('touchcancel', onTouchEnd, { passive: true });
+  };
+
+  if (iframe.contentDocument?.readyState === 'complete') {
+    register();
+  } else {
+    iframe.addEventListener('load', register, { once: true });
   }
 }
 

@@ -1,7 +1,7 @@
 module.exports = {
   name: 'magenta',
   palette: {
-    primary: '#9c0f5f',
+    primary: '#6b0d42',
     accent: '#e91e63',
     light: '#ffe6f2'
   }

@@ -412,7 +412,8 @@ class PdfClusterManager {
         data.palette,
         data.customSectionNames,
         data.showWatermark,
-        this.appConfig.labels
+        this.appConfig.labels,
+        typeof data.layout === 'string' ? data.layout : 'standard'
       );
 
       // Generate PDF with memory tracking (pass page)
