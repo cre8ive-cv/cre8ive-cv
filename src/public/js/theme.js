@@ -67,7 +67,7 @@ function applyThemeLabelStyle(element, themeValue) {
     element.style.webkitBackgroundClip = '';
     element.style.backgroundClip = '';
     element.style.webkitTextFillColor = '';
-    element.style.color = '#67f088';
+    element.style.color = 'var(--terminal-theme-label-color)';
     return;
   }
 
