@@ -193,6 +193,10 @@
   color: #1a2028;
 }
 
+:root[data-mode="light"] #loadExampleBtn.btn-success {
+  color: #1a2028;
+}
+
 .btn-icon {
   background: none;
   border: none;
