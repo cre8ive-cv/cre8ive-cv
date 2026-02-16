@@ -413,6 +413,30 @@ body {
   transform: scale(1.04);
 }
 
+.gallery-dropdown-item-preview {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.95);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease;
+  z-index: 1;
+}
+
+.gallery-dropdown-item:hover .gallery-dropdown-item-preview,
+.gallery-dropdown-item:focus-visible .gallery-dropdown-item-preview {
+  opacity: 1;
+}
+
+.gallery-dropdown-item-preview iframe {
+  width: 794px;
+  height: 1123px;
+  border: none;
+  transform: scale(var(--gallery-dropdown-preview-scale, 0.14));
+  transform-origin: top left;
+  pointer-events: none;
+}
+
 /* Template name overlay */
 .gallery-dropdown-item-label {
   position: absolute;
@@ -427,6 +451,7 @@ body {
   text-align: center;
   line-height: 1.25;
   letter-spacing: 0.01em;
+  z-index: 2;
 }
 
 /* Skeleton loading shimmer */
@@ -463,13 +488,13 @@ body {
   align-items: center;
   gap: 8px;
   margin: 8px 10px 10px;
-  padding: 9px 13px;
+  padding: 11px 14px;
   background: rgba(100, 181, 246, 0.07);
   border: 1px solid rgba(100, 181, 246, 0.18);
   border-radius: 8px;
   color: #90caf9;
-  font-size: 12.5px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 700;
   text-decoration: none;
   transition: background 0.15s, border-color 0.15s, color 0.15s;
   cursor: pointer;
@@ -485,7 +510,7 @@ body {
 
 .gallery-dropdown-footer-arrow {
   margin-left: auto;
-  font-size: 10px;
+  font-size: 13px;
   opacity: 0.65;
   transition: transform 0.15s;
 }

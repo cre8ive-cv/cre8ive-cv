@@ -2,6 +2,7 @@
 (function () {
   let initialized = false;
   let templatesCache = null;
+  const PREVIEW_BASE_WIDTH = 794; // A4 width at 96 DPI
 
   function forceCloseDropdown(wrapper) {
     if (!wrapper) return;
@@ -58,8 +59,29 @@
       label.className = 'gallery-dropdown-item-label';
       label.textContent = template.label;
 
+      const preview = document.createElement('div');
+      preview.className = 'gallery-dropdown-item-preview';
+
+      const iframe = document.createElement('iframe');
+      iframe.dataset.previewSrc = '/gallery/' + template.folder + '/' + template.html;
+      iframe.setAttribute('sandbox', 'allow-same-origin');
+      iframe.setAttribute('aria-hidden', 'true');
+      preview.appendChild(iframe);
+
+      const ensurePreviewLoaded = () => {
+        const itemWidth = btn.clientWidth || 1;
+        const scale = itemWidth / PREVIEW_BASE_WIDTH;
+        preview.style.setProperty('--gallery-dropdown-preview-scale', String(scale));
+        if (iframe.src) return;
+        iframe.src = iframe.dataset.previewSrc;
+      };
+
       btn.appendChild(img);
       btn.appendChild(label);
+      btn.appendChild(preview);
+
+      btn.addEventListener('mouseenter', ensurePreviewLoaded);
+      btn.addEventListener('focus', ensurePreviewLoaded);
 
       btn.addEventListener('click', async () => {
         const loaded = await loadTemplateFromGallery(template);
