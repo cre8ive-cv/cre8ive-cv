@@ -205,10 +205,17 @@ async function generatePreview() {
     state.jsonModified = false;
 
     // Display preview in iframe wrapped by an unscaled frame so the paper border
-    // keeps a consistent 1px thickness on every side.
-    elements.previewContainer.innerHTML = '<div id="resumePreviewFrame"><iframe id="resumePreview"></iframe></div>';
-    const frame = document.getElementById('resumePreviewFrame');
-    const iframe = document.getElementById('resumePreview');
+    // keeps a consistent 1px thickness on every side. Reuse the existing frame
+    // and iframe when present so the browser keeps the old content painted
+    // during navigation — this prevents any white-canvas flash between previews.
+    let frame = document.getElementById('resumePreviewFrame');
+    let iframe = document.getElementById('resumePreview');
+    const isFirstRender = !frame || !iframe;
+    if (isFirstRender) {
+      elements.previewContainer.innerHTML = '<div id="resumePreviewFrame"><iframe id="resumePreview"></iframe></div>';
+      frame = document.getElementById('resumePreviewFrame');
+      iframe = document.getElementById('resumePreview');
+    }
     // Lock iframe to A4 width (794px at 96 DPI) so the HTML preview matches
     // the PDF output. transform: scale() scales it visually to fit the
     // container without affecting scroll mechanics (unlike CSS zoom).
@@ -225,18 +232,23 @@ async function generatePreview() {
     iframe.style.transformOrigin = 'top left';
     iframe.style.transform = `scale(${scale})`;
     iframe.dataset.scale = scale;
+    // Register all post-load callbacks before setting srcdoc so the load event
+    // is never missed — srcdoc navigation is asynchronous in Firefox and the
+    // event can fire before JS resumes if we set srcdoc first.
+    iframe.addEventListener('load', () => {
+      autoResizePreviewIframe(iframe);
+      forwardPreviewScroll(iframe);
+      restorePreviewScrollPosition(iframe);
+      trackPreviewScroll(iframe);
+    }, { once: true });
     iframe.srcdoc = data.html;
-    // Expand iframe to full content height so .preview-container scrolls it
-    autoResizePreviewIframe(iframe);
-    // Forward wheel/touch from iframe to .preview-container
-    forwardPreviewScroll(iframe);
+    if (isFirstRender) {
+      attachPreviewInteractionHandlers(iframe);
+    }
     if (previousScroll) {
       const sc = getPreviewScrollContainer();
       if (sc) sc.scrollTop = previousScroll.containerScroll || 0;
     }
-    restorePreviewScrollPosition(iframe);
-    trackPreviewScroll(iframe);
-    attachPreviewInteractionHandlers(iframe);
 
     resetPreviewStatus();
     updateButtonStates();
@@ -864,14 +876,25 @@ function autoResizePreviewIframe(iframe) {
         iframe.style.marginBottom = '0px';
         const frame = iframe.parentElement;
         if (frame) {
-          frame.style.height = (layoutH * scale) + 'px';
+          // Compensate for the frame's border (box-sizing: border-box) so the
+          // scaled iframe doesn't overflow and get clipped at the bottom.
+          const frameCs = window.getComputedStyle(frame);
+          const frameBorderH = (parseFloat(frameCs.borderTopWidth) || 0) +
+                               (parseFloat(frameCs.borderBottomWidth) || 0);
+          frame.style.height = (layoutH * scale + frameBorderH) + 'px';
         }
       }
     };
     // Wait for fonts so text is laid out with accurate metrics before measuring.
     (doc.fonts?.ready ?? Promise.resolve()).then(measure).catch(measure);
   };
-  if (iframe.contentDocument?.readyState === 'complete') {
+  // Firefox: setting srcdoc queues navigation asynchronously, so readyState
+  // stays 'complete' (about:blank) until the new document starts loading.
+  // Always add a load listener to catch the actual content load. Only skip
+  // the listener and run immediately if the document already has real content.
+  const doc = iframe.contentDocument;
+  const hasContent = doc?.readyState === 'complete' && doc?.URL !== 'about:blank';
+  if (hasContent) {
     resize();
   } else {
     iframe.addEventListener('load', resize, { once: true });
@@ -914,7 +937,8 @@ function restorePreviewScrollPosition(iframe) {
 
   const onLoad = () => scheduleApply(retryAttempts);
 
-  if (iframe.contentDocument?.readyState === 'complete') {
+  const rdoc = iframe.contentDocument;
+  if (rdoc?.readyState === 'complete' && rdoc?.URL !== 'about:blank') {
     onLoad();
   } else {
     iframe.addEventListener('load', onLoad, { once: true });
@@ -965,7 +989,8 @@ function trackPreviewScroll(iframe) {
     updatePosition();
   };
 
-  if (iframe.contentDocument?.readyState === 'complete') {
+  const tdoc = iframe.contentDocument;
+  if (tdoc?.readyState === 'complete' && tdoc?.URL !== 'about:blank') {
     attachListener();
   } else {
     iframe.addEventListener('load', attachListener, { once: true });
@@ -1012,14 +1037,20 @@ function forwardPreviewScroll(iframe) {
     scrollEl.addEventListener('touchmove', onTouchMove, { passive: false });
     scrollEl.addEventListener('touchend', onTouchEnd, { passive: true });
     scrollEl.addEventListener('touchcancel', onTouchEnd, { passive: true });
-    iframe.addEventListener('wheel', onWheel, { passive: false });
-    iframe.addEventListener('touchstart', onTouchStart, { passive: true });
-    iframe.addEventListener('touchmove', onTouchMove, { passive: false });
-    iframe.addEventListener('touchend', onTouchEnd, { passive: true });
-    iframe.addEventListener('touchcancel', onTouchEnd, { passive: true });
+    // iframe-element listeners live on the reused DOM node across navigations —
+    // only attach once to prevent accumulation on repeated preview generations.
+    if (!iframe.dataset.scrollForwarded) {
+      iframe.dataset.scrollForwarded = '1';
+      iframe.addEventListener('wheel', onWheel, { passive: false });
+      iframe.addEventListener('touchstart', onTouchStart, { passive: true });
+      iframe.addEventListener('touchmove', onTouchMove, { passive: false });
+      iframe.addEventListener('touchend', onTouchEnd, { passive: true });
+      iframe.addEventListener('touchcancel', onTouchEnd, { passive: true });
+    }
   };
 
-  if (iframe.contentDocument?.readyState === 'complete') {
+  const fdoc = iframe.contentDocument;
+  if (fdoc?.readyState === 'complete' && fdoc?.URL !== 'about:blank') {
     register();
   } else {
     iframe.addEventListener('load', register, { once: true });

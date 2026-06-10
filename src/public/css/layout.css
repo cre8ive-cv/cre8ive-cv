@@ -133,6 +133,7 @@ body {
   background: linear-gradient(135deg, rgba(100, 181, 246, 0.15), rgba(66, 165, 245, 0.08));
   border: 1px solid rgba(100, 181, 246, 0.3);
   box-shadow: 0 6px 18px rgba(66, 165, 245, 0.2);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   transition: all 0.2s ease;
   border-radius: 10px;
@@ -150,6 +151,7 @@ body {
   background: linear-gradient(135deg, rgba(100, 181, 246, 0.15), rgba(66, 165, 245, 0.08));
   border: 1px solid rgba(100, 181, 246, 0.3);
   box-shadow: 0 6px 18px rgba(66, 165, 245, 0.2);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   transition: all 0.2s ease;
   border-radius: 10px;
